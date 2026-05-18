@@ -5,7 +5,7 @@
 # =============================================================================
 # Version definitions (single source of truth)
 # =============================================================================
-%global app_version     2.0.0
+%global app_version     2.0.1
 %global go_version      1.21
 %global whisper_version 1.8.4
 
@@ -256,8 +256,8 @@ fi
 %{_datadir}/icons/hicolor/scalable/apps/io.github.ashbuk.dabri.svg
 
 %changelog
-* Mon May 19 2026 Asher Buk <AshBuk@users.noreply.github.com> - 2.0.0-1
-- Project renamed to Dabri (breaking change)
+* Mon May 19 2026 Asher Buk <AshBuk@users.noreply.github.com> - 2.0.1-1
+- Project renamed to Dabri (breaking change
 
 * Thu May 15 2026 Asher Buk <AshBuk@users.noreply.github.com> - 1.8.2-1
 - Bug fixes and improvements

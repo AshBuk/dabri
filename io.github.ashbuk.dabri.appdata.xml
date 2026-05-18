@@ -45,9 +45,10 @@
     <binary>dabri</binary>
   </provides>
   <releases>
-    <release version="2.0.0" date="2026-05-19">
+    <release version="2.0.1" date="2026-05-19">
       <description><p>Project renamed to Dabri (breaking change)</p></description>
     </release>
+    <release version="2.0.0" date="2026-05-19"/>
     <release version="1.8.2" date="2026-05-15">
       <description><p>Bug fixes and improvements</p></description>
     </release>
