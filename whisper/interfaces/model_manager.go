@@ -6,7 +6,7 @@ package interfaces
 import (
 	"context"
 
-	"github.com/AshBuk/dabri/config"
+	"github.com/AshBuk/dabri/v2/config"
 )
 
 // Defines the contract for managing the lifecycle of Whisper models

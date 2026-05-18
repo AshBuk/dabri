@@ -6,7 +6,7 @@ package app
 import (
 	"fmt"
 
-	"github.com/AshBuk/dabri/hotkeys/adapters"
+	"github.com/AshBuk/dabri/v2/hotkeys/adapters"
 )
 
 // Hotkey Handlers - Adapter layer between HotkeyService and Business Services

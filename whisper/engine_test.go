@@ -7,8 +7,8 @@ import (
 	"os"
 	"testing"
 
-	"github.com/AshBuk/dabri/config"
-	"github.com/AshBuk/dabri/internal/utils"
+	"github.com/AshBuk/dabri/v2/config"
+	"github.com/AshBuk/dabri/v2/internal/utils"
 )
 
 func TestNewWhisperEngine(t *testing.T) {

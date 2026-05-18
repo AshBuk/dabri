@@ -10,7 +10,7 @@ import (
 
 	"github.com/spf13/cobra"
 
-	appversion "github.com/AshBuk/dabri/internal/version"
+	appversion "github.com/AshBuk/dabri/v2/internal/version"
 )
 
 // Command Router — two execution modes:

@@ -8,8 +8,8 @@ import (
 	"os/exec"
 	"strings"
 
-	"github.com/AshBuk/dabri/config"
-	"github.com/AshBuk/dabri/output/interfaces"
+	"github.com/AshBuk/dabri/v2/config"
+	"github.com/AshBuk/dabri/v2/output/interfaces"
 )
 
 // Implements the Outputter interface for clipboard operations

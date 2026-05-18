@@ -10,13 +10,13 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/AshBuk/dabri/config"
-	"github.com/AshBuk/dabri/internal/assets"
-	"github.com/AshBuk/dabri/internal/constants"
-	"github.com/AshBuk/dabri/internal/logger"
-	"github.com/AshBuk/dabri/internal/notify"
-	"github.com/AshBuk/dabri/internal/tray"
-	appversion "github.com/AshBuk/dabri/internal/version"
+	"github.com/AshBuk/dabri/v2/config"
+	"github.com/AshBuk/dabri/v2/internal/assets"
+	"github.com/AshBuk/dabri/v2/internal/constants"
+	"github.com/AshBuk/dabri/v2/internal/logger"
+	"github.com/AshBuk/dabri/v2/internal/notify"
+	"github.com/AshBuk/dabri/v2/internal/tray"
+	appversion "github.com/AshBuk/dabri/v2/internal/version"
 )
 
 // Coordinates tray icon states and desktop notifications

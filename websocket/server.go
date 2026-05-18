@@ -12,8 +12,8 @@ import (
 	"sync/atomic"
 	"time"
 
-	"github.com/AshBuk/dabri/config"
-	"github.com/AshBuk/dabri/internal/logger"
+	"github.com/AshBuk/dabri/v2/config"
+	"github.com/AshBuk/dabri/v2/internal/logger"
 	"github.com/gorilla/websocket"
 )
 

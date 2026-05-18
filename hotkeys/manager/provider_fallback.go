@@ -7,8 +7,8 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/AshBuk/dabri/hotkeys/interfaces"
-	"github.com/AshBuk/dabri/hotkeys/providers"
+	"github.com/AshBuk/dabri/v2/hotkeys/interfaces"
+	"github.com/AshBuk/dabri/v2/hotkeys/providers"
 )
 
 // Register all configured hotkeys on the given provider

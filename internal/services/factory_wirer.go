@@ -10,9 +10,9 @@ import (
 	"strings"
 	"syscall"
 
-	"github.com/AshBuk/dabri/config"
-	"github.com/AshBuk/dabri/hotkeys/adapters"
-	"github.com/AshBuk/dabri/internal/logger"
+	"github.com/AshBuk/dabri/v2/config"
+	"github.com/AshBuk/dabri/v2/hotkeys/adapters"
+	"github.com/AshBuk/dabri/v2/internal/logger"
 )
 
 // FactoryWirer wires tray menu callbacks to service business logic

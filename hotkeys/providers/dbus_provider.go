@@ -11,8 +11,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/AshBuk/dabri/hotkeys/utils"
-	"github.com/AshBuk/dabri/internal/logger"
+	"github.com/AshBuk/dabri/v2/hotkeys/utils"
+	"github.com/AshBuk/dabri/v2/internal/logger"
 	dbus "github.com/godbus/dbus/v5"
 )
 

@@ -8,8 +8,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/AshBuk/dabri/config"
-	"github.com/AshBuk/dabri/output/interfaces"
+	"github.com/AshBuk/dabri/v2/config"
+	"github.com/AshBuk/dabri/v2/output/interfaces"
 )
 
 func TestNewClipboardOutputter(t *testing.T) {

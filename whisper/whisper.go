@@ -12,9 +12,9 @@
 package whisper
 
 import (
-	"github.com/AshBuk/dabri/config"
-	"github.com/AshBuk/dabri/whisper/interfaces"
-	"github.com/AshBuk/dabri/whisper/manager"
+	"github.com/AshBuk/dabri/v2/config"
+	"github.com/AshBuk/dabri/v2/whisper/interfaces"
+	"github.com/AshBuk/dabri/v2/whisper/manager"
 )
 
 // Re-export key interfaces for convenience

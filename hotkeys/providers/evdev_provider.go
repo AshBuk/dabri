@@ -15,8 +15,8 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/AshBuk/dabri/hotkeys/utils"
-	"github.com/AshBuk/dabri/internal/logger"
+	"github.com/AshBuk/dabri/v2/hotkeys/utils"
+	"github.com/AshBuk/dabri/v2/internal/logger"
 	evdev "github.com/holoplot/go-evdev"
 )
 

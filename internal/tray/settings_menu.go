@@ -9,7 +9,7 @@ import (
 	"context"
 
 	"fyne.io/systray"
-	"github.com/AshBuk/dabri/internal/constants"
+	"github.com/AshBuk/dabri/v2/internal/constants"
 )
 
 // Create settings submenus

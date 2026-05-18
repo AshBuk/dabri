@@ -10,8 +10,8 @@ import (
 	"sync"
 
 	"fyne.io/systray"
-	"github.com/AshBuk/dabri/config"
-	"github.com/AshBuk/dabri/internal/logger"
+	"github.com/AshBuk/dabri/v2/config"
+	"github.com/AshBuk/dabri/v2/internal/logger"
 )
 
 // TrayManager manages the system tray icon and menu

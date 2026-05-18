@@ -10,9 +10,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/AshBuk/dabri/hotkeys/providers"
-	"github.com/AshBuk/dabri/internal/app"
-	"github.com/AshBuk/dabri/internal/testutils"
+	"github.com/AshBuk/dabri/v2/hotkeys/providers"
+	"github.com/AshBuk/dabri/v2/internal/app"
+	"github.com/AshBuk/dabri/v2/internal/testutils"
 	"go.uber.org/goleak"
 )
 

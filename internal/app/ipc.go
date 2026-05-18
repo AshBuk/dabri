@@ -8,9 +8,9 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/AshBuk/dabri/internal/ipc"
-	"github.com/AshBuk/dabri/internal/services"
-	"github.com/AshBuk/dabri/internal/utils"
+	"github.com/AshBuk/dabri/v2/internal/ipc"
+	"github.com/AshBuk/dabri/v2/internal/services"
+	"github.com/AshBuk/dabri/v2/internal/utils"
 )
 
 // IPC Handlers - Protocol adapter between Unix socket IPC and Business Services

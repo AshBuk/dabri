@@ -7,8 +7,8 @@ import (
 	"errors"
 	"testing"
 
-	"github.com/AshBuk/dabri/internal/testutils"
-	"github.com/AshBuk/dabri/tests/mocks"
+	"github.com/AshBuk/dabri/v2/internal/testutils"
+	"github.com/AshBuk/dabri/v2/tests/mocks"
 )
 
 func TestHotkeyService_NewHotkeyService(t *testing.T) {

@@ -8,8 +8,8 @@ import (
 	"sync"
 	"testing"
 
-	"github.com/AshBuk/dabri/hotkeys/interfaces"
-	"github.com/AshBuk/dabri/hotkeys/mocks"
+	"github.com/AshBuk/dabri/v2/hotkeys/interfaces"
+	"github.com/AshBuk/dabri/v2/hotkeys/mocks"
 )
 
 // MockFactory for testing dependency injection

@@ -8,10 +8,10 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/AshBuk/dabri/config"
-	"github.com/AshBuk/dabri/internal/constants"
-	"github.com/AshBuk/dabri/internal/utils"
-	"github.com/AshBuk/dabri/whisper/providers"
+	"github.com/AshBuk/dabri/v2/config"
+	"github.com/AshBuk/dabri/v2/internal/constants"
+	"github.com/AshBuk/dabri/v2/internal/utils"
+	"github.com/AshBuk/dabri/v2/whisper/providers"
 )
 
 // Manages Whisper model lifecycle: resolution, download, and validation

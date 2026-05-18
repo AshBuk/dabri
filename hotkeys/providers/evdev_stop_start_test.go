@@ -9,7 +9,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/AshBuk/dabri/internal/testutils"
+	"github.com/AshBuk/dabri/v2/internal/testutils"
 )
 
 // TestEvdevStopStartRace verifies no race between Stop() and Start()

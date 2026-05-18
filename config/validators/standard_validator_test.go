@@ -6,7 +6,7 @@ package validators
 import (
 	"testing"
 
-	"github.com/AshBuk/dabri/config/models"
+	"github.com/AshBuk/dabri/v2/config/models"
 )
 
 // setDefaultConfigForTest sets default values for testing

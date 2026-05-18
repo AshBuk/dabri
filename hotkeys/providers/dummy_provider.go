@@ -7,7 +7,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/AshBuk/dabri/internal/logger"
+	"github.com/AshBuk/dabri/v2/internal/logger"
 )
 
 // Implements a KeyboardEventProvider with no actual functionality

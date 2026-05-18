@@ -7,17 +7,17 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/AshBuk/dabri/audio/interfaces"
-	"github.com/AshBuk/dabri/audio/processing"
-	"github.com/AshBuk/dabri/config"
-	"github.com/AshBuk/dabri/hotkeys/manager"
-	"github.com/AshBuk/dabri/internal/logger"
-	"github.com/AshBuk/dabri/internal/notify"
-	"github.com/AshBuk/dabri/internal/platform"
-	"github.com/AshBuk/dabri/internal/tray"
-	outputInterfaces "github.com/AshBuk/dabri/output/interfaces"
-	"github.com/AshBuk/dabri/websocket"
-	"github.com/AshBuk/dabri/whisper"
+	"github.com/AshBuk/dabri/v2/audio/interfaces"
+	"github.com/AshBuk/dabri/v2/audio/processing"
+	"github.com/AshBuk/dabri/v2/config"
+	"github.com/AshBuk/dabri/v2/hotkeys/manager"
+	"github.com/AshBuk/dabri/v2/internal/logger"
+	"github.com/AshBuk/dabri/v2/internal/notify"
+	"github.com/AshBuk/dabri/v2/internal/platform"
+	"github.com/AshBuk/dabri/v2/internal/tray"
+	outputInterfaces "github.com/AshBuk/dabri/v2/output/interfaces"
+	"github.com/AshBuk/dabri/v2/websocket"
+	"github.com/AshBuk/dabri/v2/whisper"
 )
 
 // ServiceFactoryConfig holds all dependencies needed to create services

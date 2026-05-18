@@ -9,9 +9,9 @@ import (
 	"context"
 	"errors"
 
-	"github.com/AshBuk/dabri/config"
-	"github.com/AshBuk/dabri/internal/logger"
-	"github.com/AshBuk/dabri/whisper/interfaces"
+	"github.com/AshBuk/dabri/v2/config"
+	"github.com/AshBuk/dabri/v2/internal/logger"
+	"github.com/AshBuk/dabri/v2/whisper/interfaces"
 )
 
 // WhisperEngine is a no-cgo stub that fails gracefully when CGO is disabled

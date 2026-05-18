@@ -10,8 +10,8 @@ import (
 	"os/exec"
 	"testing"
 
-	"github.com/AshBuk/dabri/config"
-	"github.com/AshBuk/dabri/internal/notify"
+	"github.com/AshBuk/dabri/v2/config"
+	"github.com/AshBuk/dabri/v2/internal/notify"
 )
 
 // Helper function to create test config

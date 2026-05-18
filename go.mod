@@ -1,4 +1,4 @@
-module github.com/AshBuk/dabri
+module github.com/AshBuk/dabri/v2
 
 go 1.25.0
 

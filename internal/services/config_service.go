@@ -6,9 +6,9 @@ package services
 import (
 	"fmt"
 
-	"github.com/AshBuk/dabri/config"
-	"github.com/AshBuk/dabri/internal/constants"
-	"github.com/AshBuk/dabri/internal/logger"
+	"github.com/AshBuk/dabri/v2/config"
+	"github.com/AshBuk/dabri/v2/internal/constants"
+	"github.com/AshBuk/dabri/v2/internal/logger"
 )
 
 // Manages persistent configuration state and validation

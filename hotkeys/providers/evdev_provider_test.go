@@ -6,8 +6,8 @@ package providers
 import (
 	"testing"
 
-	"github.com/AshBuk/dabri/hotkeys/utils"
-	"github.com/AshBuk/dabri/internal/testutils"
+	"github.com/AshBuk/dabri/v2/hotkeys/utils"
+	"github.com/AshBuk/dabri/v2/internal/testutils"
 )
 
 func TestNewEvdevKeyboardProvider(t *testing.T) {

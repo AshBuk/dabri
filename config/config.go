@@ -15,11 +15,11 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/AshBuk/dabri/config/loaders"
-	"github.com/AshBuk/dabri/config/models"
-	"github.com/AshBuk/dabri/config/security"
-	"github.com/AshBuk/dabri/config/validators"
-	"github.com/AshBuk/dabri/internal/logger"
+	"github.com/AshBuk/dabri/v2/config/loaders"
+	"github.com/AshBuk/dabri/v2/config/models"
+	"github.com/AshBuk/dabri/v2/config/security"
+	"github.com/AshBuk/dabri/v2/config/validators"
+	"github.com/AshBuk/dabri/v2/internal/logger"
 )
 
 // Config is a type alias for the main configuration structure defined in the models package.

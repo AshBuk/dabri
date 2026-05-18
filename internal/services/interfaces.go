@@ -8,9 +8,9 @@ import (
 	"errors"
 	"time"
 
-	"github.com/AshBuk/dabri/audio/processing"
-	"github.com/AshBuk/dabri/config"
-	"github.com/AshBuk/dabri/hotkeys/adapters"
+	"github.com/AshBuk/dabri/v2/audio/processing"
+	"github.com/AshBuk/dabri/v2/config"
+	"github.com/AshBuk/dabri/v2/hotkeys/adapters"
 )
 
 // AudioServiceInterface defines the contract for audio-related operations

@@ -12,8 +12,8 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/AshBuk/dabri/config/models"
-	"github.com/AshBuk/dabri/internal/logger"
+	"github.com/AshBuk/dabri/v2/config/models"
+	"github.com/AshBuk/dabri/v2/internal/logger"
 )
 
 // Check if a command is in the security whitelist.

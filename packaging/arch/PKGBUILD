@@ -98,7 +98,7 @@ build() {
 
     go build -v \
         -tags systray \
-        -ldflags "-s -w -X github.com/AshBuk/dabri/internal/version.Version=${pkgver} -linkmode=external -extldflags '-Wl,-rpath,/usr/lib/${pkgname}'" \
+        -ldflags "-s -w -X github.com/AshBuk/dabri/v2/internal/version.Version=${pkgver} -linkmode=external -extldflags '-Wl,-rpath,/usr/lib/${pkgname}'" \
         -o "${pkgname}" \
         ./cmd/dabri
 }

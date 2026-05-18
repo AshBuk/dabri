@@ -7,9 +7,9 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/AshBuk/dabri/hotkeys/adapters"
-	"github.com/AshBuk/dabri/hotkeys/manager"
-	"github.com/AshBuk/dabri/internal/logger"
+	"github.com/AshBuk/dabri/v2/hotkeys/adapters"
+	"github.com/AshBuk/dabri/v2/hotkeys/manager"
+	"github.com/AshBuk/dabri/v2/internal/logger"
 )
 
 // HotkeyManager defines the interface for hotkey managers

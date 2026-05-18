@@ -7,7 +7,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/AshBuk/dabri/config"
+	"github.com/AshBuk/dabri/v2/config"
 )
 
 const (

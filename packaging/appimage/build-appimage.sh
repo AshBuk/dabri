@@ -86,7 +86,7 @@ build_appdir() {
 
     # Build application
     echo "Building ${APP_NAME}..."
-    go build -tags systray -ldflags "-s -w -X github.com/AshBuk/dabri/internal/version.Version=${APP_VERSION}" -o "${APP_NAME}" ./cmd/dabri
+    go build -tags systray -ldflags "-s -w -X github.com/AshBuk/dabri/v2/internal/version.Version=${APP_VERSION}" -o "${APP_NAME}" ./cmd/dabri
     cp "${APP_NAME}" "${APPDIR}/usr/bin/"
     cp config.yaml "${APPDIR}/"
 

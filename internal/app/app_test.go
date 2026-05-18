@@ -7,8 +7,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/AshBuk/dabri/internal/services"
-	"github.com/AshBuk/dabri/internal/testutils"
+	"github.com/AshBuk/dabri/v2/internal/services"
+	"github.com/AshBuk/dabri/v2/internal/testutils"
 )
 
 func TestRuntimeContext_NewRuntimeContext(t *testing.T) {

@@ -11,7 +11,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/AshBuk/dabri/internal/logger"
+	"github.com/AshBuk/dabri/v2/internal/logger"
 )
 
 // Manages the lifecycle of temporary audio files

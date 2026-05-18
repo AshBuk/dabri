@@ -12,8 +12,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/AshBuk/dabri/config"
-	"github.com/AshBuk/dabri/whisper"
+	"github.com/AshBuk/dabri/v2/config"
+	"github.com/AshBuk/dabri/v2/whisper"
 )
 
 // Integration tests for complete user scenarios

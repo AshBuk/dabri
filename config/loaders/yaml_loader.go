@@ -9,9 +9,9 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/AshBuk/dabri/config/models"
-	"github.com/AshBuk/dabri/config/validators"
-	"github.com/AshBuk/dabri/internal/logger"
+	"github.com/AshBuk/dabri/v2/config/models"
+	"github.com/AshBuk/dabri/v2/config/validators"
+	"github.com/AshBuk/dabri/v2/internal/logger"
 	yaml "gopkg.in/yaml.v2"
 )
 

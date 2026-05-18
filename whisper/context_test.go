@@ -11,7 +11,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/AshBuk/dabri/config"
+	"github.com/AshBuk/dabri/v2/config"
 )
 
 // TestTranscribeWithContextCancellation verifies context cancellation works

@@ -12,8 +12,8 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/AshBuk/dabri/internal/ipc"
-	"github.com/AshBuk/dabri/internal/utils"
+	"github.com/AshBuk/dabri/v2/internal/ipc"
+	"github.com/AshBuk/dabri/v2/internal/utils"
 )
 
 // addCLICommands registers all IPC-based subcommands on the root command.

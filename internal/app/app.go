@@ -10,11 +10,11 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/AshBuk/dabri/config"
-	"github.com/AshBuk/dabri/internal/ipc"
-	"github.com/AshBuk/dabri/internal/logger"
-	"github.com/AshBuk/dabri/internal/platform"
-	"github.com/AshBuk/dabri/internal/services"
+	"github.com/AshBuk/dabri/v2/config"
+	"github.com/AshBuk/dabri/v2/internal/ipc"
+	"github.com/AshBuk/dabri/v2/internal/logger"
+	"github.com/AshBuk/dabri/v2/internal/platform"
+	"github.com/AshBuk/dabri/v2/internal/services"
 )
 
 // Manages application lifecycle and context

@@ -10,11 +10,11 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/AshBuk/dabri/config"
-	"github.com/AshBuk/dabri/internal/constants"
-	"github.com/AshBuk/dabri/internal/ipc"
-	"github.com/AshBuk/dabri/internal/utils"
-	"github.com/AshBuk/dabri/whisper/providers"
+	"github.com/AshBuk/dabri/v2/config"
+	"github.com/AshBuk/dabri/v2/internal/constants"
+	"github.com/AshBuk/dabri/v2/internal/ipc"
+	"github.com/AshBuk/dabri/v2/internal/utils"
+	"github.com/AshBuk/dabri/v2/whisper/providers"
 )
 
 // addModelCommand registers the "model" command tree:

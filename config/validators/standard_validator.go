@@ -9,8 +9,8 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/AshBuk/dabri/config/models"
-	"github.com/AshBuk/dabri/internal/constants"
+	"github.com/AshBuk/dabri/v2/config/models"
+	"github.com/AshBuk/dabri/v2/internal/constants"
 )
 
 // validateGeneralConfig validates general configuration settings

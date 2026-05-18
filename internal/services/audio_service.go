@@ -10,14 +10,14 @@ import (
 	"sync"
 	"time"
 
-	"github.com/AshBuk/dabri/audio/factory"
-	"github.com/AshBuk/dabri/audio/interfaces"
-	"github.com/AshBuk/dabri/audio/processing"
-	"github.com/AshBuk/dabri/config"
-	"github.com/AshBuk/dabri/internal/constants"
-	"github.com/AshBuk/dabri/internal/logger"
-	"github.com/AshBuk/dabri/internal/utils"
-	"github.com/AshBuk/dabri/whisper"
+	"github.com/AshBuk/dabri/v2/audio/factory"
+	"github.com/AshBuk/dabri/v2/audio/interfaces"
+	"github.com/AshBuk/dabri/v2/audio/processing"
+	"github.com/AshBuk/dabri/v2/config"
+	"github.com/AshBuk/dabri/v2/internal/constants"
+	"github.com/AshBuk/dabri/v2/internal/logger"
+	"github.com/AshBuk/dabri/v2/internal/utils"
+	"github.com/AshBuk/dabri/v2/whisper"
 )
 
 // Orchestrates recording, transcription, and output workflows

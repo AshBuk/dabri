@@ -7,7 +7,7 @@ import (
 	"errors"
 	"testing"
 
-	"github.com/AshBuk/dabri/tests/mocks"
+	"github.com/AshBuk/dabri/v2/tests/mocks"
 )
 
 // TestServiceContainer tests the ServiceContainer basic functionality

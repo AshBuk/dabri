@@ -20,7 +20,7 @@
 # Variables
 GO_VERSION := 1.25.3
 VERSION := $(shell git describe --tags --always --dirty 2>/dev/null || echo "dev")
-LDFLAGS := -s -w -X github.com/AshBuk/dabri/internal/version.Version=$(VERSION)
+LDFLAGS := -s -w -X github.com/AshBuk/dabri/v2/internal/version.Version=$(VERSION)
 BINARY_NAME := dabri
 BUILD_DIR := build
 LIB_DIR := lib

@@ -9,11 +9,11 @@ import (
 	"os/exec"
 	"time"
 
-	"github.com/AshBuk/dabri/audio/interfaces"
-	"github.com/AshBuk/dabri/audio/processing"
-	"github.com/AshBuk/dabri/audio/recorders"
-	"github.com/AshBuk/dabri/config"
-	"github.com/AshBuk/dabri/internal/logger"
+	"github.com/AshBuk/dabri/v2/audio/interfaces"
+	"github.com/AshBuk/dabri/v2/audio/processing"
+	"github.com/AshBuk/dabri/v2/audio/recorders"
+	"github.com/AshBuk/dabri/v2/config"
+	"github.com/AshBuk/dabri/v2/internal/logger"
 )
 
 // AudioRecorderFactory creates audio recorder instances based on configuration

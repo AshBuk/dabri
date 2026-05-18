@@ -10,7 +10,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/AshBuk/dabri/config/models"
+	"github.com/AshBuk/dabri/v2/config/models"
 )
 
 // TestVerifyConfigIntegrity tests config integrity verification

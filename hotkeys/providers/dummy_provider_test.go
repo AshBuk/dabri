@@ -6,8 +6,8 @@ package providers
 import (
 	"testing"
 
-	"github.com/AshBuk/dabri/hotkeys/interfaces"
-	"github.com/AshBuk/dabri/internal/testutils"
+	"github.com/AshBuk/dabri/v2/hotkeys/interfaces"
+	"github.com/AshBuk/dabri/v2/internal/testutils"
 )
 
 func TestNewDummyKeyboardProvider(t *testing.T) {

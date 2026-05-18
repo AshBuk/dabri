@@ -8,12 +8,12 @@ import (
 	"sync"
 	"time"
 
-	"github.com/AshBuk/dabri/config"
-	"github.com/AshBuk/dabri/internal/logger"
-	"github.com/AshBuk/dabri/internal/platform"
-	outputFactory "github.com/AshBuk/dabri/output/factory"
-	outputInterfaces "github.com/AshBuk/dabri/output/interfaces"
-	"github.com/AshBuk/dabri/websocket"
+	"github.com/AshBuk/dabri/v2/config"
+	"github.com/AshBuk/dabri/v2/internal/logger"
+	"github.com/AshBuk/dabri/v2/internal/platform"
+	outputFactory "github.com/AshBuk/dabri/v2/output/factory"
+	outputInterfaces "github.com/AshBuk/dabri/v2/output/interfaces"
+	"github.com/AshBuk/dabri/v2/websocket"
 )
 
 // Handles text output routing and transcription synchronization

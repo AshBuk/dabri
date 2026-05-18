@@ -12,17 +12,17 @@ import (
 	"testing"
 	"time"
 
-	"github.com/AshBuk/dabri/audio/factory"
-	audiointerfaces "github.com/AshBuk/dabri/audio/interfaces"
-	"github.com/AshBuk/dabri/audio/processing"
-	"github.com/AshBuk/dabri/config"
-	"github.com/AshBuk/dabri/hotkeys/adapters"
-	hotkeyinterfaces "github.com/AshBuk/dabri/hotkeys/interfaces"
-	"github.com/AshBuk/dabri/hotkeys/manager"
-	"github.com/AshBuk/dabri/internal/logger"
-	"github.com/AshBuk/dabri/internal/testutils"
-	outputfactory "github.com/AshBuk/dabri/output/factory"
-	"github.com/AshBuk/dabri/whisper"
+	"github.com/AshBuk/dabri/v2/audio/factory"
+	audiointerfaces "github.com/AshBuk/dabri/v2/audio/interfaces"
+	"github.com/AshBuk/dabri/v2/audio/processing"
+	"github.com/AshBuk/dabri/v2/config"
+	"github.com/AshBuk/dabri/v2/hotkeys/adapters"
+	hotkeyinterfaces "github.com/AshBuk/dabri/v2/hotkeys/interfaces"
+	"github.com/AshBuk/dabri/v2/hotkeys/manager"
+	"github.com/AshBuk/dabri/v2/internal/logger"
+	"github.com/AshBuk/dabri/v2/internal/testutils"
+	outputfactory "github.com/AshBuk/dabri/v2/output/factory"
+	"github.com/AshBuk/dabri/v2/whisper"
 )
 
 // setupRecorderWithCleanup creates a recorder and ensures cleanup on test completion

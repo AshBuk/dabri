@@ -7,8 +7,8 @@ import (
 	"context"
 	"time"
 
-	"github.com/AshBuk/dabri/config"
-	"github.com/AshBuk/dabri/hotkeys/adapters"
+	"github.com/AshBuk/dabri/v2/config"
+	"github.com/AshBuk/dabri/v2/hotkeys/adapters"
 )
 
 // MockAudioService implements AudioServiceInterface for testing

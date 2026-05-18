@@ -7,7 +7,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/AshBuk/dabri/hotkeys/interfaces"
+	"github.com/AshBuk/dabri/v2/hotkeys/interfaces"
 )
 
 // Parse a hotkey string into a KeyCombination struct

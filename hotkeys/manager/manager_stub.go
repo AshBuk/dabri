@@ -6,10 +6,10 @@
 package manager
 
 import (
-	"github.com/AshBuk/dabri/hotkeys/adapters"
-	"github.com/AshBuk/dabri/hotkeys/interfaces"
-	"github.com/AshBuk/dabri/hotkeys/providers"
-	"github.com/AshBuk/dabri/internal/logger"
+	"github.com/AshBuk/dabri/v2/hotkeys/adapters"
+	"github.com/AshBuk/dabri/v2/hotkeys/interfaces"
+	"github.com/AshBuk/dabri/v2/hotkeys/providers"
+	"github.com/AshBuk/dabri/v2/internal/logger"
 )
 
 // Return a dummy provider on non-Linux systems to avoid build errors

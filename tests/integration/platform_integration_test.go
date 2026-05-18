@@ -10,12 +10,12 @@ import (
 	"os"
 	"testing"
 
-	"github.com/AshBuk/dabri/config"
-	"github.com/AshBuk/dabri/hotkeys/providers"
-	"github.com/AshBuk/dabri/internal/platform"
-	"github.com/AshBuk/dabri/internal/testutils"
-	outputfactory "github.com/AshBuk/dabri/output/factory"
-	"github.com/AshBuk/dabri/whisper"
+	"github.com/AshBuk/dabri/v2/config"
+	"github.com/AshBuk/dabri/v2/hotkeys/providers"
+	"github.com/AshBuk/dabri/v2/internal/platform"
+	"github.com/AshBuk/dabri/v2/internal/testutils"
+	outputfactory "github.com/AshBuk/dabri/v2/output/factory"
+	"github.com/AshBuk/dabri/v2/whisper"
 )
 
 // Platform-specific integration tests

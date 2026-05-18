@@ -8,7 +8,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/AshBuk/dabri/audio/interfaces"
+	"github.com/AshBuk/dabri/v2/audio/interfaces"
 )
 
 // MockAudioRecorder implements AudioRecorder interface for testing

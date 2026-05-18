@@ -4,10 +4,10 @@
 package services
 
 import (
-	"github.com/AshBuk/dabri/internal/notify"
-	"github.com/AshBuk/dabri/internal/tray"
-	outputInterfaces "github.com/AshBuk/dabri/output/interfaces"
-	"github.com/AshBuk/dabri/websocket"
+	"github.com/AshBuk/dabri/v2/internal/notify"
+	"github.com/AshBuk/dabri/v2/internal/tray"
+	outputInterfaces "github.com/AshBuk/dabri/v2/output/interfaces"
+	"github.com/AshBuk/dabri/v2/websocket"
 )
 
 // FactoryAssembler assembles low-level components into high-level services

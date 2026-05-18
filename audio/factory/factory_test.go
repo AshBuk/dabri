@@ -7,9 +7,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/AshBuk/dabri/audio/processing"
-	"github.com/AshBuk/dabri/config"
-	"github.com/AshBuk/dabri/internal/testutils"
+	"github.com/AshBuk/dabri/v2/audio/processing"
+	"github.com/AshBuk/dabri/v2/config"
+	"github.com/AshBuk/dabri/v2/internal/testutils"
 )
 
 func TestNewAudioRecorderFactory(t *testing.T) {

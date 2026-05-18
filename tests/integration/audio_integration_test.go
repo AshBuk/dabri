@@ -11,10 +11,10 @@ import (
 	"testing"
 	"time"
 
-	"github.com/AshBuk/dabri/audio/factory"
-	"github.com/AshBuk/dabri/audio/processing"
-	"github.com/AshBuk/dabri/config"
-	"github.com/AshBuk/dabri/internal/logger"
+	"github.com/AshBuk/dabri/v2/audio/factory"
+	"github.com/AshBuk/dabri/v2/audio/processing"
+	"github.com/AshBuk/dabri/v2/config"
+	"github.com/AshBuk/dabri/v2/internal/logger"
 )
 
 func TestAudioRecordingIntegration(t *testing.T) {

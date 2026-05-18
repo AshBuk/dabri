@@ -6,7 +6,7 @@ package interfaces
 import (
 	"time"
 
-	"github.com/AshBuk/dabri/internal/platform"
+	"github.com/AshBuk/dabri/v2/internal/platform"
 )
 
 // KeyboardEventProvider defines the contract for a keyboard event source

@@ -6,8 +6,8 @@ package tray
 import (
 	"context"
 
-	"github.com/AshBuk/dabri/config"
-	"github.com/AshBuk/dabri/internal/logger"
+	"github.com/AshBuk/dabri/v2/config"
+	"github.com/AshBuk/dabri/v2/internal/logger"
 )
 
 // MockTrayManager implements a mock version of TrayManager without external dependencies

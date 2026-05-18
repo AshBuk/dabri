@@ -7,7 +7,7 @@ import (
 	"os/exec"
 	"testing"
 
-	"github.com/AshBuk/dabri/config"
+	"github.com/AshBuk/dabri/v2/config"
 )
 
 // Helper function to create test config

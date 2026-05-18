@@ -7,9 +7,9 @@ import (
 	"fmt"
 	"os/exec"
 
-	"github.com/AshBuk/dabri/config"
-	"github.com/AshBuk/dabri/internal/platform"
-	"github.com/AshBuk/dabri/output/interfaces"
+	"github.com/AshBuk/dabri/v2/config"
+	"github.com/AshBuk/dabri/v2/internal/platform"
+	"github.com/AshBuk/dabri/v2/output/interfaces"
 )
 
 // Implements the Outputter interface for typing text into the active window

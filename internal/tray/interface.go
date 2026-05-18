@@ -6,7 +6,7 @@ package tray
 import (
 	"context"
 
-	"github.com/AshBuk/dabri/config"
+	"github.com/AshBuk/dabri/v2/config"
 )
 
 // Defines the interface for tray managers
