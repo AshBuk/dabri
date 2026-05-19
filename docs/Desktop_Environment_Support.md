@@ -103,4 +103,28 @@ Bind `dabri toggle` to any key via your DE settings or WM config to start/stop r
 - **Separate start/stop** also available: `dabri start` / `dabri stop`
 - See [CLI Usage Guide](CLI_USAGE.md) for command reference
 
-*Last updated: 2026-02-11*
+## Autostart on Login
+
+If you want Dabri ready as soon as you log in (without launching app manually), add to your session startup:
+
+### GNOME / KDE / XFCE (XDG autostart)
+```bash
+mkdir -p ~/.config/autostart
+cat > ~/.config/autostart/dabri.desktop << 'EOF'
+[Desktop Entry]
+Name=Dabri
+Exec=dabri
+Icon=io.github.ashbuk.dabri
+Type=Application
+Terminal=false
+X-GNOME-Autostart-enabled=true
+EOF
+```
+
+### Hyprland
+Add to `~/.config/hypr/hyprland.conf`:
+```
+exec-once = dabri
+```
+
+*Last updated: 2026-05-19*
