@@ -1,5 +1,5 @@
 <div align="center">
-<img src="https://github.com/AshBuk/dabri/raw/master/icons/io.github.ashbuk.dabri-logo.svg" width="420" alt="Dabri"/>
+<img src="https://github.com/AshBuk/dabri/raw/master/icons/io.github.ashbuk.dabri-logo.svg" width="300" alt="Dabri"/>
   
 > 🗣️ **Linux speech-to-text, the Unix way**
 
@@ -28,6 +28,7 @@
 Written in pure **[Go](https://github.com/golang/go)**, it leverages **[whisper.cpp](https://github.com/ggerganov/whisper.cpp)** for fast, offline transcription.
 The architecture is built from the ground up with a *minimal set of dependencies*, featuring a **custom dependency injection factory**, ensuring **lean and maintainable** design.
 
+https://github.com/user-attachments/assets/b798f350-c6a8-4408-83eb-51eef392a731
 
 ## Features
 
@@ -35,7 +36,7 @@ The architecture is built from the ground up with a *minimal set of dependencies
 [![Security](https://snyk.io/test/github/AshBuk/dabri/badge.svg)](https://snyk.io/test/github/AshBuk/dabri)
 [![gosec](https://img.shields.io/badge/gosec-passing-brightgreen)](https://github.com/AshBuk/dabri/security/code-scanning)
 
-▸ **Daemon:** <img src="icons/io.github.ashbuk.dabri.png" width="18" height="18" align="absmiddle"> Dabri runs quietly in the background and integrates into the system tray for convenient management.
+▸ **<img src="icons/io.github.ashbuk.dabri.png" width="18" height="18" align="absmiddle">aemon:** Dabri runs quietly in the background and integrates into the system tray for convenient management.
 
 ▸ **Terminal:** it can also be invoked as a CLI tool (see **[CLI Usage Guide](docs/CLI_USAGE.md)**) for scripting purposes. 
 
