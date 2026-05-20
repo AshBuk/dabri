@@ -180,7 +180,7 @@ build_appimage() {
         $lib_args \
         --desktop-file "${APP_NAME}.AppDir/${APP_NAME}.desktop" \
         --icon-file "${APP_NAME}.AppDir/io.github.ashbuk.dabri.png" \
-        --plugin gtk || echo "Warning: linuxdeploy had issues, continuing..."
+        --plugin gtk
 
     # Remove unnecessary docs (licenses available in source repos)
     rm -rf "${APP_NAME}.AppDir/usr/share/doc"
