@@ -8,7 +8,7 @@
 .PHONY: fmt lint gosec
 
 # Packaging
-.PHONY: appimage appimage-host
+.PHONY: appimage appimage-host flatpak
 
 # Docker targets
 .PHONY: docker-build docker-up docker-down docker-stop docker-shell
@@ -143,6 +143,19 @@ appimage-host: build
 	@echo "⚠️  Warning: This requires linuxdeploy and appimagetool installed on host"
 	bash packaging/appimage/build-appimage.sh
 
+# Build Flatpak locally (requires flatpak-builder)
+flatpak:
+	@echo "=== Building Flatpak locally ==="
+	@if [ ! -f shared-modules/libayatana-appindicator/libayatana-appindicator-gtk3.json ]; then \
+		echo "Initializing Flathub shared-modules submodule..."; \
+		git submodule update --init --recursive shared-modules; \
+	fi
+	@if command -v flatpak-builder >/dev/null 2>&1; then \
+		flatpak-builder --force-clean --install-deps-from=flathub build-flatpak io.github.ashbuk.dabri.yml; \
+	else \
+		flatpak run --command=flatpak-builder org.flatpak.Builder --force-clean --install-deps-from=flathub build-flatpak io.github.ashbuk.dabri.yml; \
+	fi
+
 # Clean build artifacts
 clean:
 	@echo "=== Cleaning build artifacts ==="
@@ -155,6 +168,7 @@ clean:
 		rm -rf $(BUILD_DIR) $(LIB_DIR); \
 	fi
 	rm -rf $(DIST_DIR)
+	rm -rf build-flatpak
 	go clean -cache 2>/dev/null || true
 	@echo "Clean completed"
 
@@ -251,6 +265,7 @@ help:
 	@echo "Packaging:"
 	@echo "  appimage              - Build AppImage (Docker-based, recommended)"
 	@echo "  appimage-host         - Build AppImage locally (requires tools on host)"
+	@echo "  flatpak               - Build Flatpak locally (requires flatpak-builder)"
 	@echo ""
 	@echo "Docker:"
 	@echo "  docker-up             - Start development services (docker compose up -d)"

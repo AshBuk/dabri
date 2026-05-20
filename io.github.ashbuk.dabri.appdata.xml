@@ -12,26 +12,26 @@
       using the Whisper model locally for speech recognition.
     </p>
     <p>
-      For system tray integration on GNOME (install AppIndicator extension) and automatic typing on Wayland (setup ydotool),
-      see <a href="https://github.com/AshBuk/dabri/blob/master/docs/Desktop_Environment_Support.md">Desktop Environment Support Guide</a>.
+      For system tray integration on GNOME and automatic typing on Wayland,
+      see the Desktop Environment Support Guide.
     </p>
     <p>Features:</p>
     <ul>
-      <li><b>Offline speech-to-text, privacy-first</b>: all processing happens locally</li>
-      <li><b>Portable</b>: AppImage package</li>
-      <li><b>Cross-platform support</b> for X11 and Wayland</li>
-      <li><b>Linux DEs</b>: native integration with GNOME, KDE, and others</li>
-      <li><b>GPU + CPU support</b>: Vulkan backend for faster transcription (auto-fallback to CPU)</li>
-      <li><b>Voice typing or clipboard mode</b></li>
-      <li><b>Flexible audio recording</b>: arecord (ALSA) or ffmpeg (PulseAudio/PipeWire), see <a href="docs/AUDIO_PIPELINE_DIAGRAM.txt">audio pipeline</a></li>
-      <li><b>Multi-language support, custom hotkey binding, visual notifications</b></li>
-      <li><b>Model management</b>: switch between base, small, medium, and large-v3 whisper models via tray or CLI</li>
+      <li>Offline speech-to-text, privacy-first: all processing happens locally</li>
+      <li>Portable AppImage and Flatpak packages</li>
+      <li>Cross-platform support for X11 and Wayland</li>
+      <li>Linux desktop integration with GNOME, KDE, and others</li>
+      <li>GPU and CPU support with Vulkan acceleration and CPU fallback</li>
+      <li>Voice typing or clipboard mode</li>
+      <li>Flexible audio recording with ALSA or PulseAudio/PipeWire</li>
+      <li>Multi-language support, custom hotkey binding, visual notifications</li>
+      <li>Model management: switch between base, small, medium, and large-v3 whisper models via tray or CLI</li>
     </ul>
   </description>
   <screenshots>
     <screenshot type="default">
-      <caption>Quick demo: Voice recording and automatic text output</caption>
-      <video>https://github.com/user-attachments/assets/e8448f73-57f2-46dc-98f9-e36f685a6587</video>
+      <caption>Dabri application icon</caption>
+      <image>https://raw.githubusercontent.com/AshBuk/dabri/master/icons/io.github.ashbuk.dabri-logo.png</image>
     </screenshot>
   </screenshots>
   <url type="homepage">https://github.com/AshBuk/dabri</url>
@@ -39,7 +39,9 @@
   <url type="vcs-browser">https://github.com/AshBuk/dabri</url>
   <url type="help">https://github.com/AshBuk/dabri/blob/master/README.md</url>
   <url type="donation">https://github.com/sponsors/AshBuk</url>
-  <developer_name>Asher Buk</developer_name>
+  <developer id="io.github.ashbuk">
+    <name>Asher Buk</name>
+  </developer>
   <launchable type="desktop-id">io.github.ashbuk.dabri.desktop</launchable>
   <provides>
     <binary>dabri</binary>
