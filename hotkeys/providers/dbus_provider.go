@@ -208,6 +208,7 @@ func (p *DbusKeyboardProvider) registerHotkeys() error {
 	// Subscribe to Response signal BEFORE calling CreateSession to avoid race condition
 	signalChan := make(chan *dbus.Signal, 1)
 	p.conn.Signal(signalChan)
+	defer p.conn.RemoveSignal(signalChan)
 
 	rule := fmt.Sprintf("type='signal',interface='org.freedesktop.portal.Request',member='Response',path='%s'", expectedRequestPath)
 	if err := p.conn.BusObject().Call("org.freedesktop.DBus.AddMatch", 0, rule).Err; err != nil {
