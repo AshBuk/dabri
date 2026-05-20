@@ -173,6 +173,9 @@ build_appimage() {
         [ -n "$found" ] && lib_args="$lib_args --library $found" && echo "Will bundle: $found"
     done
 
+    # GTK version must be set explicitly — auto-detection fails on Go binaries
+    export DEPLOY_GTK_VERSION=3
+
     # Step 1: Use linuxdeploy to gather dependencies
     "${TOOLS_DIR}/linuxdeploy-${ARCH}.AppImage" --appimage-extract-and-run \
         --appdir "${APP_NAME}.AppDir" \

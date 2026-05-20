@@ -1,7 +1,7 @@
 #!/bin/bash
 # AppRun - Entry point for Dabri AppImage
 
-HERE="${APPDIR:-$(dirname "$(readlink -f "$0")"}"
+HERE="${APPDIR:-$(dirname "$(readlink -f "$0")")}"
 export PATH="${HERE}/usr/bin:${PATH}"
 export LD_LIBRARY_PATH="${HERE}/usr/lib:${LD_LIBRARY_PATH}"
 
