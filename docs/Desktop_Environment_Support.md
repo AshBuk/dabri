@@ -81,15 +81,35 @@ systemctl --user enable --now ydotool
 - Requires manual `Ctrl+V` after speech recognition
 - No additional setup needed
 
-## ⌨️ **Hotkey Support Status (for hotkey registration and binding)**
+## ⌨️ **Hotkeys**
 
-### **All Packages (native & AppImage)**
-- **All DEs:** **evdev first (requires input group)** → D-Bus GlobalShortcuts portal fallback. **evdev** enables native hotkey capture and binding via system tray menu
-- **Fallback:** If evdev unavailable, attempts D-Bus GlobalShortcuts portal
-- **Setup input group:**
+By default, Dabri uses the **D-Bus GlobalShortcuts portal** — the Wayland-native sandboxed approach. No setup required on GNOME and KDE. Rebind via *Settings → Keyboard Shortcuts*.
+
+### **Optional: evdev**
+
+The classic X11-era approach — direct raw input access. Opt in if:
+- Your WM/DE doesn't implement XDG GlobalShortcuts (i3, bspwm, openbox, etc.)
+- You want to rebind hotkeys from the **Dabri tray menu** directly
+- Portal behavior is inconsistent on your setup
+
+**Trade-off:** requires access to all input devices (`/dev/input/event*`), not just keyboard.
+
+**Option A — udev rule (scoped to session user):**
 ```bash
-sudo usermod -a -G input $USER
-# Log out and log back in for changes to take effect
+echo 'KERNEL=="event*", SUBSYSTEM=="input", ATTRS{capabilities/key}!="0", TAG+="uaccess"' \
+  | sudo tee /etc/udev/rules.d/70-dabri-input.rules
+sudo udevadm control --reload && sudo udevadm trigger
+```
+
+**Option B — input group (broader access):**
+```bash
+sudo usermod -a -G input $USER  # then logout/login
+```
+
+Then enable in `~/.config/dabri/config.yaml`:
+```yaml
+hotkeys:
+  provider: evdev
 ```
 
 ### **Direct Hotkey Binding via DE/WM**
