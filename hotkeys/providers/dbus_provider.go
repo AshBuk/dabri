@@ -6,6 +6,7 @@
 package providers
 
 import (
+	"context"
 	"fmt"
 	"strings"
 	"sync"
@@ -48,9 +49,13 @@ func (p *DbusKeyboardProvider) IsSupported() bool {
 			p.logger.Error("Failed to close D-Bus connection: %v", err)
 		}
 	}()
-	// Check if the GlobalShortcuts portal is available by introspecting the desktop portal
+	// Probe with a short timeout — portal may be activatable but not yet running,
+	// which causes the default D-Bus timeout (25s) to block app startup.
+	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
+	defer cancel()
+
 	obj := conn.Object("org.freedesktop.portal.Desktop", "/org/freedesktop/portal/desktop")
-	call := obj.Call("org.freedesktop.DBus.Introspectable.Introspect", 0)
+	call := obj.CallWithContext(ctx, "org.freedesktop.DBus.Introspectable.Introspect", 0)
 	if call.Err != nil {
 		p.logger.Warning("D-Bus portal not available: %v", call.Err)
 		return false
