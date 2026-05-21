@@ -21,7 +21,8 @@ type Config struct {
 	} `yaml:"general"`
 
 	Hotkeys struct {
-		// Hotkey provider override. Use "auto" for automatic detection, or force a specific backend like "dbus" or "evdev"
+		// Hotkey provider: "dbus" (default, portal-based) | "evdev" (direct input, requires udev rule or input group).
+		// Omit or leave empty for auto-selection: dbus → evdev → disabled.
 		Provider        string `yaml:"provider"`
 		StartRecording  string `yaml:"start_recording"`
 		StopRecording   string `yaml:"stop_recording"`

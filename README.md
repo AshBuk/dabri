@@ -76,26 +76,18 @@ Download the latest AppImage from [Releases](https://github.com/AshBuk/dabri/rel
 ```bash
 # Download the file, then:
 chmod +x dabri-*.AppImage
-# Ensure user is in input group for hotkeys to work:
-sudo usermod -a -G input $USER
-# then logout/login or reboot
-# Open via GUI or with terminal command:
 ./dabri-*.AppImage
 ```
 
 ### Arch Linux [AUR](https://aur.archlinux.org/packages/dabri):
 ```bash
 yay -S dabri
-# Ensure user is in input group:
-sudo usermod -a -G input $USER
 ```
 
 ### Fedora [COPR](https://copr.fedorainfracloud.org/coprs/ashbuk/dabri/):
 ```bash
 sudo dnf copr enable ashbuk/dabri
 sudo dnf install dabri
-# Ensure user is in input group:
-sudo usermod -a -G input $USER
 ```
 
 ## Desktop Environment Compatibility

@@ -9,6 +9,9 @@ general:
 
 # Hotkey settings
 hotkeys:
+  # provider: "evdev"  # Uncomment to use evdev (direct input access) instead of D-Bus portal.
+  #                    # Requires udev rule or input group — see docs/Desktop_Environment_Support.md.
+  #                    # Default (omitted): dbus → evdev → disabled.
   start_recording: "alt+r"            # Start/stop recording
   stop_recording: "alt+r"             # Same combination for start/stop
   show_config: "alt+c"                # Open configuration file

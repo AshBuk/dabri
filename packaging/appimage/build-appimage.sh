@@ -173,6 +173,9 @@ build_appimage() {
         [ -n "$found" ] && lib_args="$lib_args --library $found" && echo "Will bundle: $found"
     done
 
+    # GTK version must be set explicitly — auto-detection fails on Go binaries
+    export DEPLOY_GTK_VERSION=3
+
     # Step 1: Use linuxdeploy to gather dependencies
     "${TOOLS_DIR}/linuxdeploy-${ARCH}.AppImage" --appimage-extract-and-run \
         --appdir "${APP_NAME}.AppDir" \
@@ -180,7 +183,7 @@ build_appimage() {
         $lib_args \
         --desktop-file "${APP_NAME}.AppDir/${APP_NAME}.desktop" \
         --icon-file "${APP_NAME}.AppDir/io.github.ashbuk.dabri.png" \
-        --plugin gtk || echo "Warning: linuxdeploy had issues, continuing..."
+        --plugin gtk
 
     # Remove unnecessary docs (licenses available in source repos)
     rm -rf "${APP_NAME}.AppDir/usr/share/doc"
