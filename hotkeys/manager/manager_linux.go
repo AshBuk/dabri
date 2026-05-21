@@ -19,6 +19,11 @@ func isAppImage() bool {
 	return os.Getenv("APPIMAGE") != "" || os.Getenv("APPDIR") != ""
 }
 
+// Check if running under Hyprland
+func isHyprland() bool {
+	return os.Getenv("HYPRLAND_INSTANCE_SIGNATURE") != ""
+}
+
 // Select the most appropriate hotkey provider based on configuration and environment.
 // Provider selection order (unless overridden in config):
 //  1. D-Bus GlobalShortcuts portal (Wayland-native, no extra permissions)
@@ -49,6 +54,9 @@ func selectAppImageProvider(logger logger.Logger) interfaces.KeyboardEventProvid
 	// D-Bus GlobalShortcuts portal requires no special permissions
 	if dbusProvider := providers.NewDbusKeyboardProvider(logger); dbusProvider.IsSupported() {
 		logger.Info("Using D-Bus keyboard provider (AppImage mode)")
+		if isHyprland() {
+			logger.Warning("Hyprland detected: hotkeys require manual binding in hyprland.conf — see docs/Desktop_Environment_Support.md")
+		}
 		return dbusProvider
 	}
 	logger.Info("D-Bus not available in AppImage, trying evdev...")
@@ -63,7 +71,10 @@ func selectAppImageProvider(logger logger.Logger) interfaces.KeyboardEventProvid
 func selectSystemProvider(logger logger.Logger) interfaces.KeyboardEventProvider {
 	// D-Bus GlobalShortcuts portal requires no special permissions
 	if dbusProvider := providers.NewDbusKeyboardProvider(logger); dbusProvider.IsSupported() {
-		logger.Info("Using D-Bus keyboard provider (GNOME/KDE)")
+		logger.Info("Using D-Bus keyboard provider")
+		if isHyprland() {
+			logger.Warning("Hyprland detected: hotkeys require manual binding in hyprland.conf — see docs/Desktop_Environment_Support.md")
+		}
 		return dbusProvider
 	}
 	logger.Info("D-Bus not available, trying evdev...")

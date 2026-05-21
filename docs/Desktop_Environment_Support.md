@@ -85,9 +85,14 @@ systemctl --user enable --now ydotool
 
 By default, Dabri uses the **D-Bus GlobalShortcuts portal** — the Wayland-native sandboxed approach. No setup required on GNOME and KDE. Rebind via *Settings → Keyboard Shortcuts*.
 
+**Hyprland:** The portal registers shortcuts, but Hyprland requires explicit binding in `hyprland.conf`. Run `hyprctl globalshortcuts` while Dabri is running to see the registered IDs, then add:
+```
+bind = <mods>, <key>, global, <appid>:<shortcutid>
+```
+
 ### **Optional: evdev**
 
-The classic X11-era approach — direct raw input access. Opt in if:
+The classic X11 approach — direct raw input access. Opt in if:
 - Your WM/DE doesn't implement XDG GlobalShortcuts (i3, bspwm, openbox, etc.)
 - You want to rebind hotkeys from the **Dabri tray menu** directly
 - Portal behavior is inconsistent on your setup
@@ -147,4 +152,4 @@ Add to `~/.config/hypr/hyprland.conf`:
 exec-once = dabri
 ```
 
-*Last updated: 2026-05-19*
+*Last updated: 2026-05-21*
