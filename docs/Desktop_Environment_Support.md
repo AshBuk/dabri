@@ -83,7 +83,20 @@ systemctl --user enable --now ydotool
 
 ## ⌨️ **Hotkeys**
 
-By default, Dabri uses the **D-Bus GlobalShortcuts portal** — the Wayland-native sandboxed approach. No setup required on GNOME and KDE. Rebind via *Settings → Keyboard Shortcuts*.
+By default, Dabri uses the **D-Bus GlobalShortcuts portal** — the Wayland-native sandboxed approach. No setup required on GNOME and KDE.
+
+**Edit config directly** — open `~/.config/dabri/config.yaml` and set your key combination:
+```yaml
+hotkeys:
+  start_recording: "ctrl+shift+r"
+  stop_recording: "ctrl+shift+r"
+```
+Restart Dabri after saving.
+
+**Or add a custom shortcut:**
+**GNOME:** *Settings → Keyboard → Keyboard Shortcuts → Custom Shortcuts → `+`* → command: `dabri toggle`
+
+**KDE:** Add a custom shortcut: *System Settings → Shortcuts → Custom Shortcuts → `+`* → command: `dabri toggle`
 
 **Hyprland:** The portal registers shortcuts, but Hyprland requires explicit binding in `hyprland.conf`. Run `hyprctl globalshortcuts` while Dabri is running to see the registered IDs, then add:
 ```
