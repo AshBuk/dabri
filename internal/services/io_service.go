@@ -233,10 +233,10 @@ func (ios *IOService) SetUIService(ui UIServiceInterface) { ios.ui = ui }
 // Wire config service for persistent setting changes
 func (ios *IOService) SetConfigService(cfg ConfigServiceInterface) { ios.cfg = cfg }
 
-// fallbackToTyping switches to typing mode and executes the output
+// fallbackToTyping switches to typing mode and executes the output (transient, no config persist)
 func (ios *IOService) fallbackToTyping(text string, originalErr error) error {
-	ios.logger.Warning("Clipboard method failed: %v. Switching to active_window mode.", originalErr)
-	if err := ios.switchOutputMode(config.OutputModeActiveWindow, "clipboard failed"); err != nil {
+	ios.logger.Warning("Clipboard method failed: %v. Falling back to active_window mode for this session.", originalErr)
+	if err := ios.switchOutputModeTransient(config.OutputModeActiveWindow); err != nil {
 		return fmt.Errorf("failed to switch output mode: %w", err)
 	}
 	if err := ios.outputManager.TypeToActiveWindow(text); err != nil {
@@ -245,10 +245,10 @@ func (ios *IOService) fallbackToTyping(text string, originalErr error) error {
 	return nil
 }
 
-// fallbackToClipboard switches to clipboard mode and executes the output
+// fallbackToClipboard switches to clipboard mode and executes the output (transient, no config persist)
 func (ios *IOService) fallbackToClipboard(text string, originalErr error) error {
-	ios.logger.Warning("Active window method failed: %v. Switching to clipboard mode.", originalErr)
-	if err := ios.switchOutputMode(config.OutputModeClipboard, "typing failed"); err != nil {
+	ios.logger.Warning("Active window method failed: %v. Falling back to clipboard mode for this session.", originalErr)
+	if err := ios.switchOutputModeTransient(config.OutputModeClipboard); err != nil {
 		return fmt.Errorf("failed to switch output mode: %w", err)
 	}
 	if err := ios.outputManager.CopyToClipboard(text); err != nil {
@@ -287,5 +287,25 @@ func (ios *IOService) switchOutputMode(mode string, reason string) error {
 		ios.ui.UpdateSettings(ios.config)
 	}
 	ios.logger.Info("Output mode switched to '%s' and persisted", mode)
+	return nil
+}
+
+// switchOutputModeTransient swaps the output manager for the current session only,
+// without persisting the mode change to disk. Used for runtime fallbacks.
+func (ios *IOService) switchOutputModeTransient(mode string) error {
+	ios.logger.Warning("Transiently switching output mode to '%s' (not persisted)", mode)
+	old := ios.config.Output.DefaultMode
+	ios.config.Output.DefaultMode = mode
+	// Recreate output manager for the new mode based on current environment
+	env := ios.detectOutputEnvironment()
+	out, err := outputFactory.GetOutputterFromConfig(ios.config, env)
+	if err != nil {
+		// Restore original mode on failure
+		ios.config.Output.DefaultMode = old
+		ios.logger.Error("Failed to reinitialize output manager after transient switch: %v", err)
+		return fmt.Errorf("failed to reinitialize output manager after transient switch: %w", err)
+	}
+	ios.outputManager = out
+	ios.logger.Info("Output mode transiently switched to '%s'", mode)
 	return nil
 }
