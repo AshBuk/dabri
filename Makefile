@@ -107,7 +107,7 @@ $(LIB_DIR)/whisper.h:
 			git checkout $(WHISPER_CPP_REF); \
 		fi; \
 		rm -rf build && \
-		cmake -B build -DGGML_VULKAN=ON && \
+		cmake -B build -DGGML_NATIVE=OFF -DGGML_AVX512=OFF -DGGML_VULKAN=ON && \
 		cmake --build build --config Release
 	mkdir -p $(LIB_DIR)
 	cp $(BUILD_DIR)/whisper.cpp/build/src/libwhisper.so* $(LIB_DIR)/ || true
