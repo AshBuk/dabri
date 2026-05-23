@@ -92,7 +92,7 @@ modules:
   - name: whisper-cpp
     buildsystem: simple
     build-commands:
-      - cmake -B build -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=ON -DCMAKE_INSTALL_RPATH=/app/lib/dabri -DCMAKE_BUILD_WITH_INSTALL_RPATH=ON -DGGML_NATIVE=OFF -DGGML_AVX=ON -DGGML_AVX2=ON -DGGML_FMA=ON -DGGML_F16C=ON -DGGML_VULKAN=ON
+      - cmake -B build -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=ON -DCMAKE_INSTALL_RPATH=/app/lib/dabri -DCMAKE_BUILD_WITH_INSTALL_RPATH=ON -DGGML_NATIVE=OFF -DGGML_AVX=ON -DGGML_AVX2=ON -DGGML_FMA=ON -DGGML_F16C=ON -DGGML_AVX512=OFF -DGGML_VULKAN=ON
       - cmake --build build --parallel ${FLATPAK_BUILDER_N_JOBS}
       - install -d /app/lib/dabri /app/include/dabri
       - cp build/src/libwhisper.so* /app/lib/dabri/
