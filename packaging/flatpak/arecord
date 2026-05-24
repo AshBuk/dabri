@@ -1,0 +1,55 @@
+#!/bin/sh
+# Flatpak runtime wrapper for the subset of arecord used by Dabri.
+set -eu
+
+device="default"
+rate="16000"
+channels="1"
+duration=""
+output=""
+
+while [ "$#" -gt 0 ]; do
+    case "$1" in
+        -D)
+            device="$2"
+            shift 2
+            ;;
+        -r)
+            rate="$2"
+            shift 2
+            ;;
+        -c)
+            channels="$2"
+            shift 2
+            ;;
+        -d)
+            duration="$2"
+            shift 2
+            ;;
+        -f|-t)
+            shift 2
+            ;;
+        -*)
+            shift
+            ;;
+        *)
+            output="$1"
+            shift
+            ;;
+    esac
+done
+
+if [ -z "$output" ]; then
+    output="-"
+fi
+
+set -- ffmpeg -nostdin -hide_banner -loglevel error -y \
+    -f pulse -i "$device" \
+    -ac "$channels" -ar "$rate" \
+    -c:a pcm_s16le -f wav
+
+if [ -n "$duration" ]; then
+    set -- "$@" -t "$duration"
+fi
+
+exec "$@" "$output"

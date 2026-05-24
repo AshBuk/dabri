@@ -83,9 +83,11 @@ systemctl --user enable --now ydotool
 
 ## ⌨️ **Hotkeys**
 
-By default, Dabri uses the **D-Bus GlobalShortcuts portal** — the Wayland-native sandboxed approach. No setup required on GNOME and KDE.
+---
 
-**Edit config directly** — open `~/.config/dabri/config.yaml` and set your key combination:
+### Built-in provider (app listens for keypresses)
+
+Dabri handles hotkeys internally. Configure the key in `~/.config/dabri/config.yaml`:
 ```yaml
 hotkeys:
   start_recording: "ctrl+shift+r"
@@ -93,26 +95,23 @@ hotkeys:
 ```
 Restart Dabri after saving.
 
-**Or add a custom shortcut:**
-**GNOME:** *Settings → Keyboard → Keyboard Shortcuts → Custom Shortcuts → `+`* → command: `dabri toggle`
+**Default provider: D-Bus GlobalShortcuts portal** — works out of the box on GNOME and KDE, no setup required.
 
-**KDE:** Add a custom shortcut: *System Settings → Shortcuts → Custom Shortcuts → `+`* → command: `dabri toggle`
-
-**Hyprland:** The portal registers shortcuts, but Hyprland requires explicit binding in `hyprland.conf`. Run `hyprctl globalshortcuts` while Dabri is running to see the registered IDs, then add:
+**Hyprland:** The portal registers shortcuts but Hyprland requires an explicit binding in `hyprland.conf`. Run `hyprctl globalshortcuts` while Dabri is running to see the registered IDs, then add:
 ```
 bind = <mods>, <key>, global, <appid>:<shortcutid>
 ```
 
-### **Optional: evdev**
+#### Optional: evdev provider
 
-The classic X11 approach — direct raw input access. Opt in if:
+The classic direct input access approach. Use if:
 - Your WM/DE doesn't implement XDG GlobalShortcuts (i3, bspwm, openbox, etc.)
 - You want to rebind hotkeys from the **Dabri tray menu** directly
 - Portal behavior is inconsistent on your setup
 
 **Trade-off:** requires access to all input devices (`/dev/input/event*`), not just keyboard.
 
-**Option A — udev rule (scoped to session user):**
+**Option A — udev rule (scoped to session user, recommended):**
 ```bash
 echo 'KERNEL=="event*", SUBSYSTEM=="input", ATTRS{capabilities/key}!="0", TAG+="uaccess"' \
   | sudo tee /etc/udev/rules.d/70-dabri-input.rules
@@ -130,16 +129,20 @@ hotkeys:
   provider: evdev
 ```
 
-### **Direct Hotkey Binding via DE/WM**
-Bind `dabri toggle` to any key via your DE settings or WM config to start/stop recording:
-- **GNOME:** Settings → Keyboard → Custom Shortcuts → `dabri toggle`
-- **KDE:** System Settings → Shortcuts → Custom Shortcuts → `dabri toggle`
-- **Tiling WMs** (i3, sway, Hyprland, bspwm, etc.):
+### CLI command delegated to DE/WM custom shortcut
+
+Let your DE or WM handle the key — no provider needed, Dabri just receives the command.
+
+- **GNOME:** *Settings → Keyboard → Keyboard Shortcuts → Custom Shortcuts → `+`* → command: `dabri toggle`
+- **KDE:** *System Settings → Shortcuts → Custom Shortcuts → `+`* → command: `dabri toggle`
+- **Tiling WMs** (i3, sway, bspwm, etc.):
   ```
   bindsym $mod+r exec dabri toggle
   ```
-- **Separate start/stop** also available: `dabri start` / `dabri stop`
-- See [CLI Usage Guide](CLI_USAGE.md) for command reference
+
+Separate start/stop commands are also available: `dabri start` / `dabri stop`. See [CLI Usage Guide](CLI_USAGE.md).
+
+---
 
 ## Autostart on Login
 

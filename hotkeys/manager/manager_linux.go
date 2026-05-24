@@ -19,6 +19,11 @@ func isAppImage() bool {
 	return os.Getenv("APPIMAGE") != "" || os.Getenv("APPDIR") != ""
 }
 
+// Check if running inside Flatpak
+func isFlatpak() bool {
+	return os.Getenv("FLATPAK_ID") != ""
+}
+
 // Check if running under Hyprland
 func isHyprland() bool {
 	return os.Getenv("HYPRLAND_INSTANCE_SIGNATURE") != ""
@@ -41,6 +46,11 @@ func selectProviderForEnvironment(config adapters.HotkeyConfig, environment inte
 		return providers.NewEvdevKeyboardProvider(logger)
 	case "dbus":
 		logger.Info("Hotkeys provider override: dbus")
+		return providers.NewDbusKeyboardProvider(logger)
+	}
+	// Auto-select the provider based on the runtime environment
+	if isFlatpak() {
+		logger.Info("Flatpak detected - using D-Bus keyboard provider")
 		return providers.NewDbusKeyboardProvider(logger)
 	}
 	if isAppImage() {

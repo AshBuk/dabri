@@ -1,0 +1,38 @@
+#!/bin/sh
+# Minimal notify-send compatible wrapper for Flatpak.
+set -eu
+
+app_name="Dabri"
+icon="dialog-information-symbolic"
+
+while [ "$#" -gt 0 ]; do
+    case "$1" in
+        --app-name)
+            app_name="$2"
+            shift 2
+            ;;
+        --icon)
+            icon="$2"
+            shift 2
+            ;;
+        --)
+            shift
+            break
+            ;;
+        -*)
+            shift
+            ;;
+        *)
+            break
+            ;;
+    esac
+done
+
+summary="${1:-}"
+body="${2:-}"
+
+gdbus call --session \
+    --dest org.freedesktop.Notifications \
+    --object-path /org/freedesktop/Notifications \
+    --method org.freedesktop.Notifications.Notify \
+    "$app_name" 0 "$icon" "$summary" "$body" "[]" "{}" 5000 >/dev/null
