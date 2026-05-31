@@ -2,7 +2,23 @@
 
 Thank you for your interest to Dabri!
 
-AI-assisted contributions accepted **if author understands and can defend the code**.
+## Before You Start
+
+- **For features** (not bug fixes or small PRs): please open an issue first to discuss the idea before sending a pull request.
+- **Stay in scope:** any new contribution must fit the scope and goals of the project.
+- AI-assisted contributions accepted **if author understands and can defend the code**.
+
+## 🐛 Bug Reports
+
+When reporting bugs, include:
+
+- Create an issue
+- Operating system and version
+- Desktop environment (GNOME, KDE, etc.)
+- Display server (X11/Wayland)
+- Steps to reproduce
+- Expected vs actual behavior
+- Relevant logs
 
 ## Getting Started
 
@@ -23,40 +39,9 @@ AI-assisted contributions accepted **if author understands and can defend the co
 
 5. **Code Style**
 
-- **Formatting:** All Go code must be formatted with `gofmt` — run `make fmt`
-- **Linting:** Code must pass `golangci-lint` checks — run `make lint`
-- **Testing:** New features should include appropriate tests — run `make test`
-- **Build:** Changes must not break the build process — run `make build`
+Before opening a PR, make sure your changes are formatted, linted, tested, and build cleanly. See the commands and tooling details in [DEVELOPMENT.md](DEVELOPMENT.md).
 
-**Note:** Our CI automatically validates:
-- Lint rules (`golangci-lint`)
-- Code formatting (`gofmt`)
-- Security scanning (`gosec`)
-- Unit tests (including race detector)
-- License headers in all Go files
-
-PRs must pass all checks before merge.
-
-## 🐛 Bug Reports
-
-When reporting bugs, include:
-
-- Create an issue
-- Operating system and version
-- Desktop environment (GNOME, KDE, etc.)
-- Display server (X11/Wayland)
-- Steps to reproduce
-- Expected vs actual behavior
-- Relevant logs
-
-## 💡 Feature Requests
-
-For new features:
-
-- Check existing issues first
-- Describe the use case
-- Consider backwards compatibility
-- Be specific about the desired behavior
+CI validates formatting, linting, security scanning, tests (with race detector), and license headers. PRs must pass all checks before merge.
 
 ## 📜 License
 
