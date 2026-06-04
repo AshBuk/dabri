@@ -47,23 +47,13 @@
     <binary>dabri</binary>
   </provides>
   <releases>
-    <release version="2.0.1" date="2026-05-19">
-      <description><p>Project renamed to Dabri (breaking change)</p></description>
-    </release>
-    <release version="2.0.0" date="2026-05-19"/>
-    <release version="1.8.2" date="2026-05-15">
+    <release version="2.0.2" date="2026-06-04">
       <description><p>Bug fixes and improvements</p></description>
     </release>
-    <release version="1.8.1" date="2026-04-19">
-      <description>
-        <p>Bump whisper.cpp to v1.8.4 (ggml sync, perf gains, UTF-8 fix). Update Go dependencies. Add SECURITY.md</p>
-      </description>
-    </release>
-    <release version="1.8.0" date="2026-03-21">
-      <description>
-        <p>Cobra CLI framework migration. Add Whisper Large v3 Turbo (Q5_0) model — fast, GPU-optimized variant for modern laptops.</p>
-      </description>
-    </release>
+    <release version="2.0.1" date="2026-05-19"/>
+    <release version="1.8.2" date="2026-05-15"/>
+    <release version="1.8.1" date="2026-04-19"/>
+    <release version="1.8.0" date="2026-03-21"/>
     <release version="1.7.2" date="2026-03-15"/>
     <release version="1.7.1" date="2026-03-02"/>
     <release version="1.7.0" date="2026-03-02"/>
