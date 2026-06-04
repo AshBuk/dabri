@@ -98,6 +98,11 @@ func (w *WhisperEngine) Transcribe(audioFile string) (string, error) {
 	if err != nil {
 		return "", fmt.Errorf("failed to load audio data: %w", err)
 	}
+	// Guard against empty input: whisper.cpp bindings panic on a zero-length
+	// sample slice (index out of range).
+	if len(audioData) == 0 {
+		return "", fmt.Errorf("no audio samples decoded from %s", audioFile)
+	}
 	context, err := w.model.NewContext()
 	if err != nil {
 		return "", fmt.Errorf("failed to create whisper context: %w", err)
