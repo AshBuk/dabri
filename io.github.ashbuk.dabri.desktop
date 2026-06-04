@@ -1,10 +1,10 @@
 [Desktop Entry]
 Name=Dabri
-Comment=Offline STT
+Comment=Offline speech-to-text
 Exec=dabri
 Icon=io.github.ashbuk.dabri
 Type=Application
-Categories=AudioVideo;Audio;Utility;Accessibility;
+Categories=Utility;Accessibility;
 Keywords=speech;voice;transcription;ai;whisper;offline;privacy;
 Terminal=false
 StartupNotify=true
