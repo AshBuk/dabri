@@ -8,6 +8,11 @@ on:
     tags:
       - 'v[0-9]+.[0-9]+.[0-9]+'  # Only stable tags (v1.0.0), not RC (v1.0.0-rc.1)
   workflow_dispatch:
+    inputs:
+      release_tag:
+        description: 'Existing release tag to attach the bundle. Leave empty to only build.'
+        required: false
+        default: ''
 
 permissions:
   contents: write
@@ -56,11 +61,12 @@ jobs:
           path: dabri.flatpak
 
       - name: Attach Flatpak bundle to Release
-        if: startsWith(github.ref, 'refs/tags/')
+        if: startsWith(github.ref, 'refs/tags/') || github.event.inputs.release_tag != ''
         uses: softprops/action-gh-release@v2
         with:
-          # Only attach the asset; the release itself (notes, title) is owned by
-          # release-appimage.yml. Unspecified fields are left untouched.
+          # Attach to the pushed tag, or to an existing release given via
+          # workflow_dispatch (release_tag).
+          tag_name: ${{ github.event.inputs.release_tag || github.ref_name }}
           files: dabri.flatpak
           fail_on_unmatched_files: true
         env:
