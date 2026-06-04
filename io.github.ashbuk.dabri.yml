@@ -89,10 +89,18 @@ modules:
         url: https://github.com/atx/wtype/archive/refs/tags/v0.4.tar.gz
         sha256: da91786d828b6a6e29b884bc510473939eda052658ebef87d7bdeafa6a8746f9
 
+  # SPIRV-Headers cmake config - required by whisper.cpp >= v1.8.5 Vulkan backend
+  - name: spirv-headers
+    buildsystem: cmake-ninja
+    sources:
+      - type: archive
+        url: https://github.com/KhronosGroup/SPIRV-Headers/archive/refs/tags/vulkan-sdk-1.4.321.0.tar.gz
+        sha256: 5bbea925663d4cd2bab23efad53874f2718248a73dcaf9dd21dff8cb48e602fc
+
   - name: whisper-cpp
     buildsystem: simple
     build-commands:
-      - cmake -B build -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=ON -DCMAKE_INSTALL_RPATH=/app/lib/dabri -DCMAKE_BUILD_WITH_INSTALL_RPATH=ON -DGGML_NATIVE=OFF -DGGML_AVX=ON -DGGML_AVX2=ON -DGGML_FMA=ON -DGGML_F16C=ON -DGGML_AVX512=OFF -DGGML_VULKAN=ON
+      - cmake -B build -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=ON -DCMAKE_PREFIX_PATH=/app -DCMAKE_INSTALL_RPATH=/app/lib/dabri -DCMAKE_BUILD_WITH_INSTALL_RPATH=ON -DGGML_NATIVE=OFF -DGGML_AVX=ON -DGGML_AVX2=ON -DGGML_FMA=ON -DGGML_F16C=ON -DGGML_AVX512=OFF -DGGML_VULKAN=ON
       - cmake --build build --parallel ${FLATPAK_BUILDER_N_JOBS}
       - install -d /app/lib/dabri /app/include/dabri
       - cp build/src/libwhisper.so* /app/lib/dabri/
@@ -102,8 +110,8 @@ modules:
       - cp ggml/include/*.h /app/include/dabri/
     sources:
       - type: archive
-        url: https://github.com/ggml-org/whisper.cpp/archive/refs/tags/v1.8.4.tar.gz
-        sha256: b26f30e52c095ccb75da40b168437736605eb280de57381887bf9e2b65f31e66
+        url: https://github.com/ggml-org/whisper.cpp/archive/refs/tags/v1.8.6.tar.gz
+        sha256: f8e632016ceae556f3132a16c7f704be1e7715595041f474fa81a2b64c1abf7c
 
   - name: dabri
     buildsystem: simple

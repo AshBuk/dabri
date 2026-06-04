@@ -18,10 +18,10 @@
   type: archive
   url: https://proxy.golang.org/gopkg.in/yaml.v2/@v/v2.4.0.zip
 - dest: vendor/github.com/ggerganov/whisper.cpp/bindings/go
-  sha256: a779e9381c56f4b3db540b2797031066278c745a67436912bb4911ab424e8267
+  sha256: 9b080f427c529cd7d4ce4b80734aed33c4cc72d7c7ba7cc7e9c8a53464f38b65
   strip-components: 5
   type: archive
-  url: https://proxy.golang.org/github.com/ggerganov/whisper.cpp/bindings/go/@v/v0.0.0-20260319084013-9386f2394010.zip
+  url: https://proxy.golang.org/github.com/ggerganov/whisper.cpp/bindings/go/@v/v0.0.0-20260601115620-23ee03506a91.zip
 - dest: vendor/github.com/go-audio/wav
   sha256: 884d351372627717f4779da1fa58751481db5bfe9a623bdfd9a9e887c13e2e62
   strip-components: 3

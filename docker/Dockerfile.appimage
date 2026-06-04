@@ -28,6 +28,8 @@ RUN apt-get update && apt-get install -y \
     libnotify-bin \
     # Vulkan runtime library (SDK installed separately for glslc + headers)
     libvulkan-dev \
+    # SPIRV-Headers cmake config - required by whisper.cpp >= v1.8.5 Vulkan backend
+    spirv-headers \
     && rm -rf /var/lib/apt/lists/*
 
 # Install Vulkan SDK (glslc + headers) - required for whisper.cpp Vulkan backend

@@ -26,8 +26,8 @@ BUILD_DIR := build
 LIB_DIR := lib
 DIST_DIR := dist
 # Optional: set to a tag or commit hash to pin whisper.cpp version for reproducible builds
-# Example (CI recommended): make WHISPER_CPP_REF=v1.8.4
-WHISPER_CPP_REF ?= v1.8.4
+# Example (CI recommended): make WHISPER_CPP_REF=v1.8.6
+WHISPER_CPP_REF ?= v1.8.6
 
 # Docker helpers
 DOCKER_RUN := docker compose run --rm dev

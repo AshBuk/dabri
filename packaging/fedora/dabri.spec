@@ -7,7 +7,7 @@
 # =============================================================================
 %global app_version     2.0.1
 %global go_version      1.21
-%global whisper_version 1.8.4
+%global whisper_version 1.8.6
 
 # Exclude auto-requires for vendored whisper libraries
 %global __requires_exclude libwhisper\\.so|libggml.*\\.so
@@ -48,6 +48,8 @@ BuildRequires:  pkgconfig(dbus-1)
 # Vulkan SDK for GPU acceleration
 BuildRequires:  vulkan-devel
 BuildRequires:  glslc
+# SPIRV-Headers cmake config - required by whisper.cpp >= v1.8.5 Vulkan backend
+BuildRequires:  spirv-headers-devel
 
 # =============================================================================
 # Runtime dependencies

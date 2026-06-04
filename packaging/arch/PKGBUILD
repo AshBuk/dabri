@@ -34,10 +34,12 @@ makedepends=(
     # Vulkan SDK for GPU acceleration
     'vulkan-headers'
     'shaderc'
+    # SPIRV-Headers cmake config - required by whisper.cpp >= v1.8.5 Vulkan backend
+    'spirv-headers'
 )
 options=('!lto')
 # Whisper.cpp version (pinned for reproducibility)
-_whisper_version=1.8.4
+_whisper_version=1.8.6
 
 source=(
     "${pkgname}-${pkgver}.tar.gz::https://github.com/AshBuk/dabri/archive/refs/tags/v${pkgver}.tar.gz"
