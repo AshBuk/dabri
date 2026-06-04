@@ -49,16 +49,32 @@ jobs:
             --repo=repo \
             build-dir io.github.ashbuk.dabri.yml
 
+      - name: Resolve version
+        id: ver
+        run: |
+          TAG="${{ github.event.inputs.release_tag }}"
+          if [ -z "$TAG" ] && [ "${GITHUB_REF_TYPE}" = "tag" ]; then
+            TAG="${GITHUB_REF_NAME}"
+          fi
+          if [ -n "$TAG" ]; then
+            VERSION="${TAG#v}"
+          else
+            # No tag context (plain manual build): fall back to the appdata version.
+            VERSION="$(python3 -c 'import xml.etree.ElementTree as ET; print(ET.parse("io.github.ashbuk.dabri.appdata.xml").getroot().find("releases/release").attrib["version"])')"
+          fi
+          echo "bundle=dabri-${VERSION}-x86_64.flatpak" >> "$GITHUB_OUTPUT"
+          echo "Bundle name: dabri-${VERSION}-x86_64.flatpak"
+
       - name: Bundle Flatpak
         run: |
-          flatpak build-bundle repo dabri.flatpak io.github.ashbuk.dabri stable
-          ls -lh dabri.flatpak
+          flatpak build-bundle repo "${{ steps.ver.outputs.bundle }}" io.github.ashbuk.dabri stable
+          ls -lh "${{ steps.ver.outputs.bundle }}"
 
       - name: Upload Flatpak artifact
         uses: actions/upload-artifact@v4
         with:
           name: dabri-flatpak
-          path: dabri.flatpak
+          path: ${{ steps.ver.outputs.bundle }}
 
       - name: Attach Flatpak bundle to Release
         if: startsWith(github.ref, 'refs/tags/') || github.event.inputs.release_tag != ''
@@ -67,7 +83,7 @@ jobs:
           # Attach to the pushed tag, or to an existing release given via
           # workflow_dispatch (release_tag).
           tag_name: ${{ github.event.inputs.release_tag || github.ref_name }}
-          files: dabri.flatpak
+          files: ${{ steps.ver.outputs.bundle }}
           fail_on_unmatched_files: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
