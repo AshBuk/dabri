@@ -53,10 +53,11 @@ fi
 # pulseaudio socket is granted directly by --socket=pulseaudio, so "default"
 # resolves to the default PipeWire/PulseAudio source.
 #
-# -flush_packets 1 keeps captured audio on disk continuously: dabri stops
-# recording with a signal and this ffmpeg does not finalize the WAV on signal,
-# so its output buffer would otherwise be lost.
-set -- ffmpeg -nostdin -hide_banner -loglevel error -y \
+# Dabri stops recording by writing "q" to ffmpeg's stdin (BaseRecorder graceful
+# stop), so ffmpeg finalizes the WAV header itself — no kill/re-mux needed. We
+# exec ffmpeg directly so it inherits that stdin and replaces this shell.
+# -flush_packets 1 keeps captured audio flushed to disk while recording.
+set -- ffmpeg -hide_banner -loglevel error -y \
     -f pulse -i "$device" \
     -ac "$channels" -ar "$rate" \
     -c:a pcm_s16le -flush_packets 1 -f wav
@@ -65,26 +66,4 @@ if [ -n "$duration" ]; then
     set -- "$@" -t "$duration"
 fi
 
-# Stream mode (stdout): nothing to finalize, exec directly.
-if [ "$output" = "-" ]; then
-    exec "$@" -
-fi
-
-# File mode: run ffmpeg as a child so we can finalize on stop. Because this
-# ffmpeg leaves placeholder (0xFFFFFFFF) WAV sizes when killed, re-mux the
-# captured file with "-c copy" to rewrite a correct, decodable header.
-"$@" "$output" &
-ff=$!
-
-finalize() {
-    kill -KILL "$ff" 2>/dev/null || true
-    wait "$ff" 2>/dev/null || true
-    if ffmpeg -nostdin -hide_banner -loglevel error -y -i "$output" -c copy -f wav "$output.tmp" 2>/dev/null; then
-        mv -f "$output.tmp" "$output"
-    fi
-    exit 0
-}
-
-trap finalize INT TERM
-wait "$ff" || true
-finalize
+exec "$@" "$output"
