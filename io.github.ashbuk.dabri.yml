@@ -4,6 +4,13 @@ runtime-version: "50"
 sdk: org.gnome.Sdk
 command: dabri
 
+# Force cmake modules to install into /app/lib (not /app/lib64). Newer
+# cmake/GNUInstallDirs picks lib64 on 64-bit, which splits libs/pkgconfig
+# away from the autotools modules in /app/lib and breaks shared-modules
+# (e.g. libayatana-ido3-0.4 not found by libayatana-indicator).
+build-options:
+  libdir: /app/lib
+
 finish-args:
   - --share=network
   - --share=ipc
