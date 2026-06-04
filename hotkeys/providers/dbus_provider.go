@@ -327,8 +327,7 @@ func (p *DbusKeyboardProvider) waitForSessionResponseOnChannel(signalChan chan *
 
 // Listen for shortcut activation signals from the GlobalShortcuts portal
 func (p *DbusKeyboardProvider) listenForShortcuts() {
-	// Add a signal match rule for the session
-	rule := fmt.Sprintf("type='signal',interface='org.freedesktop.portal.GlobalShortcuts',member='Activated',path='%s'", p.sessionHandle)
+	rule := "type='signal',interface='org.freedesktop.portal.GlobalShortcuts',member='Activated',path='/org/freedesktop/portal/desktop'"
 	p.conn.BusObject().Call("org.freedesktop.DBus.AddMatch", 0, rule)
 	// Listen for signals
 	c := make(chan *dbus.Signal, 10)
