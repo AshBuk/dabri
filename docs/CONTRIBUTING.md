@@ -24,7 +24,7 @@ When reporting bugs, include:
 
 1. Fork the repository
 2. Clone your fork: `git clone https://github.com/YOUR-USERNAME/dabri.git`
-3. Follow the development setup in [DEVELOPMENT.md](DEVELOPMENT.md)
+3. Follow the development setup in [DEVELOPMENT.md](https://github.com/AshBuk/dabri/blob/master/docs/DEVELOPMENT.md)
 
 4. **Dev Workflow**
    1. Create a feature branch: `git checkout -b feature/your-feature-name`
@@ -39,7 +39,7 @@ When reporting bugs, include:
 
 5. **Code Style**
 
-Before opening a PR, make sure your changes are formatted, linted, tested, and build cleanly. See the commands and tooling details in [DEVELOPMENT.md](DEVELOPMENT.md).
+Before opening a PR, make sure your changes are formatted, linted, tested, and build cleanly. See the commands and tooling details in [DEVELOPMENT.md](https://github.com/AshBuk/dabri/blob/master/docs/DEVELOPMENT.md).
 
 CI validates formatting, linting, security scanning, tests (with race detector), and license headers. PRs must pass all checks before merge.
 
