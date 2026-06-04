@@ -34,9 +34,14 @@ type FFmpegRecorder struct {
 
 // Create a new instance of the ffmpeg-based recorder
 func NewFFmpegRecorder(config *config.Config, logger logger.Logger, tempManager *processing.TempFileManager) *FFmpegRecorder {
-	return &FFmpegRecorder{
+	r := &FFmpegRecorder{
 		BaseRecorder: NewBaseRecorder(config, logger, tempManager),
 	}
+	// ffmpeg finalizes the WAV trailer (correct header sizes) only on a clean
+	// stop; reading "q" on stdin triggers that, whereas signals can leave it
+	// SIGKILL'd with an unfinalized header that decoders read as empty.
+	r.quitToken = []byte("q")
+	return r
 }
 
 // Resolve PulseAudio source name if "default" is specified
@@ -157,7 +162,8 @@ func (f *FFmpegRecorder) StopRecording() (string, error) {
 func (f *FFmpegRecorder) buildBaseCommandArgs() []string {
 	// Resolve actual PulseAudio source name (ffmpeg needs explicit source, not "default")
 	device := f.resolvePulseAudioSource(f.config.Audio.Device)
-	// Stable command with optimized options; avoid stdin to let SIGINT be handled cleanly
+	// Stable command with optimized options; stdin stays open so a "q" can
+	// stop ffmpeg cleanly and let it finalize the WAV header.
 	sr := f.config.Audio.SampleRate
 	if sr <= 0 {
 		sr = 16000
@@ -165,10 +171,9 @@ func (f *FFmpegRecorder) buildBaseCommandArgs() []string {
 	// Reduce PulseAudio buffering to lower start latency (~20ms fragments)
 	fragmentBytes := (sr / 50) * 2 // bytes, 16-bit mono
 	args := []string{
-		"-nostdin",
 		"-hide_banner",
-		"-y",                                 // Overwrite output file if it exists
-		"-fflags", "+nobuffer+flush_packets", // Reduce demuxer buffering and flush aggressively
+		"-y",                  // Overwrite output file if it exists
+		"-fflags", "+nobuffer", // Reduce demuxer (input) buffering for low latency
 		// Input options must precede the input specification
 		"-analyzeduration", "0", // Start processing immediately, skip long stream analysis
 		"-probesize", "32k", // Smaller probe size for faster start
@@ -188,6 +193,7 @@ func (f *FFmpegRecorder) buildBaseCommandArgs() []string {
 		"-vn", "-sn", // Disable video/subtitles just in case
 		"-c:a", "pcm_s16le",
 		"-q:a", "0",
+		"-flush_packets", "1", // Flush output muxer to disk per packet (avoid data loss on stop)
 	}
 
 	// Configure the output format

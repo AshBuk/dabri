@@ -5,6 +5,7 @@ package recorders
 
 import (
 	"fmt"
+	"os"
 
 	"github.com/AshBuk/dabri/v2/audio/processing"
 	"github.com/AshBuk/dabri/v2/config"
@@ -18,9 +19,16 @@ type ArecordRecorder struct {
 
 // Create a new instance of the arecord-based recorder
 func NewArecordRecorder(config *config.Config, logger logger.Logger, tempManager *processing.TempFileManager) *ArecordRecorder {
-	return &ArecordRecorder{
+	r := &ArecordRecorder{
 		BaseRecorder: NewBaseRecorder(config, logger, tempManager),
 	}
+	// In Flatpak, "arecord" is the bundled ffmpeg+pulse wrapper, which finalizes
+	// the WAV only on a clean "q" stop. Native arecord finalizes on signals, so
+	// the token stays disabled there.
+	if os.Getenv("FLATPAK_ID") != "" {
+		r.quitToken = []byte("q")
+	}
+	return r
 }
 
 // Start an audio recording using the `arecord` command
