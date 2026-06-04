@@ -55,6 +55,7 @@ modules:
       - --disable-ffplay
       - --disable-ffprobe
       - --disable-network
+      - --enable-libpulse
     cleanup:
       - /share/ffmpeg
     sources:

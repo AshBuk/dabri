@@ -43,6 +43,9 @@ if [ -z "$output" ]; then
     output="-"
 fi
 
+# Capture via the pulse indev (ffmpeg built with --enable-libpulse). The
+# pulseaudio socket is granted directly by --socket=pulseaudio, so "default"
+# resolves to the default PipeWire/PulseAudio source.
 set -- ffmpeg -nostdin -hide_banner -loglevel error -y \
     -f pulse -i "$device" \
     -ac "$channels" -ar "$rate" \
