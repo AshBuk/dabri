@@ -14,6 +14,7 @@ import (
 	"github.com/AshBuk/dabri/v2/hotkeys/adapters"
 	"github.com/AshBuk/dabri/v2/hotkeys/manager"
 	"github.com/AshBuk/dabri/v2/internal/notify"
+	"github.com/AshBuk/dabri/v2/internal/platform"
 	"github.com/AshBuk/dabri/v2/internal/tray"
 	outputFactory "github.com/AshBuk/dabri/v2/output/factory"
 	outputInterfaces "github.com/AshBuk/dabri/v2/output/interfaces"
@@ -85,6 +86,8 @@ func (cf *FactoryComponents) InitializeComponents() (*Components, error) {
 			return nil, fmt.Errorf("failed to initialize any output manager")
 		}
 	}
+	// Start ydotoold when ydotool is the chosen typing backend (Flatpak/wlroots)
+	components.InputDaemon = cf.startInputDaemonIfNeeded(components.OutputManager)
 	// Initialize hotkey manager
 	components.HotkeyManager = cf.createHotkeyManager()
 	// Initialize WebSocket server (always initialized but may not be started).
@@ -139,6 +142,24 @@ func (cf *FactoryComponents) createFallbackOutputManager(outputEnv outputFactory
 		// Restore original mode if fallback failed
 		cf.config.Config.Output.DefaultMode = oldMode
 	}
+	return nil
+}
+
+// startInputDaemonIfNeeded launches ydotoold only when ydotool is the resolved
+// typing backend inside Flatpak. Returns nil otherwise (portal/clipboard/native),
+// and logs guidance when uinput access is missing so typing degrades to clipboard.
+func (cf *FactoryComponents) startInputDaemonIfNeeded(out outputInterfaces.Outputter) *outputters.YdotoolDaemon {
+	if out == nil || !platform.IsFlatpak() {
+		return nil
+	}
+	if _, typeTool := out.GetToolNames(); typeTool != "ydotool" {
+		return nil
+	}
+	if daemon := outputters.StartYdotoolDaemon(); daemon != nil {
+		cf.config.Logger.Info("Started ydotoold for active-window typing")
+		return daemon
+	}
+	cf.config.Logger.Warning("Active-window typing needs uinput access; run 'flatpak override --user --device=all io.github.ashbuk.dabri' (see docs) — falling back to clipboard otherwise")
 	return nil
 }
 

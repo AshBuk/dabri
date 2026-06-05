@@ -16,6 +16,7 @@ import (
 	"github.com/AshBuk/dabri/v2/internal/platform"
 	"github.com/AshBuk/dabri/v2/internal/tray"
 	outputInterfaces "github.com/AshBuk/dabri/v2/output/interfaces"
+	"github.com/AshBuk/dabri/v2/output/outputters"
 	"github.com/AshBuk/dabri/v2/websocket"
 	"github.com/AshBuk/dabri/v2/whisper"
 )
@@ -41,6 +42,7 @@ type Components struct {
 	TrayManager     tray.Manager                // System tray icon and menu
 	NotifyManager   *notify.NotificationManager // Desktop notifications
 	TempFileManager *processing.TempFileManager // Temporary audio file management
+	InputDaemon     *outputters.YdotoolDaemon   // ydotoold for active-window typing (Flatpak/wlroots)
 }
 
 // ServiceFactory creates and configures all services with proper dependency injection

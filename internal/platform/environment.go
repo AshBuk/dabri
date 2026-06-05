@@ -67,6 +67,15 @@ func IsGNOME() bool {
 	return de == "GNOME" || de == "ubuntu:GNOME"
 }
 
+// IsFlatpak reports whether the process runs inside a Flatpak sandbox
+func IsFlatpak() bool {
+	if os.Getenv("FLATPAK_ID") != "" {
+		return true
+	}
+	_, err := os.Stat("/.flatpak-info")
+	return err == nil
+}
+
 // HasStatusNotifierWatcher checks if a StatusNotifier watcher is present on the session D-Bus
 func HasStatusNotifierWatcher() bool {
 	conn, err := dbus.SessionBus()
