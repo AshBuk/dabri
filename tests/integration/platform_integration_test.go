@@ -9,6 +9,7 @@ import (
 	"context"
 	"os"
 	"testing"
+	"time"
 
 	"github.com/AshBuk/dabri/v2/config"
 	"github.com/AshBuk/dabri/v2/hotkeys/providers"
@@ -170,9 +171,14 @@ func TestModelAvailability(t *testing.T) {
 		cfg := &config.Config{}
 		config.SetDefaultConfig(cfg)
 
-		// Test ModelManager's bundled model path resolution
+		// Test ModelManager's bundled model path resolution.
+		// Use a short timeout: when no bundled model exists (development), GetModelPath
+		// falls through to a network download — without a deadline this test would block
+		// downloading the full model. The timeout makes the missing-model case fail fast.
+		ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
+		defer cancel()
 		modelManager := whisper.NewModelManager(cfg)
-		modelPath, err := modelManager.GetModelPath(context.Background())
+		modelPath, err := modelManager.GetModelPath(ctx)
 		if err != nil {
 			t.Logf("Bundled model not found (expected for development): %v", err)
 		} else {
