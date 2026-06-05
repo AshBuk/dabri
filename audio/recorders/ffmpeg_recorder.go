@@ -172,7 +172,7 @@ func (f *FFmpegRecorder) buildBaseCommandArgs() []string {
 	fragmentBytes := (sr / 50) * 2 // bytes, 16-bit mono
 	args := []string{
 		"-hide_banner",
-		"-y",                  // Overwrite output file if it exists
+		"-y",                   // Overwrite output file if it exists
 		"-fflags", "+nobuffer", // Reduce demuxer (input) buffering for low latency
 		// Input options must precede the input specification
 		"-analyzeduration", "0", // Start processing immediately, skip long stream analysis

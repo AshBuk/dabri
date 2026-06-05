@@ -164,7 +164,7 @@ func (f *Factory) createClipboardOutputter(env EnvironmentType) (interfaces.Outp
 // extra device permissions. Otherwise it falls back to a CLI tool.
 func (f *Factory) createTypeOutputter(env EnvironmentType) (interfaces.Outputter, error) {
 	if env == EnvironmentWayland && f.config.Output.TypeTool == "auto" && outputters.PortalRemoteDesktopAvailable() {
-		if out, err := outputters.NewPortalOutputter(f.config); err == nil {
+		if out, err := outputters.NewPortalOutputter(); err == nil {
 			return out, nil
 		}
 	}

@@ -14,7 +14,6 @@ import (
 
 	"github.com/godbus/dbus/v5"
 
-	"github.com/AshBuk/dabri/v2/config"
 	"github.com/AshBuk/dabri/v2/output/interfaces"
 )
 
@@ -54,7 +53,6 @@ func PortalRemoteDesktopAvailable() bool {
 
 // PortalOutputter types text through the RemoteDesktop portal
 type PortalOutputter struct {
-	config    *config.Config
 	tokenPath string
 
 	mu      sync.Mutex
@@ -64,11 +62,11 @@ type PortalOutputter struct {
 }
 
 // NewPortalOutputter creates a portal-based type outputter (session is opened lazily)
-func NewPortalOutputter(cfg *config.Config) (interfaces.Outputter, error) {
+func NewPortalOutputter() (interfaces.Outputter, error) {
 	if !PortalRemoteDesktopAvailable() {
 		return nil, fmt.Errorf("RemoteDesktop portal not available")
 	}
-	return &PortalOutputter{config: cfg, tokenPath: portalTokenPath()}, nil
+	return &PortalOutputter{tokenPath: portalTokenPath()}, nil
 }
 
 // TypeToActiveWindow injects text as keyboard input into the focused window
