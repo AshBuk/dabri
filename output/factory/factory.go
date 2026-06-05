@@ -164,9 +164,9 @@ func (f *Factory) createClipboardOutputter(env EnvironmentType) (interfaces.Outp
 // extra device permissions. Otherwise it falls back to a CLI tool.
 func (f *Factory) createTypeOutputter(env EnvironmentType) (interfaces.Outputter, error) {
 	if env == EnvironmentWayland && f.config.Output.TypeTool == "auto" && outputters.PortalRemoteDesktopAvailable() {
-		// Best-effort clipboard fallback for characters the portal cannot type (non-ASCII)
-		clip, _ := f.createClipboardOutputter(env)
-		if out, err := outputters.NewPortalOutputter(clip); err == nil {
+		// Text the portal cannot type (non-ASCII) is handled one level up by
+		// IOService, which switches the whole output mode to clipboard.
+		if out, err := outputters.NewPortalOutputter(); err == nil {
 			return out, nil
 		}
 	}

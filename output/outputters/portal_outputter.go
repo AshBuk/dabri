@@ -23,28 +23,25 @@ func PortalRemoteDesktopAvailable() bool {
 // types text through the RemoteDesktop portal via the go-wlportal/typing adapter
 type PortalOutputter struct {
 	kbd *typing.Keyboard
-	// clipboard handles text the portal cannot type (non-ASCII), nil disables fallback
-	clipboard interfaces.Outputter
 }
 
 // NewPortalOutputter creates a portal-based type outputter (session is opened lazily).
-// clipboard is an optional fallback used for characters the portal cannot inject.
-func NewPortalOutputter(clipboard interfaces.Outputter) (interfaces.Outputter, error) {
+func NewPortalOutputter() (interfaces.Outputter, error) {
 	kbd, err := typing.NewKeyboard(typing.WithRestoreTokenPath(portalTokenPath()))
 	if err != nil {
 		return nil, err
 	}
-	return &PortalOutputter{kbd: kbd, clipboard: clipboard}, nil
+	return &PortalOutputter{kbd: kbd}, nil
 }
 
 // TypeToActiveWindow injects text as keyboard input into the focused window.
 // The RemoteDesktop portal maps keysyms through the compositor's active layout,
 // so characters outside it (e.g. Cyrillic on a Latin layout) are silently dropped.
-// Such non-ASCII text is routed to the clipboard so nothing is lost; the typing
-// mode itself is preserved, so subsequent ASCII text keeps typing.
+// Rather than lose such text, we report an error so IOService switches the whole
+// output mode to clipboard — honest behaviour the user is notified about.
 func (o *PortalOutputter) TypeToActiveWindow(text string) error {
-	if o.clipboard != nil && isNonASCII(text) {
-		return o.clipboard.CopyToClipboard(text)
+	if isNonASCII(text) {
+		return fmt.Errorf("portal cannot type non-ASCII text through the active keyboard layout")
 	}
 	return o.kbd.Type(text)
 }
