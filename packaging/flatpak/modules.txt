@@ -3,9 +3,11 @@
 fyne.io/systray
 fyne.io/systray/internal/generated/menu
 fyne.io/systray/internal/generated/notifier
-# github.com/AshBuk/go-wlportal v0.1.0
+# github.com/AshBuk/go-wlportal v0.2.0
 ## explicit; go 1.25.0
-github.com/AshBuk/go-wlportal/remotedesktop
+github.com/AshBuk/go-wlportal/internal/portal
+github.com/AshBuk/go-wlportal/shortcuts
+github.com/AshBuk/go-wlportal/typing
 # github.com/ggerganov/whisper.cpp/bindings/go v0.0.0-20260601115620-23ee03506a91
 ## explicit; go 1.23
 github.com/ggerganov/whisper.cpp/bindings/go
