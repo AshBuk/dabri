@@ -8,7 +8,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/AshBuk/go-wlportal/remotedesktop"
+	"github.com/AshBuk/go-wlportal/typing"
 
 	"github.com/AshBuk/dabri/v2/output/interfaces"
 )
@@ -17,12 +17,12 @@ import (
 // keyboard injection. This is the sandbox-clean typing path on GNOME/KDE; the
 // wlroots/Hyprland portal does not implement it.
 func PortalRemoteDesktopAvailable() bool {
-	return remotedesktop.Available()
+	return typing.Available()
 }
 
-// PortalOutputter types text through the RemoteDesktop portal (go-wlportal)
+// types text through the RemoteDesktop portal via the go-wlportal/typing adapter
 type PortalOutputter struct {
-	kbd *remotedesktop.Keyboard
+	kbd *typing.Keyboard
 	// clipboard handles text the portal cannot type (non-ASCII), nil disables fallback
 	clipboard interfaces.Outputter
 }
@@ -30,7 +30,7 @@ type PortalOutputter struct {
 // NewPortalOutputter creates a portal-based type outputter (session is opened lazily).
 // clipboard is an optional fallback used for characters the portal cannot inject.
 func NewPortalOutputter(clipboard interfaces.Outputter) (interfaces.Outputter, error) {
-	kbd, err := remotedesktop.NewKeyboard(remotedesktop.WithRestoreTokenPath(portalTokenPath()))
+	kbd, err := typing.NewKeyboard(typing.WithRestoreTokenPath(portalTokenPath()))
 	if err != nil {
 		return nil, err
 	}
