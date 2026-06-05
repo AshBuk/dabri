@@ -104,7 +104,7 @@ func (us *UIService) ShowAboutPage() error {
 	}
 	path := filepath.Join(cacheDir, "dabri-about.html")
 	html := strings.Replace(assets.AboutHTML, "{{VERSION}}", appversion.Version, 1)
-	if err := os.WriteFile(path, []byte(html), 0o644); err != nil {
+	if err := os.WriteFile(path, []byte(html), 0o600); err != nil {
 		return fmt.Errorf("failed to write about page: %w", err)
 	}
 	return us.openWithSystem(path)
