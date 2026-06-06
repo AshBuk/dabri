@@ -123,45 +123,7 @@ func TestDbusKeyboardProvider_Stop_WhenStarted(t *testing.T) {
 	if provider.isListening {
 		t.Error("expected isListening to be false after stop")
 	}
-	if provider.conn != nil {
-		t.Error("expected connection to be nil after stop")
-	}
-}
-
-func TestContainsGlobalShortcuts(t *testing.T) {
-	tests := []struct {
-		name     string
-		data     string
-		expected bool
-	}{
-		{
-			name:     "contains GlobalShortcuts",
-			data:     `<interface name="org.freedesktop.portal.GlobalShortcuts">`,
-			expected: true,
-		},
-		{
-			name:     "does not contain GlobalShortcuts",
-			data:     `<interface name="org.freedesktop.portal.FileChooser">`,
-			expected: false,
-		},
-		{
-			name:     "empty data",
-			data:     "",
-			expected: false,
-		},
-		{
-			name:     "contains partial match",
-			data:     "Some text with Global but not the full interface",
-			expected: false,
-		},
-	}
-
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			result := containsGlobalShortcuts(tt.data)
-			if result != tt.expected {
-				t.Errorf("containsGlobalShortcuts(%q) = %v, want %v", tt.data, result, tt.expected)
-			}
-		})
+	if provider.session != nil {
+		t.Error("expected session to be nil after stop")
 	}
 }

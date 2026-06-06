@@ -7,10 +7,24 @@ import (
 	"context"
 	"fmt"
 	"io"
+	"net"
 	"net/http"
 	"os"
 	"path/filepath"
+	"time"
 )
+
+// httpClient is used for model downloads. It sets connection-establishment and
+// response-header timeouts so a stalled server fails fast, but deliberately has
+// no total Timeout: model files are large and may legitimately take a while on
+// slow links. Total cancellation is handled via the request context.
+var httpClient = &http.Client{
+	Transport: &http.Transport{
+		DialContext:           (&net.Dialer{Timeout: 10 * time.Second}).DialContext,
+		TLSHandshakeTimeout:   10 * time.Second,
+		ResponseHeaderTimeout: 30 * time.Second,
+	},
+}
 
 // ModelDownloader handles downloading the whisper model from Hugging Face
 type ModelDownloader struct {
@@ -69,7 +83,7 @@ func (d *ModelDownloader) downloadToFile(ctx context.Context, path string) error
 	if err != nil {
 		return fmt.Errorf("failed to create download request: %w", err)
 	}
-	resp, err := http.DefaultClient.Do(req)
+	resp, err := httpClient.Do(req)
 	if err != nil {
 		return fmt.Errorf("failed to download model: %w", err)
 	}

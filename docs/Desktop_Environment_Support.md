@@ -21,16 +21,42 @@ sudo pacman -S gnome-shell-extension-appindicator
 
 | Desktop Environment | Primary Tool | Fallback | Status |
 |---------------------|--------------|----------|--------|
-| **🟢 GNOME+Wayland** | ydotool | clipboard | ⚠️ Requires setup |
-| **🟢 KDE+Wayland** | wtype → ydotool | clipboard | ✅ Auto-detected |
+| **🟢 GNOME+Wayland** | RemoteDesktop portal → ydotool | clipboard | ✅ Auto-detected |
+| **🟢 KDE+Wayland** | RemoteDesktop portal → wtype | clipboard | ✅ Auto-detected |
 | **🟢 Sway/Other Wayland** | wtype → ydotool | clipboard | ✅ Auto-detected |
 | **🟢 X11 (all DEs)** | xdotool | clipboard | ✅ Works out-of-box |
 
- GNOME/Wayland requires ydotool setup. 
- 
- Other Wayland compositors (KDE, Sway, etc.) works with wtype out of the box.
+ GNOME/KDE use the RemoteDesktop portal when available (one-time permission dialog), with a tool/clipboard fallback.
 
-## Direct typing on Wayland - Tool options
+ Other Wayland compositors (Sway, Hyprland, etc.) use wtype out of the box.
+
+### Flatpak
+
+Inside the sandbox `wtype` cannot work: the Wayland security-context blocks its
+virtual-keyboard protocol on wlroots/Hyprland, and GNOME/KDE never exposed it.
+Dabri therefore selects automatically:
+
+| Compositor | Active-window typing | Setup |
+|------------|----------------------|-------|
+| **GNOME / KDE** | RemoteDesktop portal | None — one-time permission dialog |
+| **Hyprland / wlroots / Sway** | ydotool (uinput) | Opt-in (see below) |
+
+The portal path is provided by [go-wlportal](https://github.com/AshBuk/go-wlportal)
+and needs no extra permissions. For wlroots/Hyprland auto-typing, grant uinput
+access once (otherwise Dabri falls back to clipboard):
+
+```bash
+# 1) Allow the sandbox to see /dev/uinput
+flatpak override --user --device=all io.github.ashbuk.dabri
+# 2) Allow non-root access to /dev/uinput on the host (if not already granted)
+echo 'KERNEL=="uinput", GROUP="input", MODE="0660"' | sudo tee /etc/udev/rules.d/99-uinput.rules
+sudo udevadm control --reload && sudo udevadm trigger
+sudo usermod -a -G input $USER   # re-login required
+```
+
+Dabri starts its own `ydotoold` inside the sandbox when uinput is accessible.
+
+## Direct typing on Wayland - Tool options (native)
 
 The application automatically selects the best available typing tool:
 - **wtype**: Works without setup on non-GNOME Wayland compositors (KDE, Sway, etc.). Automatically selected if available.
@@ -168,4 +194,4 @@ Add to `~/.config/hypr/hyprland.conf`:
 exec-once = dabri
 ```
 
-*Last updated: 2026-05-21*
+*Last updated: 2026-06-05*

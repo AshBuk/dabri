@@ -92,22 +92,22 @@ func (us *UIService) SetSuccess(message string) {
 	}
 }
 
-// Create temporary HTML file and open with system browser
+// Write the About HTML to a cache file and open it with the system browser.
+// We use the user cache dir rather than os.TempDir(): under Flatpak the latter
+// is the sandbox-private /tmp, which the host browser cannot read, so xdg-open
+// would silently open nothing. XDG_CACHE_HOME maps to a host-visible path.
 func (us *UIService) ShowAboutPage() error {
 	us.logger.Info("Showing about page...")
-	tmpFile, err := os.CreateTemp("", "dabri-about-*.html")
+	cacheDir, err := os.UserCacheDir()
 	if err != nil {
-		return fmt.Errorf("failed to create temp file: %w", err)
+		cacheDir = os.TempDir()
 	}
-	// Note: temp file for browser access
+	path := filepath.Join(cacheDir, "dabri-about.html")
 	html := strings.Replace(assets.AboutHTML, "{{VERSION}}", appversion.Version, 1)
-	if _, err := tmpFile.WriteString(html); err != nil {
-		return fmt.Errorf("failed to write HTML content: %w", err)
+	if err := os.WriteFile(path, []byte(html), 0o600); err != nil {
+		return fmt.Errorf("failed to write about page: %w", err)
 	}
-	if err := tmpFile.Close(); err != nil {
-		return fmt.Errorf("failed to close temp file: %w", err)
-	}
-	return us.openWithSystem(tmpFile.Name())
+	return us.openWithSystem(path)
 }
 
 // Open configuration file with system default editor

@@ -113,6 +113,11 @@ func (f *Factory) selectGNOMEWaylandTypeTool() string {
 // selectNonGNOMEWaylandTypeTool Non-GNOME Wayland priority chain
 // Priority: wtype (native Wayland) → ydotool → xdotool (XWayland fallback)
 func (f *Factory) selectNonGNOMEWaylandTypeTool() string {
+	// Inside Flatpak the wlroots security-context blocks wtype's virtual-keyboard
+	// protocol, so ydotool (uinput) is the only working CLI path.
+	if platform.IsFlatpak() && f.isToolAvailable("ydotool") {
+		return "ydotool"
+	}
 	if f.isToolAvailable("wtype") {
 		return "wtype"
 	}
@@ -138,22 +143,38 @@ func (f *Factory) selectFallbackTypeTool() string {
 // Security: validates tools via config.IsCommandAllowed before instantiation
 // Returns ClipboardOutputter or TypeOutputter based on config.Output.DefaultMode
 func (f *Factory) GetOutputter(env EnvironmentType) (interfaces.Outputter, error) {
-	clipboardTool := f.selectClipboardTool(env)
-	typeTool := f.selectTypeTool(env)
-	if clipboardTool != "" && !config.IsCommandAllowed(f.config, clipboardTool) {
-		return nil, fmt.Errorf("clipboard tool not allowed: %s", clipboardTool)
+	if f.config.Output.DefaultMode == config.OutputModeActiveWindow {
+		return f.createTypeOutputter(env)
 	}
-	if typeTool != "" && !config.IsCommandAllowed(f.config, typeTool) {
-		return nil, fmt.Errorf("type tool not allowed: %s", typeTool)
+	return f.createClipboardOutputter(env)
+}
+
+// createClipboardOutputter builds a validated clipboard outputter
+func (f *Factory) createClipboardOutputter(env EnvironmentType) (interfaces.Outputter, error) {
+	tool := f.selectClipboardTool(env)
+	if tool != "" && !config.IsCommandAllowed(f.config, tool) {
+		return nil, fmt.Errorf("clipboard tool not allowed: %s", tool)
 	}
-	switch f.config.Output.DefaultMode {
-	case config.OutputModeClipboard:
-		return outputters.NewClipboardOutputter(clipboardTool, f.config)
-	case config.OutputModeActiveWindow:
-		return outputters.NewTypeOutputter(typeTool, f.config)
-	default:
-		return outputters.NewClipboardOutputter(clipboardTool, f.config)
+	return outputters.NewClipboardOutputter(tool, f.config)
+}
+
+// createTypeOutputter builds a validated active-window outputter.
+// Prefers the RemoteDesktop portal on Wayland (GNOME/KDE) when the typing tool is
+// auto-selected: it is the only path that works inside a Flatpak sandbox without
+// extra device permissions. Otherwise it falls back to a CLI tool.
+func (f *Factory) createTypeOutputter(env EnvironmentType) (interfaces.Outputter, error) {
+	if env == EnvironmentWayland && f.config.Output.TypeTool == "auto" && outputters.PortalRemoteDesktopAvailable() {
+		// Text the portal cannot type (non-ASCII) is handled one level up by
+		// IOService, which switches the whole output mode to clipboard.
+		if out, err := outputters.NewPortalOutputter(); err == nil {
+			return out, nil
+		}
 	}
+	tool := f.selectTypeTool(env)
+	if tool != "" && !config.IsCommandAllowed(f.config, tool) {
+		return nil, fmt.Errorf("type tool not allowed: %s", tool)
+	}
+	return outputters.NewTypeOutputter(tool, f.config)
 }
 
 // Create an outputter directly from a configuration

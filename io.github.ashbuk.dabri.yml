@@ -55,6 +55,7 @@ modules:
       - --disable-ffplay
       - --disable-ffprobe
       - --disable-network
+      - --enable-libpulse
     cleanup:
       - /share/ffmpeg
     sources:
@@ -95,6 +96,26 @@ modules:
       - type: archive
         url: https://github.com/atx/wtype/archive/refs/tags/v0.4.tar.gz
         sha256: da91786d828b6a6e29b884bc510473939eda052658ebef87d7bdeafa6a8746f9
+
+  # ydotool injects input via /dev/uinput, the only active-window typing path on
+  # wlroots/Hyprland inside the sandbox (wtype's virtual-keyboard protocol is
+  # blocked by the Wayland security-context). The binary is bundled but needs no
+  # device permission by default; users opt in with:
+  #   flatpak override --user --device=all io.github.ashbuk.dabri
+  # On GNOME/KDE the RemoteDesktop portal is used instead (no setup required).
+  - name: ydotool
+    buildsystem: simple
+    build-commands:
+      # Drop manpage (needs scdoc) and the Daemon unit install (absolute SD_UNITDIR
+      # outside /app); the ydotoold binary itself is built at top level.
+      - sed -i '/add_subdirectory(manpage)/d;/add_subdirectory(Daemon)/d' CMakeLists.txt
+      - cmake -B build -G Ninja -DCMAKE_INSTALL_PREFIX=/app -DCMAKE_BUILD_TYPE=Release -DCMAKE_POLICY_VERSION_MINIMUM=3.5
+      - cmake --build build
+      - cmake --install build
+    sources:
+      - type: archive
+        url: https://github.com/ReimuNotMoe/ydotool/archive/refs/tags/v1.0.4.tar.gz
+        sha256: ba075a43aa6ead51940e892ecffa4d0b8b40c241e4e2bc4bd9bd26b61fde23bd
 
   # SPIRV-Headers cmake config - required by whisper.cpp >= v1.8.5 Vulkan backend
   - name: spirv-headers

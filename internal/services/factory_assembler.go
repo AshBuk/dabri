@@ -59,6 +59,7 @@ func (sa *FactoryAssembler) Assemble(components *Components) *ServiceContainer {
 	container.UI = uiSvc
 	container.IO = ioSvc
 	container.TempFileManager = components.TempFileManager
+	container.InputDaemon = components.InputDaemon
 
 	// Step 4: Late wiring - cross-dependencies after container is ready
 	audioSvc.SetDependencies(container.UI, container.IO)

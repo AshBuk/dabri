@@ -20,6 +20,10 @@ import (
 	"github.com/AshBuk/dabri/v2/internal/logger"
 )
 
+// Time allowed for a process to finalize its output after a graceful stop
+// request (e.g. ffmpeg writing the WAV trailer) before escalating to signals.
+const gracefulQuitTimeout = 1500 * time.Millisecond
+
 // Implements common functionality for audio recorders
 type BaseRecorder struct {
 	config             *config.Config
@@ -35,6 +39,12 @@ type BaseRecorder struct {
 	audioLevelCallback interfaces.AudioLevelCallback // Callback for audio level updates
 	currentAudioLevel  float64                       // Current audio level (0.0 to 1.0)
 	levelMutex         sync.RWMutex                  // Mutex for audio level access
+
+	// Graceful stop: when quitToken is set, StopProcess first writes it to the
+	// process stdin (e.g. ffmpeg "q") so the process finalizes its own output
+	// before any signal escalation. Nil token keeps the signal-only behavior.
+	quitToken []byte
+	stdinPipe io.WriteCloser
 
 	// Diagnostics
 	stderrBuf bytes.Buffer
@@ -288,6 +298,12 @@ func (b *BaseRecorder) StopProcess() error {
 }
 
 func (b *BaseRecorder) attemptGracefulShutdown() {
+	// Prefer process-native graceful stop (e.g. ffmpeg "q" writes the file
+	// trailer) so output is finalized without a lossy SIGKILL.
+	if b.tryGracefulQuit() {
+		return
+	}
+
 	maxRetries := 3
 	for i := 0; i < maxRetries; i++ {
 		if i > 0 {
@@ -300,6 +316,31 @@ func (b *BaseRecorder) attemptGracefulShutdown() {
 
 		b.escalateToSIGKILL()
 		time.Sleep(100 * time.Millisecond)
+	}
+}
+
+// tryGracefulQuit asks the process to stop via its stdin token (e.g. ffmpeg
+// "q"), letting it finalize its output. Returns true if it exited in time.
+func (b *BaseRecorder) tryGracefulQuit() bool {
+	if len(b.quitToken) == 0 || b.stdinPipe == nil {
+		return false
+	}
+	if _, err := b.stdinPipe.Write(b.quitToken); err != nil {
+		b.logger.Debug("Graceful quit write failed: %v", err)
+		return false
+	}
+	// EOF on stdin also tells most tools to stop.
+	_ = b.stdinPipe.Close()
+
+	done := make(chan error, 1)
+	go func() { done <- b.waitForProcess() }()
+	select {
+	case err := <-done:
+		b.logProcessExit(err)
+		return true
+	case <-time.After(gracefulQuitTimeout):
+		b.logger.Warning("Graceful quit timed out, escalating to signals")
+		return false
 	}
 }
 
@@ -363,6 +404,10 @@ func (b *BaseRecorder) cleanup() {
 	if b.cancel != nil {
 		b.cancel()
 	}
+	if b.stdinPipe != nil {
+		_ = b.stdinPipe.Close()
+		b.stdinPipe = nil
+	}
 
 	b.logStderr()
 
@@ -419,6 +464,15 @@ func (b *BaseRecorder) ExecuteRecordingCommand(cmdName string, args []string) er
 	// Capture stderr for diagnostics
 	b.stderrBuf.Reset()
 	b.cmd.Stderr = &b.stderrBuf
+	// Wire a controlled stdin pipe for graceful shutdown when requested
+	if len(b.quitToken) > 0 {
+		stdin, err := b.cmd.StdinPipe()
+		if err != nil {
+			b.cancel()
+			return fmt.Errorf("failed to create stdin pipe: %w", err)
+		}
+		b.stdinPipe = stdin
+	}
 	// If using a buffer, set up a pipe to read stdout for audio level monitoring
 	if b.useBuffer {
 		stdout, err := b.cmd.StdoutPipe()

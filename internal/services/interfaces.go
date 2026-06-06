@@ -11,6 +11,7 @@ import (
 	"github.com/AshBuk/dabri/v2/audio/processing"
 	"github.com/AshBuk/dabri/v2/config"
 	"github.com/AshBuk/dabri/v2/hotkeys/adapters"
+	"github.com/AshBuk/dabri/v2/output/outputters"
 )
 
 // AudioServiceInterface defines the contract for audio-related operations
@@ -152,6 +153,7 @@ type ServiceContainer struct {
 	Config          ConfigServiceInterface
 	Hotkeys         HotkeyServiceInterface
 	TempFileManager *processing.TempFileManager
+	InputDaemon     *outputters.YdotoolDaemon
 }
 
 // Create a new service container with all services
@@ -190,6 +192,9 @@ func (sc *ServiceContainer) Shutdown() error {
 	if sc.TempFileManager != nil {
 		sc.TempFileManager.Stop()
 		sc.TempFileManager.CleanupAll()
+	}
+	if sc.InputDaemon != nil {
+		sc.InputDaemon.Stop()
 	}
 
 	return errors.Join(errs...)

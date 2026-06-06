@@ -29,6 +29,12 @@ while [ "$#" -gt 0 ]; do
         -f|-t)
             shift 2
             ;;
+        -l|-L|--list-devices|--list-pcms|--version)
+            # Query flags (used by audio diagnostics). The ffmpeg/pulse backend
+            # has no ALSA device enumeration, so just succeed without recording;
+            # otherwise the default capture branch below would record forever.
+            exit 0
+            ;;
         -*)
             shift
             ;;
@@ -43,10 +49,18 @@ if [ -z "$output" ]; then
     output="-"
 fi
 
-set -- ffmpeg -nostdin -hide_banner -loglevel error -y \
+# Capture via the pulse indev (ffmpeg built with --enable-libpulse). The
+# pulseaudio socket is granted directly by --socket=pulseaudio, so "default"
+# resolves to the default PipeWire/PulseAudio source.
+#
+# Dabri stops recording by writing "q" to ffmpeg's stdin (BaseRecorder graceful
+# stop), so ffmpeg finalizes the WAV header itself — no kill/re-mux needed. We
+# exec ffmpeg directly so it inherits that stdin and replaces this shell.
+# -flush_packets 1 keeps captured audio flushed to disk while recording.
+set -- ffmpeg -hide_banner -loglevel error -y \
     -f pulse -i "$device" \
     -ac "$channels" -ar "$rate" \
-    -c:a pcm_s16le -f wav
+    -c:a pcm_s16le -flush_packets 1 -f wav
 
 if [ -n "$duration" ]; then
     set -- "$@" -t "$duration"
