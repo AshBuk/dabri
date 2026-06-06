@@ -100,11 +100,7 @@ sudo dnf install dabri
 **For system tray integration on GNOME — [install the AppIndicator extension](docs/Desktop_Environment_Support.md#for-system-tray-on-gnome---to-have-full-featured-ux-with-menu) ↑**
 > KDE and other DEs have built-in system tray support out of the box
 
-**For automatic typing on GNOME — [see setup guide](docs/Desktop_Environment_Support.md#direct-typing-on-wayland---tool-options) ↑**  
-> **Other Wayland compositors** (KDE, Hyprland, Sway, etc.): wtype works without setup — automatically detected!  
-> **X11**: Native support with xdotool out of the box
-
-> If automatic typing doesn't appear automatically, the app falls back to clipboard (Ctrl + V) mode
+**Automatic typing and clipboard modes both work out of the box — [details & options](docs/Desktop_Environment_Support.md#text-output-status-outputter-for-automatic-text-insertion-into-active-window) ↑**  
 
 For issues and bug reports: [GitHub Issues](https://github.com/AshBuk/dabri/issues)
 
