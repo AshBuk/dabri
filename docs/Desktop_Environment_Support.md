@@ -42,8 +42,14 @@ Dabri therefore selects automatically:
 | **Hyprland / wlroots / Sway** | ydotool (uinput) | Opt-in (see below) |
 
 The portal path is provided by [go-wlportal](https://github.com/AshBuk/go-wlportal)
-and needs no extra permissions. For wlroots/Hyprland auto-typing, grant uinput
-access once (otherwise Dabri falls back to clipboard):
+and needs no extra permissions.
+
+> **Note:** the portal types through the active keyboard layout, so it can't produce
+> characters outside it (e.g. any non-ASCII text on a Latin/US layout). In that case
+> Dabri switches to clipboard mode and notifies you — paste with `Ctrl+V`.
+
+For wlroots/Hyprland auto-typing, grant uinput access once (otherwise Dabri falls
+back to clipboard):
 
 ```bash
 # 1) Allow the sandbox to see /dev/uinput

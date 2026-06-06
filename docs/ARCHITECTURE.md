@@ -134,7 +134,7 @@ Related constants:
 - **`adapters/adapter.go`**: Abstraction layer for different providers
 
 #### Provider Implementations
-- **`providers/dbus_provider.go`**: DBus GlobalShortcuts portal (preferred for GNOME/KDE)
+- **`providers/dbus_provider.go`**: DBus GlobalShortcuts portal (preferred for GNOME/KDE), via the [go-wlportal](https://github.com/AshBuk/go-wlportal) shortcuts adapter
 - **`providers/evdev_provider.go`**: Direct evdev input handling (primary for AppImage)
 - **`manager/provider_fallback.go`**: Fallback logic and hotkey re-registration
 - **`providers/dummy_provider.go`**: Dummy provider for testing
@@ -161,11 +161,13 @@ Related constants:
 - **`factory/factory.go`**: Factory for creating appropriate output handlers with automatic tool selection
 - **`outputters/`**: Output implementations
   - `clipboard_outputter.go`: System clipboard integration (wl-copy/wl-paste for Wayland, xsel for X11)
+  - `portal_outputter.go`: RemoteDesktop portal typing on GNOME/KDE Wayland (via [go-wlportal](https://github.com/AshBuk/go-wlportal)); sandbox-clean, no extra permissions. Types through the compositor's active keyboard layout, so non-ASCII text it cannot inject makes `IOService` switch the output mode to clipboard.
   - `type_outputter.go`: Active window typing simulation
     - **X11**: Uses `xdotool` (works out-of-the-box)
     - **Wayland (non-GNOME)**: Prefers `wtype` → falls back to `ydotool` if available
     - **Wayland (GNOME)**: Uses `ydotool` → falls back to `wtype` if available
     - Automatic runtime fallback: if primary tool fails, tries alternative typing tool
+  - `input_daemon.go`: Owns a `ydotoold` process inside Flatpak on wlroots/Hyprland, where the host daemon's socket is invisible to the sandbox; returns nil (→ clipboard fallback) when uinput is inaccessible
   - `mock_outputter.go`: Mock implementation for testing
 
 ### **WebSocket API** (`websocket/`)

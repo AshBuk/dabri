@@ -35,10 +35,8 @@ func NewPortalOutputter() (interfaces.Outputter, error) {
 }
 
 // TypeToActiveWindow injects text as keyboard input into the focused window.
-// The RemoteDesktop portal maps keysyms through the compositor's active layout,
-// so characters outside it (e.g. Cyrillic on a Latin layout) are silently dropped.
-// Rather than lose such text, we report an error so IOService switches the whole
-// output mode to clipboard — honest behaviour the user is notified about.
+// The portal can only type characters in the active keyboard layout, so it
+// errors on non-ASCII text and lets IOService fall back to clipboard.
 func (o *PortalOutputter) TypeToActiveWindow(text string) error {
 	if isNonASCII(text) {
 		return fmt.Errorf("portal cannot type non-ASCII text through the active keyboard layout")
