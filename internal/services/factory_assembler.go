@@ -59,6 +59,7 @@ func (sa *FactoryAssembler) Assemble(components *Components) *ServiceContainer {
 	container.Audio = audioSvc
 	container.UI = uiSvc
 	container.IO = ioSvc
+	container.Window = components.WindowManager
 	container.TempFileManager = components.TempFileManager
 	container.InputDaemon = components.InputDaemon
 

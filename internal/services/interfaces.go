@@ -11,6 +11,7 @@ import (
 	"github.com/AshBuk/dabri/v2/audio/processing"
 	"github.com/AshBuk/dabri/v2/config"
 	"github.com/AshBuk/dabri/v2/hotkeys/adapters"
+	"github.com/AshBuk/dabri/v2/internal/ui/window"
 	"github.com/AshBuk/dabri/v2/output/outputters"
 )
 
@@ -152,6 +153,7 @@ type ServiceContainer struct {
 	IO              IOServiceInterface
 	Config          ConfigServiceInterface
 	Hotkeys         HotkeyServiceInterface
+	Window          window.Manager
 	TempFileManager *processing.TempFileManager
 	InputDaemon     *outputters.YdotoolDaemon
 }

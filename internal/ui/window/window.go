@@ -20,13 +20,29 @@ const (
 	StateError
 )
 
+// ModelChoice is one selectable whisper model: a stable ID and a display name.
+type ModelChoice struct {
+	ID   string
+	Name string
+}
+
+// Options is the initial display state passed to a backend at construction.
+type Options struct {
+	HasTray      bool          // whether a system tray is available
+	StartVisible bool          // show the window as soon as the loop starts
+	Models       []ModelChoice // selectable models
+	ActiveModel  string        // active model ID
+	OutputMode   string        // active output mode (config value)
+	Hotkey       string        // start-recording hotkey, for display only
+}
+
 // Actions are the callbacks the window invokes on user interaction; the window
-// itself holds no business logic.
+// itself holds no business logic. They are wired after construction via
+// SetActions, mirroring the tray's callback setters.
 type Actions struct {
 	OnToggleRecording func() error
 	OnSelectModel     func(ctx context.Context, modelID string) error
 	OnSelectOutput    func(mode string) error
-	OnRunInBackground func()
 	OnQuit            func()
 }
 
@@ -37,6 +53,8 @@ type Manager interface {
 	Run() error
 	Quit()
 	Available() bool
+
+	SetActions(actions Actions)
 
 	Show()
 	Hide()

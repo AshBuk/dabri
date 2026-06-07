@@ -13,6 +13,7 @@ import (
 	"github.com/AshBuk/dabri/v2/config"
 	"github.com/AshBuk/dabri/v2/hotkeys/adapters"
 	"github.com/AshBuk/dabri/v2/internal/logger"
+	"github.com/AshBuk/dabri/v2/internal/ui/window"
 )
 
 // FactoryWirer wires tray menu callbacks to service business logic
@@ -78,6 +79,18 @@ func (cw *FactoryWirer) Wire(container *ServiceContainer, components *Components
 	components.TrayManager.SetExitAction(func() {
 		_ = syscall.Kill(os.Getpid(), syscall.SIGTERM)
 	})
+
+	// Step 8: Main window actions (no-op backend ignores these)
+	if components.WindowManager != nil {
+		components.WindowManager.SetActions(window.Actions{
+			OnToggleRecording: cw.makeToggleCallback(container),
+			OnSelectModel:     cw.makeModelSelectionCallback(container),
+			OnSelectOutput:    cw.makeOutputModeCallback(container),
+			OnQuit: func() {
+				_ = syscall.Kill(os.Getpid(), syscall.SIGTERM)
+			},
+		})
+	}
 }
 
 // Callback Makers

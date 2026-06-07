@@ -1,23 +1,38 @@
 // Copyright (c) 2025 Asher Buk
 // SPDX-License-Identifier: MIT
 
+//go:build !gtk
+
 package window
 
-// noopManager is the fallback backend when no GUI is compiled in: every method
-// is a no-op so the rest of the app stays backend-agnostic.
-type noopManager struct{}
+import (
+	"sync"
 
-// New returns a window manager. Until the gotk3 backend lands it yields the
-// no-op manager regardless of Actions.
-func New(_ Actions) Manager { return noopManager{} }
+	"github.com/AshBuk/dabri/v2/internal/logger"
+)
 
-func (noopManager) Run() error      { return nil }
-func (noopManager) Quit()           {}
-func (noopManager) Available() bool { return false }
-func (noopManager) Show()           {}
-func (noopManager) Hide()           {}
-func (noopManager) Present()        {}
-func (noopManager) Toggle()         {}
-func (noopManager) SetState(State)  {}
-func (noopManager) SetModel(string) {}
-func (noopManager) SetOutput(string) {}
+// noopManager is the fallback backend when no GUI is compiled in: the window is
+// absent, but Run still acts as the application's main loop so the lifecycle is
+// identical to the GTK build.
+type noopManager struct {
+	stop     chan struct{}
+	stopOnce sync.Once
+}
+
+// New returns the no-op window manager. Options and logger are unused.
+func New(_ logger.Logger, _ Options) Manager {
+	return &noopManager{stop: make(chan struct{})}
+}
+
+func (m *noopManager) Run() error { <-m.stop; return nil }
+func (m *noopManager) Quit()      { m.stopOnce.Do(func() { close(m.stop) }) }
+
+func (m *noopManager) Available() bool      { return false }
+func (m *noopManager) SetActions(_ Actions) {}
+func (m *noopManager) Show()                {}
+func (m *noopManager) Hide()                {}
+func (m *noopManager) Present()             {}
+func (m *noopManager) Toggle()              {}
+func (m *noopManager) SetState(State)       {}
+func (m *noopManager) SetModel(string)      {}
+func (m *noopManager) SetOutput(string)     {}
