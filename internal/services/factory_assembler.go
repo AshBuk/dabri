@@ -5,7 +5,8 @@ package services
 
 import (
 	"github.com/AshBuk/dabri/v2/internal/notify"
-	"github.com/AshBuk/dabri/v2/internal/tray"
+	"github.com/AshBuk/dabri/v2/internal/ui/tray"
+	"github.com/AshBuk/dabri/v2/internal/ui/window"
 	outputInterfaces "github.com/AshBuk/dabri/v2/output/interfaces"
 	"github.com/AshBuk/dabri/v2/websocket"
 )
@@ -41,7 +42,7 @@ func (sa *FactoryAssembler) Assemble(components *Components) *ServiceContainer {
 	configSvc := sa.createConfigService()
 	hotkeysSvc := sa.createHotkeyService(components.HotkeyManager)
 	audioSvc := sa.createAudioService(components)
-	uiSvc := sa.createUIService(components.TrayManager, components.NotifyManager)
+	uiSvc := sa.createUIService(components.TrayManager, components.WindowManager, components.NotifyManager)
 	ioSvc := sa.createIOService(components.OutputManager, components.WebSocketServer)
 
 	// Step 2: Early wiring - dependencies needed before container assembly
@@ -100,11 +101,12 @@ func (sa *FactoryAssembler) createAudioService(components *Components) *AudioSer
 }
 
 // createUIService creates the UIService
-func (sa *FactoryAssembler) createUIService(trayManager tray.Manager, notifyManager *notify.NotificationManager) *UIService {
+func (sa *FactoryAssembler) createUIService(trayManager tray.Manager, mainWindow window.Manager, notifyManager *notify.NotificationManager) *UIService {
 	return NewUIService(
 		sa.factoryConfig.Logger,
 		trayManager,
 		notifyManager,
+		mainWindow,
 		sa.factoryConfig.Config,
 	)
 }

@@ -15,7 +15,8 @@ import (
 	"github.com/AshBuk/dabri/v2/hotkeys/manager"
 	"github.com/AshBuk/dabri/v2/internal/notify"
 	"github.com/AshBuk/dabri/v2/internal/platform"
-	"github.com/AshBuk/dabri/v2/internal/tray"
+	"github.com/AshBuk/dabri/v2/internal/ui/tray"
+	"github.com/AshBuk/dabri/v2/internal/ui/window"
 	outputFactory "github.com/AshBuk/dabri/v2/output/factory"
 	outputInterfaces "github.com/AshBuk/dabri/v2/output/interfaces"
 	"github.com/AshBuk/dabri/v2/output/outputters"
@@ -100,6 +101,8 @@ func (cf *FactoryComponents) InitializeComponents() (*Components, error) {
 		components.TrayManager.Start()
 		components.TrayManager.UpdateSettings(cf.config.Config)
 	}
+	// Initialize main window controller (no-op without a GUI backend).
+	components.WindowManager = cf.createWindowManager()
 	// Initialize notification manager
 	components.NotifyManager = notify.NewNotificationManager("Dabri", cf.config.Config)
 
@@ -182,4 +185,10 @@ func (cf *FactoryComponents) createWebSocketServer() *websocket.WebSocketServer 
 // Callbacks are wired later in Stage 3 (FactoryWirer).
 func (cf *FactoryComponents) createTrayManager() tray.Manager {
 	return tray.CreateTrayManagerWithConfig(cf.config.Config, cf.config.Logger)
+}
+
+// createWindowManager creates the main window backend (no-op without a GUI
+// backend). Actions are wired later in Stage 3 (FactoryWirer).
+func (cf *FactoryComponents) createWindowManager() window.Manager {
+	return window.New(window.Actions{})
 }
