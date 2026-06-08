@@ -21,6 +21,7 @@ type TrayManager struct {
 	iconMicOn         []byte
 	onExit            func()
 	onToggle          func() error
+	onShowWindow      func()
 	onShowConfig      func() error
 	onShowAbout       func() error
 	onResetToDefaults func() error
@@ -28,6 +29,7 @@ type TrayManager struct {
 	logger            logger.Logger
 
 	// Menu items
+	showWindowItem   *systray.MenuItem
 	toggleItem       *systray.MenuItem
 	settingsItem     *systray.MenuItem
 	showConfigItem   *systray.MenuItem
@@ -96,6 +98,11 @@ func (tm *TrayManager) SetCoreActions(onToggle func() error, onShowConfig func()
 	tm.onResetToDefaults = onResetToDefaults
 }
 
+// SetShowWindowAction wires the "Open Window" menu item callback
+func (tm *TrayManager) SetShowWindowAction(onShowWindow func()) {
+	tm.onShowWindow = onShowWindow
+}
+
 // Start initializes and starts the system tray icon and menu
 func (tm *TrayManager) Start() {
 	// Initialize context for background handlers
@@ -119,6 +126,8 @@ func (tm *TrayManager) onReady() {
 	systray.SetIcon(tm.iconMicOff)
 	systray.SetTitle("Dabri")
 	// Create main menu items
+	tm.showWindowItem = systray.AddMenuItem("Open Window", "Open the Dabri window")
+	systray.AddSeparator()
 	tm.toggleItem = systray.AddMenuItem("Start Recording", "Start/Stop recording")
 	// Workflow notifications toggle (radio indicator is set by updateWorkflowNotificationUI)
 	tm.audioItems["workflow_notifications"] = systray.AddMenuItem(
@@ -173,6 +182,11 @@ func (tm *TrayManager) handleMenuClicks() {
 		select {
 		case <-tm.ctx.Done():
 			return
+		case <-tm.showWindowItem.ClickedCh:
+			tm.logger.Info("Open window clicked")
+			if tm.onShowWindow != nil {
+				tm.onShowWindow()
+			}
 		case <-tm.toggleItem.ClickedCh:
 			tm.logger.Info("Toggle recording clicked")
 			if tm.onToggle != nil {

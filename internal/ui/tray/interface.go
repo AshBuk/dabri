@@ -18,6 +18,8 @@ type Manager interface {
 	SetExitAction(onExit func())
 	// SetCoreActions sets core menu callbacks (toggle, show config, show about, reset to defaults)
 	SetCoreActions(onToggle func() error, onShowConfig func() error, onShowAbout func() error, onResetToDefaults func() error)
+	// SetShowWindowAction sets the callback invoked when "Open Window" is clicked
+	SetShowWindowAction(onShowWindow func())
 	// SetAudioActions sets callbacks for audio-related actions
 	SetAudioActions(onSelectRecorder func(method string) error)
 	// SetModelAction sets callback for whisper model selection.

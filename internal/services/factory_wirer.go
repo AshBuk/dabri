@@ -58,6 +58,12 @@ func (cw *FactoryWirer) Wire(container *ServiceContainer, components *Components
 		cw.makeShowAboutCallback(container),
 		cw.makeResetToDefaultsCallback(container),
 	)
+	// Open the main window from the tray
+	components.TrayManager.SetShowWindowAction(func() {
+		if container.Window != nil {
+			container.Window.Show()
+		}
+	})
 	// Step 2: Audio actions (recorder selection)
 	components.TrayManager.SetAudioActions(cw.makeRecorderSelectionCallback(container))
 	// Step 2b: Model selection
