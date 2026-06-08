@@ -246,13 +246,8 @@ func (m *gtkManager) build() error {
 	bgButton.Connect("clicked", func() { m.win.Hide() })
 	outer.PackStart(bgButton, false, false, 0)
 
-	// Make every control non-focusable. With output mode "Type to window" the
-	// transcript is typed into the active window; if that happens to
-	// be our own window, a focused widget would react to the synthetic keys —
-	// Space would re-fire the record button (start/stop feedback loop) and combo
-	// type-ahead would change the model/language. Mouse clicks still work.
 	for _, w := range []interface{ SetCanFocus(bool) }{
-		m.modelCombo, m.langCombo, m.outputCombo, m.startButton, bgButton,
+		m.startButton, bgButton,
 	} {
 		w.SetCanFocus(false)
 	}
