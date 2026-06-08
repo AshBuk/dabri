@@ -28,10 +28,6 @@ func TestNewHotkeyManager(t *testing.T) {
 		t.Error("Environment not set correctly")
 	}
 
-	if manager.isRecording {
-		t.Error("Initial recording state should be false")
-	}
-
 	if manager.provider == nil {
 		t.Error("Provider should be initialized")
 	}
@@ -85,146 +81,26 @@ func TestHotkeyManager_Stop(t *testing.T) {
 	}
 }
 
-func TestHotkeyManager_RegisterCallbacks(t *testing.T) {
+func TestHotkeyManager_RegisterToggle(t *testing.T) {
 	config := adapters.NewConfigAdapter("ctrl+shift+r", "auto")
 	manager := NewHotkeyManager(config, interfaces.EnvironmentX11, testutils.NewMockLogger())
-	// Replace with mock provider
 	mockProvider := mocks.NewMockHotkeyProvider()
 	manager.provider = mockProvider
 
-	startCalled := false
-	stopCalled := false
-
-	startCallback := func() error {
-		startCalled = true
+	toggleCount := 0
+	manager.RegisterToggle(func() error {
+		toggleCount++
 		return nil
-	}
+	})
 
-	stopCallback := func() error {
-		stopCalled = true
-		return nil
-	}
-
-	manager.RegisterCallbacks(startCallback, stopCallback)
-	// Check callback invocation via public API
-	err := manager.SimulateHotkeyPress("start_recording")
-	if err != nil {
-		t.Errorf("Start callback failed: %v", err)
-	}
-	if !startCalled {
-		t.Error("Start callback not called")
-	}
-
-	err = manager.SimulateHotkeyPress("stop_recording")
-	if err != nil {
-		t.Errorf("Stop callback failed: %v", err)
-	}
-	if !stopCalled {
-		t.Error("Stop callback not called")
-	}
-}
-
-func TestHotkeyManager_IsRecording(t *testing.T) {
-	config := adapters.NewConfigAdapter("ctrl+shift+r", "auto")
-	manager := NewHotkeyManager(config, interfaces.EnvironmentX11, testutils.NewMockLogger())
-	// Replace with mock provider
-	mockProvider := mocks.NewMockHotkeyProvider()
-	manager.provider = mockProvider
-	// Initially not recording
-	if manager.IsRecording() {
-		t.Error("Expected IsRecording to be false initially")
-	}
-
-	// Simulate start recording
-	manager.isRecording = true
-	if !manager.IsRecording() {
-		t.Error("Expected IsRecording to be true after setting")
-	}
-
-	// Simulate stop recording
-	manager.isRecording = false
-	if manager.IsRecording() {
-		t.Error("Expected IsRecording to be false after resetting")
-	}
-}
-
-func TestHotkeyManager_SimulateHotkeyPress_StartRecording(t *testing.T) {
-	config := adapters.NewConfigAdapter("ctrl+shift+r", "auto")
-	manager := NewHotkeyManager(config, interfaces.EnvironmentX11, testutils.NewMockLogger())
-	// Replace with mock provider
-	mockProvider := mocks.NewMockHotkeyProvider()
-	manager.provider = mockProvider
-
-	startCalled := false
-	stopCalled := false
-
-	manager.RegisterCallbacks(
-		func() error {
-			startCalled = true
-			return nil
-		},
-		func() error {
-			stopCalled = true
-			return nil
-		},
-	)
-
-	err := manager.SimulateHotkeyPress("start_recording")
-	if err != nil {
-		t.Errorf("Expected no error, got %v", err)
-	}
-
-	if !startCalled {
-		t.Error("Expected start recording callback to be called")
-	}
-
-	if stopCalled {
-		t.Error("Expected stop recording callback not to be called")
-	}
-
-	if !manager.IsRecording() {
-		t.Error("Expected recording state to be true after start")
-	}
-}
-
-func TestHotkeyManager_SimulateHotkeyPress_StopRecording(t *testing.T) {
-	config := adapters.NewConfigAdapter("ctrl+shift+r", "auto")
-	manager := NewHotkeyManager(config, interfaces.EnvironmentX11, testutils.NewMockLogger())
-	// Replace with mock provider
-	mockProvider := mocks.NewMockHotkeyProvider()
-	manager.provider = mockProvider
-
-	startCalled := false
-	stopCalled := false
-
-	manager.RegisterCallbacks(
-		func() error {
-			startCalled = true
-			return nil
-		},
-		func() error {
-			stopCalled = true
-			return nil
-		},
-	)
-
-	// Set recording state to true
-	manager.isRecording = true
-	err := manager.SimulateHotkeyPress("stop_recording")
-	if err != nil {
-		t.Errorf("Expected no error, got %v", err)
-	}
-
-	if startCalled {
-		t.Error("Expected start recording callback not to be called")
-	}
-
-	if !stopCalled {
-		t.Error("Expected stop recording callback to be called")
-	}
-
-	if manager.IsRecording() {
-		t.Error("Expected recording state to be false after stop")
+	// Each press fires the toggle; the callback owns the start/stop decision.
+	for i := 1; i <= 2; i++ {
+		if err := manager.SimulateHotkeyPress("toggle_recording"); err != nil {
+			t.Errorf("Toggle press %d failed: %v", i, err)
+		}
+		if toggleCount != i {
+			t.Errorf("Expected toggle called %d time(s), got %d", i, toggleCount)
+		}
 	}
 }
 
@@ -250,25 +126,13 @@ func TestHotkeyManager_SimulateHotkeyPress_CallbackError(t *testing.T) {
 	manager.provider = mockProvider
 
 	testError := errors.New("callback error")
+	manager.RegisterToggle(func() error {
+		return testError
+	})
 
-	manager.RegisterCallbacks(
-		func() error {
-			return testError
-		},
-		func() error {
-			return nil
-		},
-	)
-
-	err := manager.SimulateHotkeyPress("start_recording")
-
+	err := manager.SimulateHotkeyPress("toggle_recording")
 	if err != testError {
 		t.Errorf("Expected callback error, got %v", err)
-	}
-
-	// Recording state should not change on error
-	if manager.IsRecording() {
-		t.Error("Expected recording state to remain false on error")
 	}
 }
 
@@ -349,24 +213,19 @@ func TestHotkeyManager_ConcurrentAccess(t *testing.T) {
 	mockProvider := mocks.NewMockHotkeyProvider()
 	manager.provider = mockProvider
 
-	// Test concurrent access to IsRecording
+	manager.RegisterToggle(func() error { return nil })
+
+	// Test concurrent toggle presses (exercises the hotkey mutex)
 	done := make(chan bool, 2)
 
-	go func() {
-		for i := 0; i < 100; i++ {
-			manager.IsRecording()
-		}
-		done <- true
-	}()
-
-	go func() {
-		for i := 0; i < 100; i++ {
-			manager.hotkeysMutex.Lock()
-			manager.isRecording = i%2 == 0
-			manager.hotkeysMutex.Unlock()
-		}
-		done <- true
-	}()
+	for g := 0; g < 2; g++ {
+		go func() {
+			for i := 0; i < 100; i++ {
+				_ = manager.SimulateHotkeyPress("toggle_recording")
+			}
+			done <- true
+		}()
+	}
 
 	<-done
 	<-done

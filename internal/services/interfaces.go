@@ -11,6 +11,7 @@ import (
 	"github.com/AshBuk/dabri/v2/audio/processing"
 	"github.com/AshBuk/dabri/v2/config"
 	"github.com/AshBuk/dabri/v2/hotkeys/adapters"
+	"github.com/AshBuk/dabri/v2/internal/ui/window"
 	"github.com/AshBuk/dabri/v2/output/outputters"
 )
 
@@ -121,8 +122,7 @@ type ConfigServiceInterface interface {
 type HotkeyServiceInterface interface {
 	// SetupHotkeyCallbacks connects application handlers to hotkey events
 	SetupHotkeyCallbacks(
-		startRecording func() error,
-		stopRecording func() error,
+		toggleRecording func() error,
 		showConfig func() error,
 		reloadConfig func() error,
 	) error
@@ -133,7 +133,7 @@ type HotkeyServiceInterface interface {
 	UnregisterHotkeys() error
 
 	// ReloadFromConfig applies new hotkey bindings without restarting
-	ReloadFromConfig(startRecording, stopRecording func() error, configProvider func() adapters.HotkeyConfig) error
+	ReloadFromConfig(toggleRecording func() error, configProvider func() adapters.HotkeyConfig) error
 
 	// CaptureOnce captures a single keypress for hotkey rebinding
 	CaptureOnce(timeoutMs int) (string, error)
@@ -152,6 +152,7 @@ type ServiceContainer struct {
 	IO              IOServiceInterface
 	Config          ConfigServiceInterface
 	Hotkeys         HotkeyServiceInterface
+	Window          window.Manager
 	TempFileManager *processing.TempFileManager
 	InputDaemon     *outputters.YdotoolDaemon
 }

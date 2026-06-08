@@ -13,6 +13,7 @@ require (
 	github.com/ggerganov/whisper.cpp/bindings/go v0.0.0-20260601115620-23ee03506a91
 	github.com/go-audio/wav v1.1.0
 	github.com/godbus/dbus/v5 v5.2.2
+	github.com/gotk3/gotk3 v0.6.5-0.20251124190141-e7a9e823ca35
 	github.com/holoplot/go-evdev v0.0.0-20250804134636-ab1d56a1fe83
 	github.com/spf13/cobra v1.10.2
 	go.uber.org/goleak v1.3.0

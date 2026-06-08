@@ -5,6 +5,7 @@ package services
 
 import (
 	"fmt"
+	"os"
 	"os/exec"
 	"time"
 
@@ -13,9 +14,11 @@ import (
 	"github.com/AshBuk/dabri/v2/config"
 	"github.com/AshBuk/dabri/v2/hotkeys/adapters"
 	"github.com/AshBuk/dabri/v2/hotkeys/manager"
+	"github.com/AshBuk/dabri/v2/internal/constants"
 	"github.com/AshBuk/dabri/v2/internal/notify"
 	"github.com/AshBuk/dabri/v2/internal/platform"
-	"github.com/AshBuk/dabri/v2/internal/tray"
+	"github.com/AshBuk/dabri/v2/internal/ui/tray"
+	"github.com/AshBuk/dabri/v2/internal/ui/window"
 	outputFactory "github.com/AshBuk/dabri/v2/output/factory"
 	outputInterfaces "github.com/AshBuk/dabri/v2/output/interfaces"
 	"github.com/AshBuk/dabri/v2/output/outputters"
@@ -100,6 +103,8 @@ func (cf *FactoryComponents) InitializeComponents() (*Components, error) {
 		components.TrayManager.Start()
 		components.TrayManager.UpdateSettings(cf.config.Config)
 	}
+	// Initialize main window controller (no-op without a GUI backend).
+	components.WindowManager = cf.createWindowManager()
 	// Initialize notification manager
 	components.NotifyManager = notify.NewNotificationManager("Dabri", cf.config.Config)
 
@@ -182,4 +187,37 @@ func (cf *FactoryComponents) createWebSocketServer() *websocket.WebSocketServer 
 // Callbacks are wired later in Stage 3 (FactoryWirer).
 func (cf *FactoryComponents) createTrayManager() tray.Manager {
 	return tray.CreateTrayManagerWithConfig(cf.config.Config, cf.config.Logger)
+}
+
+// createWindowManager creates the main window backend (no-op without a GUI
+// backend). Actions are wired later in Stage 3 (FactoryWirer).
+func (cf *FactoryComponents) createWindowManager() window.Manager {
+	cfg := cf.config.Config
+	hasTray := platform.HasStatusNotifierWatcher()
+	opts := window.Options{
+		HasTray:        hasTray,
+		StartVisible:   !hasTray || isFirstRun(),
+		ActiveModel:    cfg.General.WhisperModel,
+		ActiveLanguage: cfg.General.Language,
+		OutputMode:     cfg.Output.DefaultMode,
+		Hotkey:         cfg.Hotkeys.StartRecording,
+	}
+	for _, m := range constants.WhisperModels {
+		opts.Models = append(opts.Models, window.ModelChoice{ID: m.ID, Name: m.Name})
+	}
+	for _, l := range constants.WhisperLanguages {
+		opts.Languages = append(opts.Languages, window.LangChoice{Code: l.Code, Name: l.Name})
+	}
+	return window.New(cf.config.Logger, opts)
+}
+
+// isFirstRun reports whether the config file does not yet exist, used to show
+// the window once on a fresh install even when a tray is available.
+func isFirstRun() bool {
+	path, err := config.ConfigFilePath()
+	if err != nil {
+		return false
+	}
+	_, statErr := os.Stat(path)
+	return os.IsNotExist(statErr)
 }

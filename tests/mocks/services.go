@@ -125,8 +125,7 @@ func (m *MockHotkeyService) Shutdown() error {
 }
 
 func (m *MockHotkeyService) SetupHotkeyCallbacks(
-	startRecording func() error,
-	stopRecording func() error,
+	toggleRecording func() error,
 	showConfig func() error,
 	resetToDefaults func() error,
 ) error {
@@ -134,7 +133,7 @@ func (m *MockHotkeyService) SetupHotkeyCallbacks(
 }
 func (m *MockHotkeyService) RegisterHotkeys() error   { return nil }
 func (m *MockHotkeyService) UnregisterHotkeys() error { return nil }
-func (m *MockHotkeyService) ReloadFromConfig(startRecording, stopRecording func() error, _ func() adapters.HotkeyConfig) error {
+func (m *MockHotkeyService) ReloadFromConfig(toggleRecording func() error, _ func() adapters.HotkeyConfig) error {
 	return nil
 }
 

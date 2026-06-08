@@ -67,6 +67,8 @@ func (tm *MockTrayManager) SetCoreActions(onToggle func() error, onShowConfig fu
 	tm.onResetToDefaults = onResetToDefaults
 }
 
+func (tm *MockTrayManager) SetShowWindowAction(_ func()) {}
+
 func (tm *MockTrayManager) SetAudioActions(onSelectRecorder func(method string) error) {
 	tm.onSelectRecorder = onSelectRecorder
 }

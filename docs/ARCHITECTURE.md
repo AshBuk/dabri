@@ -1,7 +1,7 @@
 # Dabri Architecture Documentation
 
 The application follows a **dual-mode daemon architecture** with clear separation of concerns:
-- **Daemon mode**: Background service with system tray, hotkeys, IPC server
+- **Daemon mode**: Background service with system tray and main window, hotkeys, IPC server
 - **CLI mode**: Control commands (start/stop/status/transcript) via Unix socket IPC
 
 ```
@@ -25,7 +25,7 @@ The application follows a **dual-mode daemon architecture** with clear separatio
 │                      Internal Utilities                         │
 ├─────────────────────────────────────────────────────────────────┤
 │  internal/logger/ │ internal/notify/ │ internal/platform/       │
-│  internal/tray/   │ internal/utils/  │ internal/constants/      │
+│  internal/ui/     │ internal/utils/  │ internal/constants/      │
 │  internal/services/ │ internal/ipc/                             │
 └─────────────────────────────────────────────────────────────────┘
 ┌─────────────────────────────────────────────────────────────────┐
@@ -52,11 +52,14 @@ The application follows a **dual-mode daemon architecture** with clear separatio
 
 // UI pipeline
   UIService -> TrayManager -> systray integration
+  UIService -> WindowManager -> GTK main window (no-op when built without the gtk tag)
   UIService -> NotificationManager -> system notifications
 
 // Hotkey pipeline
   HotkeyService -> HotkeyManager -> (evdev/dbus providers)
   HotkeyService -> ConfigAdapter -> hotkey mapping
+  // Start/stop is a single toggle resolved against AudioService.IsRecording(),
+  // shared by hotkey, window, tray and CLI (one source of truth, no per-surface state).
 
 // Output pipeline
   IOService -> OutputManager -> (clipboard/typing)
@@ -87,21 +90,21 @@ The application follows a **dual-mode daemon architecture** with clear separatio
   - IPC client for CLI commands communicating with daemon
 
 #### `internal/app/` - Application Core
-- **`app.go`**: Application orchestrator with ServiceContainer and RuntimeContext
-- **`handlers.go`**: Hotkey handlers that delegate to services
+- **`app.go`**: Application orchestrator with ServiceContainer and RuntimeContext; the window backend owns the main loop (GTK loop, or blocking no-op)
+- **`handlers.go`**: Hotkey handlers that delegate to services; recording is a single start/stop toggle decided from AudioService state
 - **`ipc.go`**: IPC server initialization and command handlers
 
 ### **Service Layer** (`internal/services/`)
 - **`interfaces.go`**: Service contracts and ServiceContainer definition
-- **`factory_components.go`**: Components initialization (recorder, whisper, output, hotkeys, tray, notify, websocket)
+- **`factory_components.go`**: Components initialization (recorder, whisper, output, hotkeys, tray, window, notify, websocket)
 - **`factory_assembler.go`**: Services assembly and cross-dependencies
-- **`factory_wirer.go`**: Tray menu callbacks wiring
+- **`factory_wirer.go`**: Tray and window callback wiring (shared recording toggle, model/language/output selection)
 - **`factory.go`**: Facade delegating to FactoryComponents, FactoryAssembler, FactoryWirer
 - **`audio_service.go`**: Audio recording, Whisper transcription
-- **`ui_service.go`**: System tray, notifications, UI state
+- **`ui_service.go`**: System tray, main window, notifications, UI state (fans state/config changes out to both tray and window)
 - **`io_service.go`**: Text output, WebSocket server
 - **`config_service.go`**: Configuration file operations
-- **`hotkey_service.go`**: Hotkey registration and callbacks
+- **`hotkey_service.go`**: Hotkey registration and the recording toggle
 
 Related constants:
 - **`internal/constants/ui.go`**: UI icons/messages/titles centralization
@@ -191,11 +194,16 @@ Related constants:
 - **`logger/logger.go`**: Structured logging with levels
 - **`notify/notification.go`**: Desktop notification system
 - **`platform/environment.go`**: Platform detection (X11/Wayland)
-- **`tray/`**: System tray integration
-  - `interface.go`: TrayManager interface
-  - `default_manager.go`: Standard system tray implementation
-  - `default_systray.go`: Systray library integration
-  - `mock_tray.go`: Mock implementation for testing
+- **`ui/`**: User-facing surfaces (grouped under one package)
+  - `tray/`: System tray integration
+    - `interface.go`: TrayManager interface
+    - `tray.go` / `default_systray.go`: systray library integration (built under the `systray` tag)
+    - `settings_menu.go`, `icons.go`: menu construction and icon assets
+    - `mock_tray.go`: Mock implementation for testing / headless builds
+  - `window/`: Optional main control window
+    - `window.go`: Manager interface, Options/Actions, shared types
+    - `gtk.go`: gotk3 backend (built under the `gtk` tag); owns the GTK main loop
+    - `noop.go`: headless fallback that still drives the app lifecycle
 - **`utils/`**: General utilities
   - `files.go`: File system utilities
   - `lockfile.go`: Single-instance protection (PID lock file)
@@ -248,4 +256,4 @@ Distribution-specific packaging scripts and configurations:
 
 ---
 
-*This architecture documentation is maintained alongside the codebase. Last updated: 2026-05-14*
+*This architecture documentation is maintained alongside the codebase. Last updated: 2026-06-08*

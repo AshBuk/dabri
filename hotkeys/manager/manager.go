@@ -19,18 +19,14 @@ type HotkeyAction func() error
 
 // Manages keyboard shortcuts, providers, and actions
 type HotkeyManager struct {
-	config           adapters.HotkeyConfig
-	isListening      bool
-	isRecording      bool
-	stopListening    chan bool
-	recordingStarted func() error
-	recordingStopped func() error
-	hotkeyActions    map[string]HotkeyAction // Maps hotkey actions to their callbacks
-	hotkeysMutex     sync.Mutex
-	environment      interfaces.EnvironmentType
-	provider         interfaces.KeyboardEventProvider
-	modifierState    map[string]bool // Tracks the state of modifier keys
-	logger           logger.Logger
+	config          adapters.HotkeyConfig
+	isListening     bool
+	recordingToggle func() error
+	hotkeyActions   map[string]HotkeyAction // Maps hotkey actions to their callbacks
+	hotkeysMutex    sync.Mutex
+	environment     interfaces.EnvironmentType
+	provider        interfaces.KeyboardEventProvider
+	logger          logger.Logger
 }
 
 // Create a new instance of the HotkeyManager
@@ -38,10 +34,7 @@ func NewHotkeyManager(config adapters.HotkeyConfig, environment interfaces.Envir
 	manager := &HotkeyManager{
 		config:        config,
 		isListening:   false,
-		isRecording:   false,
-		stopListening: make(chan bool),
 		environment:   environment,
-		modifierState: make(map[string]bool),
 		hotkeyActions: make(map[string]HotkeyAction),
 		logger:        logger,
 	}
@@ -53,13 +46,12 @@ func NewHotkeyManager(config adapters.HotkeyConfig, environment interfaces.Envir
 
 // selectProviderForEnvironment is defined in OS-specific files (e.g., manager_linux.go)
 
-// Register callbacks for recording start and stop events
-func (h *HotkeyManager) RegisterCallbacks(
-	recordingStarted func() error,
-	recordingStopped func() error,
-) {
-	h.recordingStarted = recordingStarted
-	h.recordingStopped = recordingStopped
+// RegisterToggle registers the callback that starts or stops recording. The
+// callback owns the start/stop decision (it consults the recorder's real state),
+// so the hotkey keeps no recording state of its own and never desyncs from the
+// window or tray.
+func (h *HotkeyManager) RegisterToggle(toggle func() error) {
+	h.recordingToggle = toggle
 }
 
 // Register a custom hotkey action
@@ -125,39 +117,15 @@ func (h *HotkeyManager) Stop() {
 	}
 }
 
-// Return the current recording state
-func (h *HotkeyManager) IsRecording() bool {
-	h.hotkeysMutex.Lock()
-	defer h.hotkeysMutex.Unlock()
-	return h.isRecording
-}
-
-// Forcefully set the recording state to false
-func (h *HotkeyManager) ResetRecordingState() {
-	h.hotkeysMutex.Lock()
-	defer h.hotkeysMutex.Unlock()
-	h.isRecording = false
-}
-
 // Simulate a hotkey press for testing purposes
 func (h *HotkeyManager) SimulateHotkeyPress(hotkeyName string) error {
 	h.hotkeysMutex.Lock()
 	defer h.hotkeysMutex.Unlock()
 
 	switch hotkeyName {
-	case "start_recording":
-		if !h.isRecording && h.recordingStarted != nil {
-			if err := h.recordingStarted(); err != nil {
-				return err
-			}
-			h.isRecording = true
-		}
-	case "stop_recording":
-		if h.recordingStopped != nil {
-			if err := h.recordingStopped(); err != nil {
-				return err
-			}
-			h.isRecording = false
+	case "toggle_recording":
+		if h.recordingToggle != nil {
+			return h.recordingToggle()
 		}
 	default:
 		return fmt.Errorf("unknown hotkey: %s", hotkeyName)

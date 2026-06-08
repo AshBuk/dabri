@@ -132,10 +132,9 @@ func (a *App) setupHotkeyCallbacks() error {
 
 	// Register callback functions defined in handlers.go
 	if err := a.Services.Hotkeys.SetupHotkeyCallbacks(
-		a.handleStartRecording,             // handlers.go: Start audio recording
-		a.handleStopRecordingAndTranscribe, // handlers.go: Stop recording and transcribe
-		a.handleShowConfig,                 // handlers.go: Display configuration
-		a.handleResetToDefaults,            // handlers.go: Reset settings to defaults
+		a.handleToggleRecording, // handlers.go: Start/stop recording (shared toggle)
+		a.handleShowConfig,      // handlers.go: Display configuration
+		a.handleResetToDefaults, // handlers.go: Reset settings to defaults
 	); err != nil {
 		return fmt.Errorf("failed to set up hotkey callbacks: %w", err)
 	}
@@ -180,14 +179,33 @@ func (a *App) RunAndWait() error {
 		a.Runtime.Logger.Warning("CLI IPC server not started: %v", err)
 	}
 
-	select { // Blocks here waiting for shutdown signal
+	// The window manager owns the main loop: the GTK backend runs gtk.Main on
+	// this (main) thread, the no-op backend blocks until Quit. A watcher
+	// goroutine stops the loop on an OS signal or context cancellation.
+	if a.Services != nil && a.Services.Window != nil {
+		go func() {
+			a.waitForShutdown()
+			a.Services.Window.Quit()
+		}()
+		if err := a.Services.Window.Run(); err != nil {
+			a.Runtime.Logger.Error("UI loop error: %v", err)
+		}
+		return a.Shutdown()
+	}
+
+	// Fallback when no window manager is wired (e.g. a partially built App).
+	a.waitForShutdown()
+	return a.Shutdown()
+}
+
+// waitForShutdown blocks until an OS signal or context cancellation.
+func (a *App) waitForShutdown() {
+	select {
 	case <-a.Runtime.ShutdownCh: // OS signal (Ctrl+C, SIGTERM)
 		a.Runtime.Logger.Info("Received shutdown signal")
 	case <-a.Runtime.Ctx.Done(): // Programmatic cancellation
 		a.Runtime.Logger.Info("Context cancelled")
 	}
-
-	return a.Shutdown()
 }
 
 // Graceful Shutdown - ensures clean resource cleanup

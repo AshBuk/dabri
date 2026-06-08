@@ -14,7 +14,8 @@ import (
 	"github.com/AshBuk/dabri/v2/internal/logger"
 	"github.com/AshBuk/dabri/v2/internal/notify"
 	"github.com/AshBuk/dabri/v2/internal/platform"
-	"github.com/AshBuk/dabri/v2/internal/tray"
+	"github.com/AshBuk/dabri/v2/internal/ui/tray"
+	"github.com/AshBuk/dabri/v2/internal/ui/window"
 	outputInterfaces "github.com/AshBuk/dabri/v2/output/interfaces"
 	"github.com/AshBuk/dabri/v2/output/outputters"
 	"github.com/AshBuk/dabri/v2/websocket"
@@ -40,6 +41,7 @@ type Components struct {
 	HotkeyManager   *manager.HotkeyManager      // Global hotkey registration
 	WebSocketServer *websocket.WebSocketServer  // WebSocket server for remote control
 	TrayManager     tray.Manager                // System tray icon and menu
+	WindowManager   window.Manager              // Optional main control window (no-op without GUI backend)
 	NotifyManager   *notify.NotificationManager // Desktop notifications
 	TempFileManager *processing.TempFileManager // Temporary audio file management
 	InputDaemon     *outputters.YdotoolDaemon   // ydotoold for active-window typing (Flatpak/wlroots)

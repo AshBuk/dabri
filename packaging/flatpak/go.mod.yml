@@ -12,6 +12,11 @@
   strip-components: 3
   type: archive
   url: https://proxy.golang.org/github.com/gorilla/websocket/@v/v1.5.3.zip
+- dest: vendor/github.com/gotk3/gotk3
+  sha256: 48cbe44b9033026750a6c3ab6fca88f7598c92fb44d011056e47d62729416906
+  strip-components: 3
+  type: archive
+  url: https://proxy.golang.org/github.com/gotk3/gotk3/@v/v0.6.5-0.20251124190141-e7a9e823ca35.zip
 - dest: vendor/gopkg.in/yaml.v2
   sha256: ede49e27c4cca6cdd2ec719aed8ea4d363710cceb3d411e7a786fbdec0d391fd
   strip-components: 2

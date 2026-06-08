@@ -41,6 +41,19 @@ func (a *App) handleStopRecordingAndTranscribe() error {
 	return a.Services.Audio.HandleStopRecording()
 }
 
+// handleToggleRecording starts or stops recording based on the recorder's real
+// state, so every trigger (hotkey, window, tray) shares one source of truth and
+// they never desync.
+func (a *App) handleToggleRecording() error {
+	if a.Services == nil || a.Services.Audio == nil {
+		return fmt.Errorf("audio service not available")
+	}
+	if a.Services.Audio.IsRecording() {
+		return a.handleStopRecordingAndTranscribe()
+	}
+	return a.handleStartRecording()
+}
+
 // handleShowConfig Adapter - delegates show config hotkey to UIService
 func (a *App) handleShowConfig() error {
 	if a.Services == nil || a.Services.UI == nil {
@@ -68,8 +81,7 @@ func (a *App) handleResetToDefaults() error {
 			return adapters.NewConfigAdapter("", "auto")
 		}
 		if err := a.Services.Hotkeys.ReloadFromConfig(
-			a.handleStartRecording,
-			a.handleStopRecordingAndTranscribe,
+			a.handleToggleRecording,
 			cfgProvider,
 		); err != nil {
 			return err

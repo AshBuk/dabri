@@ -90,6 +90,12 @@ func (as *AudioService) SetConfig(cfg ConfigServiceInterface) { as.cfg = cfg }
 func (as *AudioService) HandleStartRecording() error {
 	as.mu.Lock()
 	defer as.mu.Unlock()
+
+	// Idempotent: a duplicate start
+	if as.isRecording {
+		as.logger.Info("Start ignored: recording already in progress")
+		return nil
+	}
 	as.logger.Info("Starting recording...")
 
 	// Ensure model is available

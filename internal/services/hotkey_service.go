@@ -16,7 +16,7 @@ import (
 type HotkeyManager interface {
 	Start() error
 	Stop()
-	RegisterCallbacks(startRecording, stopRecording func() error)
+	RegisterToggle(toggle func() error)
 	RegisterHotkeyAction(action string, callback manager.HotkeyAction)
 	ReloadConfig(newConfig adapters.HotkeyConfig) error
 	CaptureOnce(timeout time.Duration) (string, error)
@@ -42,8 +42,7 @@ func NewHotkeyService(
 
 // Connect application handlers to low-level hotkey events
 func (hs *HotkeyService) SetupHotkeyCallbacks(
-	startRecording func() error,
-	stopRecording func() error,
+	toggleRecording func() error,
 	showConfig func() error,
 	resetToDefaults func() error,
 ) error {
@@ -51,8 +50,8 @@ func (hs *HotkeyService) SetupHotkeyCallbacks(
 		return fmt.Errorf("hotkey manager not available")
 	}
 	hs.logger.Info("Setting up hotkey callbacks...")
-	// Register the main recording callbacks
-	hs.hotkeyManager.RegisterCallbacks(startRecording, stopRecording)
+	// Register the recording toggle (owns the start/stop decision)
+	hs.hotkeyManager.RegisterToggle(toggleRecording)
 	// Register additional hotkey actions
 	hs.hotkeyManager.RegisterHotkeyAction("show_config", showConfig)
 	hs.hotkeyManager.RegisterHotkeyAction("reset_to_defaults", resetToDefaults)
@@ -100,13 +99,13 @@ func (hs *HotkeyService) Shutdown() error {
 }
 
 // Apply new hotkey bindings without restarting the service
-func (hs *HotkeyService) ReloadFromConfig(startRecording, stopRecording func() error, configProvider func() adapters.HotkeyConfig) error {
+func (hs *HotkeyService) ReloadFromConfig(toggleRecording func() error, configProvider func() adapters.HotkeyConfig) error {
 	if hs.hotkeyManager == nil {
 		return fmt.Errorf("hotkey manager not available")
 	}
 	cfg := configProvider()
-	// ensure callbacks are set (in case of provider swap)
-	hs.hotkeyManager.RegisterCallbacks(startRecording, stopRecording)
+	// ensure the toggle is set (in case of provider swap)
+	hs.hotkeyManager.RegisterToggle(toggleRecording)
 	return hs.hotkeyManager.ReloadConfig(cfg)
 }
 
