@@ -193,7 +193,11 @@ func (cw *FactoryWirer) makeLanguageCallback(container *ServiceContainer) func(s
 		if container == nil || container.Config == nil {
 			return fmt.Errorf("config service not available")
 		}
-		return container.Config.UpdateLanguage(language)
+		if err := container.Config.UpdateLanguage(language); err != nil {
+			return err
+		}
+		cw.updateUISettings(container)
+		return nil
 	}
 }
 func (cw *FactoryWirer) makeToggleNotificationsCallback(container *ServiceContainer) func() error {
