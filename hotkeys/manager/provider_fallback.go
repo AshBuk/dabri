@@ -15,23 +15,15 @@ import (
 func (h *HotkeyManager) registerAllHotkeysOn(provider interfaces.KeyboardEventProvider) error {
 	// Register the primary start/stop recording hotkey
 	if err := provider.RegisterHotkey(h.config.GetStartRecordingHotkey(), func() error {
-		h.hotkeysMutex.Lock()
-		defer h.hotkeysMutex.Unlock()
-
-		if !h.isRecording && h.recordingStarted != nil {
-			h.logger.Info("Start recording hotkey detected")
-			if err := h.recordingStarted(); err != nil {
-				h.logger.Error("Error starting recording: %v", err)
-				return err
-			}
-			h.isRecording = true
-		} else if h.isRecording && h.recordingStopped != nil {
-			h.logger.Info("Stop recording hotkey detected")
-			if err := h.recordingStopped(); err != nil {
-				h.logger.Error("Error stopping recording: %v", err)
-				return err
-			}
-			h.isRecording = false
+		// The toggle owns the start/stop decision against the recorder's real
+		// state, so this path holds no recording state of its own.
+		if h.recordingToggle == nil {
+			return nil
+		}
+		h.logger.Info("Toggle recording hotkey detected")
+		if err := h.recordingToggle(); err != nil {
+			h.logger.Error("Error toggling recording: %v", err)
+			return err
 		}
 		return nil
 	}); err != nil {

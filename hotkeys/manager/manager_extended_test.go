@@ -287,15 +287,16 @@ func TestHotkeyManager_ConcurrentAccess_Extended(t *testing.T) {
 	mockProvider := mocks.NewMockHotkeyProvider()
 	manager.provider = mockProvider
 
-	// Test concurrent access to IsRecording
+	manager.RegisterToggle(func() error { return nil })
+
+	// Test concurrent toggle presses
 	done := make(chan bool, 10)
 
 	for i := 0; i < 10; i++ {
 		go func() {
 			defer func() { done <- true }()
 			for j := 0; j < 100; j++ {
-				manager.IsRecording()
-				manager.SimulateHotkeyPress("start_recording")
+				_ = manager.SimulateHotkeyPress("toggle_recording")
 			}
 		}()
 	}

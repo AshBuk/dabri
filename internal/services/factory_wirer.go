@@ -278,8 +278,7 @@ func (cw *FactoryWirer) reloadHotkeysFromConfig(container *ServiceContainer) err
 
 	cfgProvider := cw.makeConfigProvider(container)
 	return container.Hotkeys.ReloadFromConfig(
-		func() error { return container.Audio.HandleStartRecording() },
-		func() error { return container.Audio.HandleStopRecording() },
+		cw.makeToggleCallback(container),
 		cfgProvider,
 	)
 }
