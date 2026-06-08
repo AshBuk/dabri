@@ -9,6 +9,7 @@ import (
 	"context"
 	"fmt"
 	"sync"
+	"time"
 
 	"github.com/gotk3/gotk3/glib"
 	"github.com/gotk3/gotk3/gtk"
@@ -16,6 +17,11 @@ import (
 	configmodels "github.com/AshBuk/dabri/v2/config/models"
 	"github.com/AshBuk/dabri/v2/internal/logger"
 )
+
+// toggleDebounce drops a second record-button "clicked" that arrives within this
+// window of the first. GTK delivers two "clicked" signals on a double-tap, which
+// would otherwise start and immediately stop a recording.
+const toggleDebounce = 400 * time.Millisecond
 
 // gtkManager is the GTK3 backend. Run owns the calling thread and runs the GTK
 // main loop; all widget mutations from other goroutines are marshalled onto that
@@ -31,7 +37,8 @@ type gtkManager struct {
 	outputCombo *gtk.ComboBoxText
 	startButton *gtk.Button
 
-	suppress bool // ignore combo "changed" while we set values programmatically
+	suppress   bool      // ignore combo "changed" while we set values programmatically
+	lastToggle time.Time // GTK-thread only: debounces record-button double-taps
 
 	mu       sync.Mutex // guards actions
 	actions  Actions
@@ -217,7 +224,16 @@ func (m *gtkManager) build() error {
 		sc.AddClass("suggested-action")
 	}
 	m.startButton.Connect("clicked", func() {
+		// Runs on the GTK thread, so lastToggle needs no lock. Coalesce a
+		// double-tap (GTK emits two "clicked") into a single toggle.
+		now := time.Now()
+		if now.Sub(m.lastToggle) < toggleDebounce {
+			m.log.Info("window: record button click ignored (debounce)")
+			return
+		}
+		m.lastToggle = now
 		if a := m.act(); a.OnToggleRecording != nil {
+			m.log.Info("window: record button clicked")
 			go m.run("toggle recording", a.OnToggleRecording)
 		}
 	})
@@ -229,6 +245,17 @@ func (m *gtkManager) build() error {
 	}
 	bgButton.Connect("clicked", func() { m.win.Hide() })
 	outer.PackStart(bgButton, false, false, 0)
+
+	// Make every control non-focusable. With output mode "Type to window" the
+	// transcript is typed into the active window; if that happens to
+	// be our own window, a focused widget would react to the synthetic keys —
+	// Space would re-fire the record button (start/stop feedback loop) and combo
+	// type-ahead would change the model/language. Mouse clicks still work.
+	for _, w := range []interface{ SetCanFocus(bool) }{
+		m.modelCombo, m.langCombo, m.outputCombo, m.startButton, bgButton,
+	} {
+		w.SetCanFocus(false)
+	}
 
 	win.Add(outer)
 	m.applyState(StateReady)
