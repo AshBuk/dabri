@@ -95,6 +95,7 @@ Provides:       bundled(golang(github.com/go-audio/riff)) = 1.0.0
 Provides:       bundled(golang(github.com/go-audio/wav)) = 1.1.0
 Provides:       bundled(golang(github.com/godbus/dbus/v5)) = 5.2.2
 Provides:       bundled(golang(github.com/gorilla/websocket)) = 1.5.3
+Provides:       bundled(golang(github.com/gotk3/gotk3)) = 0.6.5.0.20251124190141.e7a9e823ca35
 Provides:       bundled(golang(github.com/holoplot/go-evdev)) = 0.0.0.20250804134636.ab1d56a1fe83
 Provides:       bundled(golang(github.com/kr/text)) = 0.2.0
 Provides:       bundled(golang(go.uber.org/goleak)) = 1.3.0
@@ -172,7 +173,7 @@ export LD_LIBRARY_PATH=$(pwd)/lib
 VENDOR_RPATH='$ORIGIN/../lib64/%{name}'
 go build -v \
     -mod=vendor \
-    -tags systray \
+    -tags systray,gtk \
     -ldflags "-s -w -X github.com/AshBuk/dabri/v2/internal/version.Version=%{version} -linkmode=external -extldflags '-Wl,-rpath,${VENDOR_RPATH}'" \
     -o %{name} \
     ./cmd/dabri

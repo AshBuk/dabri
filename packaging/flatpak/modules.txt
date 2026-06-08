@@ -29,6 +29,16 @@ github.com/godbus/dbus/v5/prop
 # github.com/gorilla/websocket v1.5.3
 ## explicit; go 1.12
 github.com/gorilla/websocket
+# github.com/gotk3/gotk3 v0.6.5-0.20251124190141-e7a9e823ca35
+## explicit; go 1.14
+github.com/gotk3/gotk3/cairo
+github.com/gotk3/gotk3/gdk
+github.com/gotk3/gotk3/glib
+github.com/gotk3/gotk3/gtk
+github.com/gotk3/gotk3/internal/callback
+github.com/gotk3/gotk3/internal/closure
+github.com/gotk3/gotk3/internal/slab
+github.com/gotk3/gotk3/pango
 # github.com/holoplot/go-evdev v0.0.0-20250804134636-ab1d56a1fe83
 ## explicit; go 1.18
 github.com/holoplot/go-evdev

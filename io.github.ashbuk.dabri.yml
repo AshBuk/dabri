@@ -152,7 +152,7 @@ modules:
         LD_LIBRARY_PATH: /app/lib/dabri
         PKG_CONFIG_PATH: /app/lib/pkgconfig:/usr/lib/pkgconfig
     build-commands:
-      - APP_VERSION="$(python3 -c 'import xml.etree.ElementTree as ET; print(ET.parse("io.github.ashbuk.dabri.appdata.xml").getroot().find("releases/release").attrib["version"])')" && go build -mod=vendor -tags systray -trimpath -ldflags "-s -w -X github.com/AshBuk/dabri/v2/internal/version.Version=${APP_VERSION} -linkmode=external -extldflags '-Wl,-rpath,/app/lib/dabri'" -o dabri ./cmd/dabri
+      - APP_VERSION="$(python3 -c 'import xml.etree.ElementTree as ET; print(ET.parse("io.github.ashbuk.dabri.appdata.xml").getroot().find("releases/release").attrib["version"])')" && go build -mod=vendor -tags systray,gtk -trimpath -ldflags "-s -w -X github.com/AshBuk/dabri/v2/internal/version.Version=${APP_VERSION} -linkmode=external -extldflags '-Wl,-rpath,/app/lib/dabri'" -o dabri ./cmd/dabri
       - install -Dm755 dabri /app/bin/dabri
       - install -Dm755 packaging/flatpak/arecord /app/bin/arecord
       - install -Dm755 packaging/flatpak/notify-send /app/bin/notify-send

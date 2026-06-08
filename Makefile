@@ -126,7 +126,7 @@ build: deps whisper-libs
 # Build with systray support
 build-systray: deps whisper-libs
 	@echo "=== Building $(BINARY_NAME) with systray support (Docker) ==="
-	$(DOCKER_RUN) bash -c 'go build -tags systray -v -ldflags "$(LDFLAGS)" -o $(BINARY_NAME) ./cmd/dabri && ls -lh $(BINARY_NAME)'
+	$(DOCKER_RUN) bash -c 'go build -tags systray,gtk -v -ldflags "$(LDFLAGS)" -o $(BINARY_NAME) ./cmd/dabri && ls -lh $(BINARY_NAME)'
 
 # ============================================================================
 # Packaging
@@ -143,18 +143,22 @@ appimage-host: build
 	@echo "⚠️  Warning: This requires linuxdeploy and appimagetool installed on host"
 	bash packaging/appimage/build-appimage.sh
 
-# Build Flatpak locally (requires flatpak-builder)
+# Build and install Flatpak into the user installation (host or flatpak'd builder)
 flatpak:
-	@echo "=== Building Flatpak locally ==="
+	@echo "=== Building + installing Flatpak (--user) ==="
 	@if [ ! -f shared-modules/libayatana-appindicator/libayatana-appindicator-gtk3.json ]; then \
 		echo "Initializing Flathub shared-modules submodule..."; \
 		git submodule update --init --recursive shared-modules; \
 	fi
+	@RT_VER=$$(sed -n 's/^runtime-version:[[:space:]]*"\{0,1\}\([0-9]\{1,\}\)"\{0,1\}.*/\1/p' io.github.ashbuk.dabri.yml); \
+	echo "Ensuring GNOME $$RT_VER runtime/SDK (host flatpak)..."; \
+	flatpak install --user -y --noninteractive flathub org.gnome.Platform//$$RT_VER org.gnome.Sdk//$$RT_VER
 	@if command -v flatpak-builder >/dev/null 2>&1; then \
-		flatpak-builder --force-clean --install-deps-from=flathub build-flatpak io.github.ashbuk.dabri.yml; \
+		flatpak-builder --user --force-clean --install build-flatpak io.github.ashbuk.dabri.yml; \
 	else \
-		flatpak run --command=flatpak-builder org.flatpak.Builder --force-clean --install-deps-from=flathub build-flatpak io.github.ashbuk.dabri.yml; \
+		flatpak run org.flatpak.Builder --user --force-clean --install build-flatpak io.github.ashbuk.dabri.yml; \
 	fi
+	@echo "Installed. Launch with: flatpak run io.github.ashbuk.dabri"
 
 # Clean build artifacts
 clean:
