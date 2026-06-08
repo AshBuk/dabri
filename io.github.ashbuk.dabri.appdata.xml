@@ -30,8 +30,8 @@
   </description>
   <screenshots>
     <screenshot type="default">
-      <caption>Dabri application icon</caption>
-      <image>https://raw.githubusercontent.com/AshBuk/dabri/master/icons/io.github.ashbuk.dabri-logo.png</image>
+      <caption>Dabri main window and system tray</caption>
+      <image>https://raw.githubusercontent.com/AshBuk/dabri/screenshots/main-window.png</image>
     </screenshot>
   </screenshots>
   <url type="homepage">https://github.com/AshBuk/dabri</url>
