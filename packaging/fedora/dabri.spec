@@ -5,7 +5,7 @@
 # =============================================================================
 # Version definitions (single source of truth)
 # =============================================================================
-%global app_version     2.0.2
+%global app_version     2.1.0
 %global go_version      1.21
 %global whisper_version 1.8.6
 
@@ -259,6 +259,9 @@ fi
 %{_datadir}/icons/hicolor/scalable/apps/io.github.ashbuk.dabri.svg
 
 %changelog
+* Tue Jun 09 2026 Asher Buk <AshBuk@users.noreply.github.com> - 2.1.0-1
+- Sandbox-friendly Flatpak release with a dedicated Wayland portal library and a tray status window
+
 * Thu Jun 04 2026 Asher Buk <AshBuk@users.noreply.github.com> - 2.0.2-1
 - Bug fixes and improvements
 
