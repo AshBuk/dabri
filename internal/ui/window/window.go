@@ -26,14 +26,22 @@ type ModelChoice struct {
 	Name string
 }
 
+// LangChoice is one selectable language: an ISO code and a display name.
+type LangChoice struct {
+	Code string
+	Name string
+}
+
 // Options is the initial display state passed to a backend at construction.
 type Options struct {
-	HasTray      bool          // whether a system tray is available
-	StartVisible bool          // show the window as soon as the loop starts
-	Models       []ModelChoice // selectable models
-	ActiveModel  string        // active model ID
-	OutputMode   string        // active output mode (config value)
-	Hotkey       string        // start-recording hotkey, for display only
+	HasTray        bool          // whether a system tray is available
+	StartVisible   bool          // show the window as soon as the loop starts
+	Models         []ModelChoice // selectable models
+	ActiveModel    string        // active model ID
+	Languages      []LangChoice  // selectable languages
+	ActiveLanguage string        // active language code
+	OutputMode     string        // active output mode (config value)
+	Hotkey         string        // start-recording hotkey, for display only
 }
 
 // Actions are the callbacks the window invokes on user interaction; the window
@@ -42,26 +50,23 @@ type Options struct {
 type Actions struct {
 	OnToggleRecording func() error
 	OnSelectModel     func(ctx context.Context, modelID string) error
+	OnSelectLanguage  func(language string) error
 	OnSelectOutput    func(mode string) error
 	OnQuit            func()
 }
 
 // Manager drives the main window. The backend is chosen at build time (gotk3 or
-// no-op). Visibility and update methods are safe to call from any goroutine;
-// Run owns the calling thread and blocks until Quit.
+// no-op). Show and the Set* updaters are safe to call from any goroutine; Run
+// owns the calling thread and blocks until Quit.
 type Manager interface {
 	Run() error
 	Quit()
-	Available() bool
 
 	SetActions(actions Actions)
-
 	Show()
-	Hide()
-	Present()
-	Toggle()
 
 	SetState(state State)
 	SetModel(modelID string)
+	SetLanguage(code string)
 	SetOutput(mode string)
 }

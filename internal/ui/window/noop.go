@@ -27,12 +27,9 @@ func New(_ logger.Logger, _ Options) Manager {
 func (m *noopManager) Run() error { <-m.stop; return nil }
 func (m *noopManager) Quit()      { m.stopOnce.Do(func() { close(m.stop) }) }
 
-func (m *noopManager) Available() bool      { return false }
 func (m *noopManager) SetActions(_ Actions) {}
 func (m *noopManager) Show()                {}
-func (m *noopManager) Hide()                {}
-func (m *noopManager) Present()             {}
-func (m *noopManager) Toggle()              {}
 func (m *noopManager) SetState(State)       {}
 func (m *noopManager) SetModel(string)      {}
+func (m *noopManager) SetLanguage(string)   {}
 func (m *noopManager) SetOutput(string)     {}

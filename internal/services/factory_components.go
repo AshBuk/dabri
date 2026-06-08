@@ -195,14 +195,18 @@ func (cf *FactoryComponents) createWindowManager() window.Manager {
 	cfg := cf.config.Config
 	hasTray := platform.HasStatusNotifierWatcher()
 	opts := window.Options{
-		HasTray:      hasTray,
-		StartVisible: !hasTray || isFirstRun(),
-		ActiveModel:  cfg.General.WhisperModel,
-		OutputMode:   cfg.Output.DefaultMode,
-		Hotkey:       cfg.Hotkeys.StartRecording,
+		HasTray:        hasTray,
+		StartVisible:   !hasTray || isFirstRun(),
+		ActiveModel:    cfg.General.WhisperModel,
+		ActiveLanguage: cfg.General.Language,
+		OutputMode:     cfg.Output.DefaultMode,
+		Hotkey:         cfg.Hotkeys.StartRecording,
 	}
 	for _, m := range constants.WhisperModels {
 		opts.Models = append(opts.Models, window.ModelChoice{ID: m.ID, Name: m.Name})
+	}
+	for _, l := range constants.WhisperLanguages {
+		opts.Languages = append(opts.Languages, window.LangChoice{Code: l.Code, Name: l.Name})
 	}
 	return window.New(cf.config.Logger, opts)
 }

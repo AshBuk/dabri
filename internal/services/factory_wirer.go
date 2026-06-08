@@ -91,6 +91,7 @@ func (cw *FactoryWirer) Wire(container *ServiceContainer, components *Components
 		components.WindowManager.SetActions(window.Actions{
 			OnToggleRecording: cw.makeToggleCallback(container),
 			OnSelectModel:     cw.makeModelSelectionCallback(container),
+			OnSelectLanguage:  cw.makeLanguageCallback(container),
 			OnSelectOutput:    cw.makeOutputModeCallback(container),
 			OnQuit: func() {
 				_ = syscall.Kill(os.Getpid(), syscall.SIGTERM)

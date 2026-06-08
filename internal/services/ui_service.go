@@ -78,6 +78,13 @@ func (us *UIService) UpdateSettings(cfg *config.Config) {
 	if us.tray != nil {
 		us.tray.UpdateSettings(cfg)
 	}
+	// Fan the same change out to the window so its combos stay in sync with the
+	// tray and config (no-op backend ignores these; setters suppress echo).
+	if us.window != nil && cfg != nil {
+		us.window.SetModel(cfg.General.WhisperModel)
+		us.window.SetLanguage(cfg.General.Language)
+		us.window.SetOutput(cfg.Output.DefaultMode)
+	}
 }
 
 // Update visual feedback during active recording

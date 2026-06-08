@@ -27,6 +27,7 @@ type gtkManager struct {
 	win         *gtk.Window
 	statusLabel *gtk.Label
 	modelCombo  *gtk.ComboBoxText
+	langCombo   *gtk.ComboBoxText
 	outputCombo *gtk.ComboBoxText
 	startButton *gtk.Button
 
@@ -59,27 +60,13 @@ func (m *gtkManager) Quit() {
 	m.quitOnce.Do(func() { idle(gtk.MainQuit) })
 }
 
-func (m *gtkManager) Available() bool { return true }
-
 func (m *gtkManager) SetActions(a Actions) {
 	m.mu.Lock()
 	m.actions = a
 	m.mu.Unlock()
 }
 
-func (m *gtkManager) Show()    { idle(func() { m.show() }) }
-func (m *gtkManager) Hide()    { idle(func() { m.win.Hide() }) }
-func (m *gtkManager) Present() { idle(func() { m.win.Present() }) }
-
-func (m *gtkManager) Toggle() {
-	idle(func() {
-		if m.win.GetVisible() {
-			m.win.Hide()
-		} else {
-			m.show()
-		}
-	})
-}
+func (m *gtkManager) Show() { idle(func() { m.show() }) }
 
 func (m *gtkManager) SetState(s State) { idle(func() { m.applyState(s) }) }
 
@@ -90,6 +77,17 @@ func (m *gtkManager) SetModel(id string) {
 		}
 		m.suppress = true
 		m.modelCombo.SetActiveID(id)
+		m.suppress = false
+	})
+}
+
+func (m *gtkManager) SetLanguage(code string) {
+	idle(func() {
+		if m.langCombo == nil {
+			return
+		}
+		m.suppress = true
+		m.langCombo.SetActiveID(code)
 		m.suppress = false
 	})
 }
@@ -164,6 +162,28 @@ func (m *gtkManager) build() error {
 	})
 	m.attachRow(grid, 1, "Model", m.modelCombo)
 
+	m.langCombo, err = gtk.ComboBoxTextNew()
+	if err != nil {
+		return err
+	}
+	for _, l := range m.opts.Languages {
+		m.langCombo.Append(l.Code, l.Name)
+	}
+	m.langCombo.SetActiveID(m.opts.ActiveLanguage)
+	m.langCombo.Connect("changed", func() {
+		if m.suppress {
+			return
+		}
+		code := m.langCombo.GetActiveID()
+		if code == "" {
+			return
+		}
+		if a := m.act(); a.OnSelectLanguage != nil {
+			go m.run("language switch", func() error { return a.OnSelectLanguage(code) })
+		}
+	})
+	m.attachRow(grid, 2, "Language", m.langCombo)
+
 	m.outputCombo, err = gtk.ComboBoxTextNew()
 	if err != nil {
 		return err
@@ -183,9 +203,9 @@ func (m *gtkManager) build() error {
 			go m.run("output switch", func() error { return a.OnSelectOutput(mode) })
 		}
 	})
-	m.attachRow(grid, 2, "Output", m.outputCombo)
+	m.attachRow(grid, 3, "Output", m.outputCombo)
 
-	m.addRow(grid, 3, "Hotkey", &m.opts.Hotkey)
+	m.addRow(grid, 4, "Hotkey", &m.opts.Hotkey)
 
 	outer.PackStart(grid, false, false, 0)
 
