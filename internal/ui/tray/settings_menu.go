@@ -432,6 +432,17 @@ func (tm *TrayManager) updateHotkeysMenuUI() {
 	for _, cfg := range hotkeyConfigs {
 		tm.createHotkeyMenuItem(cfg, supportsCaptureOnce)
 	}
+
+	// Without capture-once (portal path) bindings are owned by the compositor and
+	// can only be changed in the system settings, so note that instead of rebind.
+	if !supportsCaptureOnce && tm.hotkeyItems["rebind_note"] == nil {
+		note := tm.hotkeysMenu.AddSubMenuItem(
+			"Set shortcuts in system settings",
+			"On Wayland, global shortcuts are managed by the desktop's Keyboard Shortcuts",
+		)
+		note.Disable()
+		tm.hotkeyItems["rebind_note"] = note
+	}
 }
 
 // updateRecorderRadioUI updates titles to emulate radio selection
