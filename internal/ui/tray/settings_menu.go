@@ -353,21 +353,24 @@ type hotkeyMenuConfig struct {
 // createHotkeyMenuItem creates or updates a hotkey menu item with rebind capability.
 // This helper reduces code duplication for hotkey menu item creation.
 func (tm *TrayManager) createHotkeyMenuItem(cfg hotkeyMenuConfig, supportsCaptureOnce bool) {
-	// Create rebind button if supported and not exists
+	// Create the rebind button once, then toggle its visibility by support.
 	if tm.hotkeyItems[cfg.rebindKey] == nil {
-		if supportsCaptureOnce {
-			rebindBtn := tm.hotkeysMenu.AddSubMenuItem(cfg.rebindTitle, cfg.rebindTooltip)
-			tm.hotkeyItems[cfg.rebindKey] = rebindBtn
+		rebindBtn := tm.hotkeysMenu.AddSubMenuItem(cfg.rebindTitle, cfg.rebindTooltip)
+		tm.hotkeyItems[cfg.rebindKey] = rebindBtn
 
-			// Use shared click helper to reduce duplication
-			tm.handleMenuItemClick(rebindBtn, func() {
-				if tm.onRebindHotkey != nil {
-					if err := tm.onRebindHotkey(cfg.actionName); err != nil {
-						tm.logger.Error("Error rebinding %s: %v", cfg.actionName, err)
-					}
+		// Use shared click helper to reduce duplication
+		tm.handleMenuItemClick(rebindBtn, func() {
+			if tm.onRebindHotkey != nil {
+				if err := tm.onRebindHotkey(cfg.actionName); err != nil {
+					tm.logger.Error("Error rebinding %s: %v", cfg.actionName, err)
 				}
-			})
-		}
+			}
+		})
+	}
+	if supportsCaptureOnce {
+		tm.hotkeyItems[cfg.rebindKey].Show()
+	} else {
+		tm.hotkeyItems[cfg.rebindKey].Hide()
 	}
 
 	// Create or update display item
