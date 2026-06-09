@@ -3,6 +3,11 @@
 
 package constants
 
+// AppID is the application's freedesktop identifier. It matches the installed
+// .desktop file and is declared to the desktop portal so it can resolve the
+// app's name and icon when opening portal sessions.
+const AppID = "io.github.ashbuk.dabri"
+
 // Common UI Messages
 const (
 	MsgReady                  = "Ready"

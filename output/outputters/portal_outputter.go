@@ -10,6 +10,7 @@ import (
 
 	"github.com/AshBuk/go-wlportal/typing"
 
+	"github.com/AshBuk/dabri/v2/internal/constants"
 	"github.com/AshBuk/dabri/v2/output/interfaces"
 )
 
@@ -27,7 +28,10 @@ type PortalOutputter struct {
 
 // NewPortalOutputter creates a portal-based type outputter (session is opened lazily).
 func NewPortalOutputter() (interfaces.Outputter, error) {
-	kbd, err := typing.NewKeyboard(typing.WithRestoreTokenPath(portalTokenPath()))
+	kbd, err := typing.NewKeyboard(
+		typing.WithRestoreTokenPath(portalTokenPath()),
+		typing.WithAppID(constants.AppID),
+	)
 	if err != nil {
 		return nil, err
 	}

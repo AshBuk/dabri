@@ -14,6 +14,7 @@ import (
 	"github.com/AshBuk/go-wlportal/shortcuts"
 
 	"github.com/AshBuk/dabri/v2/hotkeys/utils"
+	"github.com/AshBuk/dabri/v2/internal/constants"
 	"github.com/AshBuk/dabri/v2/internal/logger"
 )
 
@@ -83,7 +84,7 @@ func (p *DbusKeyboardProvider) Start() error {
 		})
 	}
 
-	session, err := shortcuts.New(list)
+	session, err := shortcuts.New(list, shortcuts.WithAppID(constants.AppID))
 	if err != nil {
 		p.logger.Error("DBus GlobalShortcuts binding failed: %v", err)
 		p.logger.Info("Hint: In AppImage/sandboxed environments, global shortcuts may require user consent")
