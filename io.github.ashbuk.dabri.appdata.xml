@@ -47,6 +47,9 @@
     <binary>dabri</binary>
   </provides>
   <releases>
+    <release version="2.1.1" date="2026-06-10">
+      <description><p>Polish GNOME/Wayland portal global shortcuts and a single source of truth for config defaults</p></description>
+    </release>
     <release version="2.1.0" date="2026-06-09">
       <description><p>Sandbox-friendly Flatpak release with a dedicated Wayland portal library and a tray status window</p></description>
     </release>
