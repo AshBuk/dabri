@@ -132,6 +132,6 @@ hotkeys/
 
 ### Configuration Reference
 
-See [`config.yaml`](../config.yaml) for the complete configuration file with all available options and detailed comments.
+See [`config/loaders/default_config.yaml`](../config/loaders/default_config.yaml) for the complete configuration file with all available options and detailed comments. It is embedded in the binary and written to `~/.config/dabri/config.yaml` on first run.
 
-*Last updated: 2026-01-06*
+*Last updated: 2026-06-10*
