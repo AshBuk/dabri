@@ -113,7 +113,7 @@ func TestDummyKeyboardProvider_RegisterHotkey(t *testing.T) {
 	}
 
 	// Register a hotkey
-	err := provider.RegisterHotkey("ctrl+r", callback)
+	err := provider.RegisterHotkey("ctrl+r", "ctrl+r", callback)
 	if err != nil {
 		t.Errorf("RegisterHotkey should not return error, got: %v", err)
 	}
@@ -160,7 +160,7 @@ func TestDummyKeyboardProvider_RegisterMultipleHotkeys(t *testing.T) {
 			return nil
 		}
 
-		err := provider.RegisterHotkey(hotkey, callback)
+		err := provider.RegisterHotkey(hotkey, hotkey, callback)
 		if err != nil {
 			t.Errorf("RegisterHotkey failed for '%s': %v", hotkey, err)
 		}
@@ -210,13 +210,13 @@ func TestDummyKeyboardProvider_OverwriteHotkey(t *testing.T) {
 	}
 
 	// Register first callback
-	err := provider.RegisterHotkey("ctrl+r", firstCallback)
+	err := provider.RegisterHotkey("ctrl+r", "ctrl+r", firstCallback)
 	if err != nil {
 		t.Errorf("RegisterHotkey failed: %v", err)
 	}
 
 	// Register second callback for same hotkey (should overwrite)
-	err = provider.RegisterHotkey("ctrl+r", secondCallback)
+	err = provider.RegisterHotkey("ctrl+r", "ctrl+r", secondCallback)
 	if err != nil {
 		t.Errorf("RegisterHotkey failed: %v", err)
 	}

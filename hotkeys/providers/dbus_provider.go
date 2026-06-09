@@ -21,7 +21,8 @@ import (
 // Implements KeyboardEventProvider using the GlobalShortcuts portal through the
 // go-wlportal/shortcuts adapter.
 type DbusKeyboardProvider struct {
-	callbacks   map[string]func() error
+	callbacks   map[string]func() error // keyed by stable action id
+	triggers    map[string]string       // action id -> desired key combo
 	session     *shortcuts.Session
 	isListening bool
 	mutex       sync.Mutex
@@ -33,8 +34,24 @@ type DbusKeyboardProvider struct {
 func NewDbusKeyboardProvider(logger logger.Logger) *DbusKeyboardProvider {
 	return &DbusKeyboardProvider{
 		callbacks: make(map[string]func() error),
+		triggers:  make(map[string]string),
 		logger:    logger,
 	}
+}
+
+// actionDescriptions maps stable action ids to human-readable text shown in the
+// compositor's shortcut UI. Unknown ids fall back to the id itself.
+var actionDescriptions = map[string]string{
+	"toggle_recording":  "Start/stop recording",
+	"show_config":       "Open configuration",
+	"reset_to_defaults": "Reset settings to defaults",
+}
+
+func describeAction(id string) string {
+	if d, ok := actionDescriptions[id]; ok {
+		return d
+	}
+	return id
 }
 
 // Check if the D-Bus GlobalShortcuts portal is available
@@ -47,17 +64,18 @@ func (p *DbusKeyboardProvider) IsSupported() bool {
 	return false
 }
 
-// Register a hotkey and its callback. Binding is deferred until Start.
-func (p *DbusKeyboardProvider) RegisterHotkey(hotkey string, callback func() error) error {
+// Register an action and its callback. Binding is deferred until Start.
+func (p *DbusKeyboardProvider) RegisterHotkey(id, hotkey string, callback func() error) error {
 	p.mutex.Lock()
 	defer p.mutex.Unlock()
 
-	if _, exists := p.callbacks[hotkey]; exists {
-		return fmt.Errorf("hotkey %s already registered", hotkey)
+	if _, exists := p.callbacks[id]; exists {
+		return fmt.Errorf("action %s already registered", id)
 	}
 
-	p.callbacks[hotkey] = callback
-	p.logger.Info("D-Bus hotkey registered: %s", hotkey)
+	p.callbacks[id] = callback
+	p.triggers[id] = hotkey
+	p.logger.Info("D-Bus action registered: %s (%s)", id, hotkey)
 	return nil
 }
 
@@ -71,15 +89,14 @@ func (p *DbusKeyboardProvider) Start() error {
 		return fmt.Errorf("D-Bus keyboard provider already started")
 	}
 
-	// Build the shortcut list; the hotkey string doubles as the portal ID echoed
-	// back on activation, so callbacks can be looked up by it directly.
-	list := make([]shortcuts.Shortcut, 0, len(p.callbacks))
-	for hotkey := range p.callbacks {
+	// The portal ID is the stable action id (echoed back on activation), so it
+	// stays constant across rebinds; the key is only the preferred_trigger hint.
+	list := make([]shortcuts.Shortcut, 0, len(p.triggers))
+	for id, hotkey := range p.triggers {
 		accel := convertHotkeyToAccelerator(hotkey)
-		p.logger.Info("DBus: Converting hotkey '%s' to accelerator '%s'", hotkey, accel)
 		list = append(list, shortcuts.Shortcut{
-			ID:               hotkey,
-			Description:      fmt.Sprintf("Dabri hotkey: %s", hotkey),
+			ID:               id,
+			Description:      describeAction(id),
 			PreferredTrigger: accel,
 		})
 	}

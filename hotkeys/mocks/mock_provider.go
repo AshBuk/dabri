@@ -84,8 +84,8 @@ func (m *MockHotkeyProvider) Stop() {
 	}
 }
 
-// RegisterHotkey simulates registering a hotkey
-func (m *MockHotkeyProvider) RegisterHotkey(hotkey string, callback func() error) error {
+// RegisterHotkey simulates registering an action, keyed by its stable id.
+func (m *MockHotkeyProvider) RegisterHotkey(id, hotkey string, callback func() error) error {
 	m.mu.Lock()
 	defer m.mu.Unlock()
 
@@ -103,7 +103,7 @@ func (m *MockHotkeyProvider) RegisterHotkey(hotkey string, callback func() error
 		return errors.New("callback cannot be nil")
 	}
 
-	m.registeredHotkeys[hotkey] = callback
+	m.registeredHotkeys[id] = callback
 	return nil
 }
 

@@ -252,8 +252,9 @@ func (p *EvdevKeyboardProvider) handleKeyEvent(_ int, event *evdev.InputEvent) {
 	}
 }
 
-// Register a callback for a hotkey
-func (p *EvdevKeyboardProvider) RegisterHotkey(hotkey string, callback func() error) error {
+// Register a callback for a hotkey. evdev owns bindings and matches physical
+// keys, so it keys callbacks by the combo; id is unused here.
+func (p *EvdevKeyboardProvider) RegisterHotkey(id, hotkey string, callback func() error) error {
 	p.mutex.Lock()
 	defer p.mutex.Unlock()
 	p.callbacks[hotkey] = callback

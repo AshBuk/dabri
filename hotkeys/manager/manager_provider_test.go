@@ -178,7 +178,7 @@ func TestHotkeyFactory_InterfaceCompliance(t *testing.T) {
 			t.Errorf("unexpected error starting provider: %v", err)
 		}
 
-		err = provider.RegisterHotkey("test", func() error { return nil })
+		err = provider.RegisterHotkey("test", "test", func() error { return nil })
 		if err != nil {
 			t.Errorf("unexpected error registering hotkey: %v", err)
 		}

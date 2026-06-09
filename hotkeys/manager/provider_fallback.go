@@ -11,10 +11,13 @@ import (
 	"github.com/AshBuk/dabri/v2/hotkeys/providers"
 )
 
+// actionToggleRecording is the stable id for the start/stop recording action.
+const actionToggleRecording = "toggle_recording"
+
 // Register all configured hotkeys on the given provider
 func (h *HotkeyManager) registerAllHotkeysOn(provider interfaces.KeyboardEventProvider) error {
 	// Register the primary start/stop recording hotkey
-	if err := provider.RegisterHotkey(h.config.GetStartRecordingHotkey(), func() error {
+	if err := provider.RegisterHotkey(actionToggleRecording, h.config.GetStartRecordingHotkey(), func() error {
 		// The toggle owns the start/stop decision against the recorder's real
 		// state, so this path holds no recording state of its own.
 		if h.recordingToggle == nil {
@@ -40,7 +43,7 @@ func (h *HotkeyManager) registerAllHotkeysOn(provider interfaces.KeyboardEventPr
 		}
 
 		act := action
-		if err := provider.RegisterHotkey(hk, func() error {
+		if err := provider.RegisterHotkey(actionName, hk, func() error {
 			h.logger.Info("Custom hotkey detected: %s (%s)", actionName, hk)
 			if err := act(); err != nil {
 				h.logger.Error("Error executing hotkey action for %s: %v", actionName, err)
