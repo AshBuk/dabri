@@ -15,8 +15,11 @@ type KeyboardEventProvider interface {
 	Start() error
 	// Stop listening for keyboard events
 	Stop()
-	// Register a hotkey combination and its associated callback function
-	RegisterHotkey(hotkey string, callback func() error) error
+	// Register an action and its callback. id is a stable action identifier
+	// (used as the portal shortcut id, kept constant across rebinds); hotkey is
+	// the desired key combo (matched against physical keys by evdev, and used as
+	// the portal's preferred_trigger).
+	RegisterHotkey(id, hotkey string, callback func() error) error
 	// Check if the provider is supported on the current system
 	IsSupported() bool
 	// Capture a single hotkey combination within a given timeout

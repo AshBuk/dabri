@@ -67,9 +67,9 @@ func (p *DummyKeyboardProvider) Stop() {
 }
 
 // Store the callback but never call it
-func (p *DummyKeyboardProvider) RegisterHotkey(hotkey string, callback func() error) error {
-	p.logger.Info("Registered hotkey: %s (but it will not function with dummy provider)", hotkey)
-	p.callbacks[hotkey] = callback
+func (p *DummyKeyboardProvider) RegisterHotkey(id, hotkey string, callback func() error) error {
+	p.logger.Info("Registered action: %s (%s) (but it will not function with dummy provider)", id, hotkey)
+	p.callbacks[id] = callback
 	return nil
 }
 

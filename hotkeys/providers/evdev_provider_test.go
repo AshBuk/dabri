@@ -52,7 +52,7 @@ func TestEvdevKeyboardProvider_RegisterHotkey(t *testing.T) {
 		return nil
 	}
 	// Test registering a hotkey
-	err := provider.RegisterHotkey("ctrl+shift+a", callback)
+	err := provider.RegisterHotkey("ctrl+shift+a", "ctrl+shift+a", callback)
 	if err != nil {
 		t.Errorf("unexpected error registering hotkey: %v", err)
 	}

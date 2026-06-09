@@ -16,7 +16,7 @@ func TestMockHotkeyProvider_SetRegisterError(t *testing.T) {
 	provider.SetRegisterError(expectedErr)
 
 	// Try to register a hotkey
-	err := provider.RegisterHotkey("ctrl+r", func() error { return nil })
+	err := provider.RegisterHotkey("ctrl+r", "ctrl+r", func() error { return nil })
 
 	if err != expectedErr {
 		t.Errorf("Expected error %v, got %v", expectedErr, err)
@@ -26,7 +26,7 @@ func TestMockHotkeyProvider_SetRegisterError(t *testing.T) {
 	provider.SetRegisterError(nil)
 
 	// Should work now
-	err = provider.RegisterHotkey("ctrl+r", func() error { return nil })
+	err = provider.RegisterHotkey("ctrl+r", "ctrl+r", func() error { return nil })
 	if err != nil {
 		t.Errorf("Expected no error after clearing, got %v", err)
 	}
@@ -44,7 +44,7 @@ func TestMockHotkeyProvider_GetRegisteredHotkeys(t *testing.T) {
 	// Register some hotkeys
 	testHotkeys := []string{"ctrl+r", "alt+f", "shift+space"}
 	for _, hotkey := range testHotkeys {
-		err := provider.RegisterHotkey(hotkey, func() error { return nil })
+		err := provider.RegisterHotkey(hotkey, hotkey, func() error { return nil })
 		if err != nil {
 			t.Errorf("Failed to register hotkey %s: %v", hotkey, err)
 		}
@@ -78,7 +78,7 @@ func TestMockHotkeyProvider_IsHotkeyRegistered(t *testing.T) {
 	}
 
 	// Register a hotkey
-	err := provider.RegisterHotkey("ctrl+r", func() error { return nil })
+	err := provider.RegisterHotkey("ctrl+r", "ctrl+r", func() error { return nil })
 	if err != nil {
 		t.Errorf("Failed to register hotkey: %v", err)
 	}
@@ -115,7 +115,7 @@ func TestMockHotkeyProvider_SimulateHotkeyPress(t *testing.T) {
 	}
 
 	// Register hotkey
-	err = provider.RegisterHotkey("ctrl+r", callback)
+	err = provider.RegisterHotkey("ctrl+r", "ctrl+r", callback)
 	if err != nil {
 		t.Errorf("Failed to register hotkey: %v", err)
 	}
@@ -145,7 +145,7 @@ func TestMockHotkeyProvider_EnableDisableEventSimulation(t *testing.T) {
 		return nil
 	}
 
-	err := provider.RegisterHotkey("ctrl+r", callback)
+	err := provider.RegisterHotkey("ctrl+r", "ctrl+r", callback)
 	if err != nil {
 		t.Errorf("Failed to register hotkey: %v", err)
 	}
@@ -170,7 +170,7 @@ func TestMockHotkeyProvider_GetCallHistory(t *testing.T) {
 
 	// Perform some operations
 	provider.Start()
-	provider.RegisterHotkey("ctrl+r", func() error { return nil })
+	provider.RegisterHotkey("ctrl+r", "ctrl+r", func() error { return nil })
 	provider.Stop()
 
 	// Check history has entries
@@ -199,7 +199,7 @@ func TestMockHotkeyProvider_Reset(t *testing.T) {
 
 	// Set up some state
 	provider.Start()
-	provider.RegisterHotkey("ctrl+r", func() error { return nil })
+	provider.RegisterHotkey("ctrl+r", "ctrl+r", func() error { return nil })
 	provider.SetStartError(fmt.Errorf("test error"))
 
 	// Verify state exists
@@ -276,7 +276,7 @@ func TestMockHotkeyProvider_GetMethodCallCount(t *testing.T) {
 
 	// Call other methods
 	provider.Stop()
-	provider.RegisterHotkey("ctrl+r", func() error { return nil })
+	provider.RegisterHotkey("ctrl+r", "ctrl+r", func() error { return nil })
 
 	// Check individual counts
 	if provider.GetMethodCallCount("Stop") != 1 {
@@ -317,7 +317,7 @@ func TestMockHotkeyProviderWithErrors_SimulateInvalidHotkey(t *testing.T) {
 	provider.SimulateInvalidHotkey()
 
 	// RegisterHotkey should fail
-	err := provider.RegisterHotkey("ctrl+r", func() error { return nil })
+	err := provider.RegisterHotkey("ctrl+r", "ctrl+r", func() error { return nil })
 	if err == nil {
 		t.Error("RegisterHotkey should fail with invalid hotkey simulation")
 	}
@@ -343,7 +343,7 @@ func TestMockHotkeyProviderWithErrors_SimulateHotkeyConflict(t *testing.T) {
 	provider.SimulateHotkeyConflict()
 
 	// RegisterHotkey should fail
-	err := provider.RegisterHotkey("ctrl+r", func() error { return nil })
+	err := provider.RegisterHotkey("ctrl+r", "ctrl+r", func() error { return nil })
 	if err == nil {
 		t.Error("RegisterHotkey should fail with hotkey conflict simulation")
 	}

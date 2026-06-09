@@ -45,7 +45,7 @@ func TestDbusKeyboardProvider_RegisterHotkey(t *testing.T) {
 		return nil
 	}
 	// Test registering a hotkey
-	err := provider.RegisterHotkey("ctrl+shift+a", callback)
+	err := provider.RegisterHotkey("ctrl+shift+a", "ctrl+shift+a", callback)
 	if err != nil {
 		t.Errorf("unexpected error registering hotkey: %v", err)
 	}
@@ -75,16 +75,16 @@ func TestDbusKeyboardProvider_RegisterHotkey_Duplicate(t *testing.T) {
 	provider := NewDbusKeyboardProvider(testutils.NewMockLogger())
 	callback := func() error { return nil }
 	// Register first hotkey
-	err := provider.RegisterHotkey("ctrl+a", callback)
+	err := provider.RegisterHotkey("ctrl+a", "ctrl+a", callback)
 	if err != nil {
 		t.Errorf("unexpected error registering first hotkey: %v", err)
 	}
 	// Try to register the same hotkey again
-	err = provider.RegisterHotkey("ctrl+a", callback)
+	err = provider.RegisterHotkey("ctrl+a", "ctrl+a", callback)
 	if err == nil {
 		t.Error("expected error when registering duplicate hotkey")
 	}
-	if err.Error() != "hotkey ctrl+a already registered" {
+	if err.Error() != "action ctrl+a already registered" {
 		t.Errorf("unexpected error message: %v", err)
 	}
 }

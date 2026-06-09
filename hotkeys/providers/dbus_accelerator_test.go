@@ -79,7 +79,7 @@ func TestDbusProvider_RegisterHotkey(t *testing.T) {
 		return nil
 	}
 
-	err := provider.RegisterHotkey("test+key", callback)
+	err := provider.RegisterHotkey("test+key", "test+key", callback)
 	if err != nil {
 		t.Logf("Expected error in test environment (no D-Bus portal): %v", err)
 	}
