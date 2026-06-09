@@ -24,13 +24,14 @@ is_cli_command() {
 }
 
 # First launch setup (GUI mode only)
+# The config file itself is created by dabri on first run (embedded defaults);
+# here we only surface hotkey-capability hints once.
 setup_first_launch() {
     if [ -f "${CONFIG_DIR}/config.yaml" ]; then
         return
     fi
 
-    echo "First launch detected: Setting up configuration..."
-    cp "${HERE}/config.yaml" "${CONFIG_DIR}/config.yaml"
+    echo "First launch detected..."
 
     # Check hotkey support
     if command -v busctl >/dev/null 2>&1 && busctl --user status >/dev/null 2>&1; then
@@ -82,7 +83,6 @@ EOF
 cd "${HERE}"
 
 if is_cli_command "$@"; then
-    [ ! -f "${CONFIG_DIR}/config.yaml" ] && cp "${HERE}/config.yaml" "${CONFIG_DIR}/config.yaml" 2>/dev/null || true
     exec "${HERE}/usr/bin/dabri" "$@"
 else
     setup_first_launch

@@ -56,7 +56,6 @@ tar --transform "s,^,dabri-${APP_VERSION}/," \
     vendor/ \
     go.mod go.sum \
     Makefile LICENSE README.md CHANGELOG.md \
-    config.yaml \
     io.github.ashbuk.dabri.desktop \
     io.github.ashbuk.dabri.appdata.xml \
     icons/ docs/
