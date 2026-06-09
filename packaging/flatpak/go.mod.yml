@@ -23,10 +23,10 @@
   type: archive
   url: https://proxy.golang.org/gopkg.in/yaml.v2/@v/v2.4.0.zip
 - dest: vendor/github.com/AshBuk/go-wlportal
-  sha256: def7a1706beabddebc18ecc7ae44159106307efddd396c390a93636f2e53a64d
+  sha256: 8875461dcf169db9860228a417417ac07631e5120d31079a320254936c70bc6b
   strip-components: 3
   type: archive
-  url: https://proxy.golang.org/github.com/!ash!buk/go-wlportal/@v/v0.2.0.zip
+  url: https://proxy.golang.org/github.com/!ash!buk/go-wlportal/@v/v1.0.1.zip
 - dest: vendor/github.com/ggerganov/whisper.cpp/bindings/go
   sha256: 9b080f427c529cd7d4ce4b80734aed33c4cc72d7c7ba7cc7e9c8a53464f38b65
   strip-components: 5
