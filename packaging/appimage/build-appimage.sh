@@ -88,7 +88,6 @@ build_appdir() {
     echo "Building ${APP_NAME}..."
     go build -tags systray,gtk -ldflags "-s -w -X github.com/AshBuk/dabri/v2/internal/version.Version=${APP_VERSION}" -o "${APP_NAME}" ./cmd/dabri
     cp "${APP_NAME}" "${APPDIR}/usr/bin/"
-    cp config.yaml "${APPDIR}/"
 
     # Copy Whisper libraries
     cp -a lib/libwhisper.so* lib/libggml*.so* "${APPDIR}/usr/lib/" 2>/dev/null || true

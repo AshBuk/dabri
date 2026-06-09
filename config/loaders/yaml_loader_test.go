@@ -171,6 +171,60 @@ func TestLoadConfig_InvalidPermissions(t *testing.T) {
 	}
 }
 
+// Guards the embedded defaults: a typo would silently zero out config fields.
+func TestSetDefaultConfig(t *testing.T) {
+	var cfg models.Config
+	SetDefaultConfig(&cfg)
+
+	checks := []struct {
+		name string
+		got  any
+		want any
+	}{
+		{"whisper_model", cfg.General.WhisperModel, "small-q5_1"},
+		{"language", cfg.General.Language, "en"},
+		{"hotkey_provider", cfg.Hotkeys.Provider, "auto"},
+		{"start_recording", cfg.Hotkeys.StartRecording, "alt+r"},
+		{"sample_rate", cfg.Audio.SampleRate, 16000},
+		{"max_recording_time", cfg.Audio.MaxRecordingTime, 300},
+		{"temp_file_cleanup_time", cfg.Audio.TempFileCleanupTime, 30},
+		{"default_mode", cfg.Output.DefaultMode, models.OutputModeActiveWindow},
+		{"notifications", cfg.Notifications.EnableWorkflowNotifications, true},
+		{"web_port", cfg.WebServer.Port, 8080},
+		{"web_max_clients", cfg.WebServer.MaxClients, 10},
+		{"max_temp_file_size", cfg.Security.MaxTempFileSize, int64(50 * 1024 * 1024)},
+	}
+	for _, c := range checks {
+		if c.got != c.want {
+			t.Errorf("%s: got %v, want %v", c.name, c.got, c.want)
+		}
+	}
+	if len(cfg.Security.AllowedCommands) == 0 {
+		t.Errorf("expected non-empty allowed_commands")
+	}
+}
+
+// First run with a missing file writes the embedded default verbatim.
+func TestLoadConfig_FirstRunWritesCommentedFile(t *testing.T) {
+	dir := t.TempDir()
+	path := filepath.Join(dir, "sub", "config.yaml")
+
+	cfg, err := LoadConfig(path)
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if cfg.General.WhisperModel != "small-q5_1" {
+		t.Errorf("expected default model, got %s", cfg.General.WhisperModel)
+	}
+	data, err := os.ReadFile(path)
+	if err != nil {
+		t.Fatalf("expected default config file to be created: %v", err)
+	}
+	if string(data) != string(defaultConfigYAML) {
+		t.Errorf("first-run file does not match embedded default (comments lost)")
+	}
+}
+
 func TestConfig_DefaultValues(t *testing.T) {
 	// Test that default config has reasonable values
 	config := &models.Config{}

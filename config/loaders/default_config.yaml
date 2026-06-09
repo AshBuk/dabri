@@ -1,0 +1,68 @@
+# Dabri configuration. Created on first run; edit and restart to apply.
+# Note: comments are dropped once Dabri rewrites this file (e.g. via the tray menu).
+
+# General settings
+general:
+  debug: false
+  whisper_model: "small-q5_1"
+  temp_audio_path: "/tmp"
+  language: "en"  # Recognition language: "en", "ru", "de", "fr", "es", "he", etc.
+
+# Hotkey settings
+hotkeys:
+  provider: "auto"  # "auto" (dbus → evdev → disabled), "dbus" (portal), or "evdev" (direct input).
+                    # evdev requires a udev rule or input group — see docs/Desktop_Environment_Support.md.
+  start_recording: "alt+r"            # Start/stop recording
+  stop_recording: "alt+r"             # Same combination for start/stop
+  show_config: "alt+c"                # Open configuration file
+  reset_to_defaults: "alt+d"          # Reset all settings to defaults
+
+# Audio recording settings
+audio:
+  device: "default"
+  sample_rate: 16000            # Optimal for speech recognition (do not change)
+  format: "s16le"               # Note: audio is always recorded in mono (1 channel)
+  recording_method: "arecord"   # Options: "arecord", "ffmpeg"
+  expected_duration: 0          # Expected recording duration in seconds (0 = indefinite)
+  max_recording_time: 300       # Hard cap in seconds to stop runaway recordings (default: 300)
+  temp_file_cleanup_time: 30    # Auto-delete temporary audio files older than X minutes (default: 30)
+
+# Text output settings
+output:
+  default_mode: "active_window"  # Options: "clipboard", "active_window"
+  clipboard_tool: "auto"         # Options: "auto", "wl-copy", "xsel"
+  type_tool: "auto"              # Options: "auto", "ydotool", "xdotool", "wl-clipboard", "dbus"
+
+# Desktop notification settings
+notifications:
+  enable_workflow_notifications: true  # Show notifications for events like "Recording started"
+
+# Web server settings (optional HTTP/WebSocket API)
+web_server:
+  enabled: false        # Disabled by default - enable only if needed
+  port: 8080
+  host: "localhost"
+  auth_token: ""        # Optional Bearer token for API authentication
+  api_version: "v1"
+  log_requests: true
+  cors_origins: "*"     # CORS origins to allow (e.g. "*" or "http://localhost:3000")
+  max_clients: 10       # Maximum concurrent WebSocket clients
+
+# Security settings
+security:
+  # Whitelist of external commands Dabri is allowed to execute.
+  allowed_commands:
+    - "arecord"
+    - "ffmpeg"
+    - "whisper"
+    - "xdotool"
+    - "wtype"
+    - "ydotool"
+    - "wl-copy"
+    - "wl-paste"
+    - "xsel"
+    - "notify-send"
+    - "xdg-open"
+  check_integrity: false          # Verify the config file hash on startup
+  config_hash: ""                 # SHA-256 hash for integrity checking (managed automatically)
+  max_temp_file_size: 52428800    # Maximum temp audio file size in bytes (50 MB)

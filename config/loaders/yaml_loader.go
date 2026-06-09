@@ -4,7 +4,10 @@
 package loaders
 
 import (
+	_ "embed"
+	"errors"
 	"fmt"
+	"io/fs"
 	"os"
 	"path/filepath"
 	"strings"
@@ -14,6 +17,12 @@ import (
 	"github.com/AshBuk/dabri/v2/internal/logger"
 	yaml "gopkg.in/yaml.v2"
 )
+
+// Single source of truth for defaults: parsed by SetDefaultConfig and written
+// verbatim (with comments) on first run.
+//
+//go:embed default_config.yaml
+var defaultConfigYAML []byte
 
 // Read a configuration file, apply defaults, and validate the result.
 // If the file doesn't exist, log a warning and return a default configuration.
@@ -35,7 +44,16 @@ func LoadConfig(filename string, loggers ...logger.Logger) (*models.Config, erro
 	// #nosec G304 -- Path is cleaned and validated, mitigating directory traversal risks.
 	data, err := os.ReadFile(clean)
 	if err != nil {
-		logSink.Info("Could not read config file: %v, using defaults", err)
+		// First run: write the default file (best-effort; defaults already in memory).
+		if errors.Is(err, fs.ErrNotExist) {
+			if werr := writeDefaultConfigFile(clean); werr != nil {
+				logSink.Warning("Could not create default config file: %v", werr)
+			} else {
+				logSink.Info("Created default configuration file: %s", clean)
+			}
+		} else {
+			logSink.Info("Could not read config file: %v, using defaults", err)
+		}
 		return &config, nil
 	}
 	// Parse the YAML content into the config struct
@@ -51,54 +69,21 @@ func LoadConfig(filename string, loggers ...logger.Logger) (*models.Config, erro
 	return &config, nil
 }
 
-// Apply sensible, safe-by-default values to a configuration struct.
-// These defaults are used when a configuration file is not found or a field is missing
+// Reset the configuration to the embedded default values.
 func SetDefaultConfig(config *models.Config) {
-	// General settings
-	config.General.Debug = false
-	config.General.WhisperModel = "small-q5_1" // Fixed whisper model
-	config.General.TempAudioPath = "/tmp"
-	config.General.Language = "en" // Default to English
+	*config = models.Config{}
+	if err := yaml.Unmarshal(defaultConfigYAML, config); err != nil {
+		// Embedded at build time, so a parse error is a bug. Guarded by TestSetDefaultConfig.
+		panic(fmt.Sprintf("invalid embedded default config: %v", err))
+	}
+}
 
-	// Hotkey settings
-	config.Hotkeys.Provider = "auto"
-	config.Hotkeys.StartRecording = "alt+r"  // Start/stop recording
-	config.Hotkeys.StopRecording = "alt+r"   // Same combination for start/stop
-	config.Hotkeys.ShowConfig = "alt+c"      // Show config
-	config.Hotkeys.ResetToDefaults = "alt+d" // Reset to defaults
-
-	// Audio settings
-	config.Audio.Device = "default"
-	config.Audio.SampleRate = 16000
-	config.Audio.Format = "s16le"
-	config.Audio.RecordingMethod = "arecord"
-	config.Audio.ExpectedDuration = 0     // No expected duration by default
-	config.Audio.MaxRecordingTime = 300   // 5 minutes max by default
-	config.Audio.TempFileCleanupTime = 30 // 30 minutes cleanup timeout by default
-
-	// Output settings
-	config.Output.DefaultMode = models.OutputModeActiveWindow
-	config.Output.ClipboardTool = "auto" // auto-detect
-	config.Output.TypeTool = "auto"      // auto-detect
-
-	// Notification settings
-	config.Notifications.EnableWorkflowNotifications = true // Enable workflow notifications by default
-
-	// Web server settings (disabled by default for security)
-	config.WebServer.Enabled = false
-	config.WebServer.Port = 8080
-	config.WebServer.Host = "localhost"
-	config.WebServer.AuthToken = "" // No auth by default
-	config.WebServer.APIVersion = "v1"
-	config.WebServer.LogRequests = true
-	config.WebServer.CORSOrigins = "*" // Allow all origins by default
-	config.WebServer.MaxClients = 10
-
-	// Security settings
-	config.Security.AllowedCommands = []string{"arecord", "ffmpeg", "whisper", "xdotool", "wtype", "ydotool", "wl-copy", "wl-paste", "xsel", "notify-send", "xdg-open"}
-	config.Security.CheckIntegrity = false
-	config.Security.ConfigHash = ""
-	config.Security.MaxTempFileSize = 50 * 1024 * 1024 // 50MB by default
+// Write the embedded default config (comments intact) to path.
+func writeDefaultConfigFile(path string) error {
+	if err := os.MkdirAll(filepath.Dir(path), 0o750); err != nil {
+		return err
+	}
+	return os.WriteFile(path, defaultConfigYAML, 0o600)
 }
 
 // Marshal the configuration to YAML and write it to a file.
