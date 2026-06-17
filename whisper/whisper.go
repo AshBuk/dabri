@@ -13,6 +13,7 @@ package whisper
 
 import (
 	"github.com/AshBuk/dabri/v2/config"
+	"github.com/AshBuk/dabri/v2/internal/logger"
 	"github.com/AshBuk/dabri/v2/whisper/interfaces"
 	"github.com/AshBuk/dabri/v2/whisper/manager"
 )
@@ -22,7 +23,8 @@ type (
 	ModelManager = interfaces.ModelManager
 )
 
-// Create a new manager for the bundled Whisper model
-func NewModelManager(config *config.Config) ModelManager {
-	return manager.NewModelManager(config)
+// Create a new manager for the bundled Whisper model.
+// An optional logger enables download-progress reporting.
+func NewModelManager(config *config.Config, loggers ...logger.Logger) ModelManager {
+	return manager.NewModelManager(config, loggers...)
 }

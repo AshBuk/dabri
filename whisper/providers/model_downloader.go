@@ -26,15 +26,26 @@ var httpClient = &http.Client{
 	},
 }
 
+// ProgressFunc reports download progress: bytes downloaded so far and the total
+// size in bytes (total is -1 when the server omits Content-Length).
+type ProgressFunc func(downloaded, total int64)
+
 // ModelDownloader handles downloading the whisper model from Hugging Face
 type ModelDownloader struct {
-	url     string
-	minSize int64
+	url      string
+	minSize  int64
+	progress ProgressFunc
 }
 
 // NewModelDownloaderForURL creates a downloader for the given URL and minimum size
 func NewModelDownloaderForURL(url string, minSize int64) *ModelDownloader {
 	return &ModelDownloader{url: url, minSize: minSize}
+}
+
+// WithProgress registers a callback invoked periodically during download.
+func (d *ModelDownloader) WithProgress(fn ProgressFunc) *ModelDownloader {
+	d.progress = fn
+	return d
 }
 
 // Download downloads the model to the specified path.
@@ -101,12 +112,41 @@ func (d *ModelDownloader) downloadToFile(ctx context.Context, path string) error
 	}
 	defer func() { _ = out.Close() }()
 
-	// Copy response body to file
-	_, err = io.Copy(out, resp.Body)
-	if err != nil {
+	// Copy response body to file, reporting progress if a callback is set
+	var dst io.Writer = out
+	if d.progress != nil {
+		pw := &progressWriter{total: resp.ContentLength, fn: d.progress}
+		dst = io.MultiWriter(out, pw)
+		defer pw.flush() // emit a final report at completion
+	}
+	if _, err = io.Copy(dst, resp.Body); err != nil {
 		return fmt.Errorf("failed to write model file: %w", err)
 	}
 	return nil
+}
+
+// progressWriter counts bytes written and forwards throttled progress reports.
+type progressWriter struct {
+	total      int64
+	downloaded int64
+	fn         ProgressFunc
+	lastReport time.Time
+}
+
+func (p *progressWriter) Write(b []byte) (int, error) {
+	n := len(b)
+	p.downloaded += int64(n)
+	// Throttle to at most one report per second to avoid log spam
+	if time.Since(p.lastReport) >= time.Second {
+		p.lastReport = time.Now()
+		p.fn(p.downloaded, p.total)
+	}
+	return n, nil
+}
+
+// flush emits a final report with the total bytes downloaded.
+func (p *progressWriter) flush() {
+	p.fn(p.downloaded, p.total)
 }
 
 // GetModelURL returns the download URL

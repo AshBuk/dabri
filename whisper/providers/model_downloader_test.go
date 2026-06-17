@@ -42,6 +42,38 @@ func TestModelDownloader_Download_Success(t *testing.T) {
 	}
 }
 
+func TestModelDownloader_Download_ReportsProgress(t *testing.T) {
+	modelData := strings.Repeat("x", testMinSize+1000)
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
+		_, _ = w.Write([]byte(modelData))
+	}))
+	defer server.Close()
+
+	var lastDownloaded, lastTotal int64
+	calls := 0
+	downloader := NewModelDownloaderForURL(server.URL, testMinSize).
+		WithProgress(func(downloaded, total int64) {
+			calls++
+			lastDownloaded, lastTotal = downloaded, total
+		})
+
+	destPath := filepath.Join(t.TempDir(), "models", "test_model.bin")
+	if err := downloader.Download(context.Background(), destPath); err != nil {
+		t.Fatalf("Download failed: %v", err)
+	}
+	// The final flush always fires, so we expect at least one report ending at 100%.
+	if calls == 0 {
+		t.Fatal("progress callback was never invoked")
+	}
+	if lastDownloaded != int64(len(modelData)) {
+		t.Errorf("final progress: expected %d bytes, got %d", len(modelData), lastDownloaded)
+	}
+	if lastTotal != int64(len(modelData)) {
+		t.Errorf("expected total %d from Content-Length, got %d", len(modelData), lastTotal)
+	}
+}
+
 func TestModelDownloader_Download_HTTPError(t *testing.T) {
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusNotFound)

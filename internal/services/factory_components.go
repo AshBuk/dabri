@@ -45,7 +45,7 @@ func NewFactoryComponents(config ServiceFactoryConfig) *FactoryComponents {
 func (cf *FactoryComponents) InitializeComponents() (*Components, error) {
 	components := &Components{}
 	// Initialize model manager
-	components.ModelManager = whisper.NewModelManager(cf.config.Config)
+	components.ModelManager = whisper.NewModelManager(cf.config.Config, cf.config.Logger)
 	if err := components.ModelManager.Initialize(cf.config.Ctx); err != nil {
 		cf.config.Logger.Warning("Failed to initialize model manager: %v", err)
 	}
