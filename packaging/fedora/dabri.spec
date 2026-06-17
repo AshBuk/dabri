@@ -24,7 +24,7 @@ Source0:        %{name}-%{version}-vendored.tar.gz
 # whisper.cpp sources (pinned version for reproducible builds)
 Source1:        https://github.com/ggml-org/whisper.cpp/archive/refs/tags/v%{whisper_version}.tar.gz#/whisper-cpp-%{whisper_version}.tar.gz
 
-ExclusiveArch:  x86_64
+ExclusiveArch:  x86_64 aarch64
 
 # =============================================================================
 # Build dependencies
@@ -135,6 +135,13 @@ mv build/whisper.cpp-%{whisper_version} build/whisper.cpp
 # Set RPATH for whisper libraries to find each other in private prefix
 WHISPER_RPATH='%{_libdir}/%{name}'
 
+# x86-only ISA extensions; on aarch64 whisper.cpp auto-detects NEON/dotprod
+%ifarch x86_64
+GGML_ARCH_FLAGS="-DGGML_AVX=ON -DGGML_AVX2=ON -DGGML_FMA=ON -DGGML_F16C=ON"
+%else
+GGML_ARCH_FLAGS=""
+%endif
+
 pushd build/whisper.cpp
 cmake -B build \
     -DCMAKE_BUILD_TYPE=Release \
@@ -142,10 +149,7 @@ cmake -B build \
     -DCMAKE_INSTALL_RPATH="$WHISPER_RPATH" \
     -DCMAKE_BUILD_WITH_INSTALL_RPATH=ON \
     -DGGML_NATIVE=OFF \
-    -DGGML_AVX=ON \
-    -DGGML_AVX2=ON \
-    -DGGML_FMA=ON \
-    -DGGML_F16C=ON \
+    $GGML_ARCH_FLAGS \
     -DGGML_VULKAN=ON
 cmake --build build --parallel %{_smp_build_ncpus}
 popd
