@@ -10,6 +10,7 @@ import (
 
 	"github.com/AshBuk/dabri/v2/config"
 	"github.com/AshBuk/dabri/v2/internal/constants"
+	"github.com/AshBuk/dabri/v2/internal/logger"
 	"github.com/AshBuk/dabri/v2/internal/utils"
 	"github.com/AshBuk/dabri/v2/whisper/providers"
 )
@@ -17,11 +18,17 @@ import (
 // Manages Whisper model lifecycle: resolution, download, and validation
 type ModelManager struct {
 	config *config.Config
+	logger logger.Logger
 }
 
-// Create a new manager responsible for the Whisper model
-func NewModelManager(config *config.Config) *ModelManager {
-	return &ModelManager{config: config}
+// Create a new manager responsible for the Whisper model.
+// An optional logger enables download-progress reporting.
+func NewModelManager(config *config.Config, loggers ...logger.Logger) *ModelManager {
+	m := &ModelManager{config: config}
+	if len(loggers) > 0 {
+		m.logger = loggers[0]
+	}
+	return m
 }
 
 // Initialize validates the configured model is present, downloading if needed
@@ -76,6 +83,18 @@ func (m *ModelManager) resolveModel(ctx context.Context, modelID string) (string
 	// Download to user data directory
 	downloadPath := resolver.GetUserDataModelPath()
 	dl := providers.NewModelDownloaderForURL(def.URL, def.MinSize)
+	if m.logger != nil {
+		m.logger.Info("Downloading model %s (%s)...", modelID, def.FileName)
+		dl.WithProgress(func(downloaded, total int64) {
+			const mb = 1024 * 1024
+			if total > 0 {
+				m.logger.Info("Downloading model %s: %d%% (%.1f/%.1f MB)",
+					modelID, downloaded*100/total, float64(downloaded)/mb, float64(total)/mb)
+			} else {
+				m.logger.Info("Downloading model %s: %.1f MB", modelID, float64(downloaded)/mb)
+			}
+		})
+	}
 	if err := dl.Download(ctx, downloadPath); err != nil {
 		return "", fmt.Errorf("failed to download model %s: %w", modelID, err)
 	}
