@@ -21,8 +21,13 @@ permissions:
 jobs:
   build-appimage:
     strategy:
+      fail-fast: false
       matrix:
-        os: [ubuntu-22.04]
+        include:
+          - os: ubuntu-22.04
+            arch: x86_64
+          - os: ubuntu-22.04-arm
+            arch: aarch64
     runs-on: ${{ matrix.os }}
     
     steps:
@@ -38,9 +43,9 @@ jobs:
       uses: actions/cache@v4
       with:
         path: /tmp/.buildx-cache
-        key: ${{ runner.os }}-buildx-appimage-${{ hashFiles('docker/Dockerfile.appimage', 'go.mod', 'go.sum') }}
+        key: ${{ runner.os }}-${{ matrix.arch }}-buildx-appimage-${{ hashFiles('docker/Dockerfile.appimage', 'go.mod', 'go.sum') }}
         restore-keys: |
-          ${{ runner.os }}-buildx-appimage-
+          ${{ runner.os }}-${{ matrix.arch }}-buildx-appimage-
 
     - name: Build AppImage via Docker
       env:
@@ -83,7 +88,7 @@ jobs:
     - name: Upload AppImage artifact
       uses: actions/upload-artifact@v4
       with:
-        name: dabri-appimage-${{ matrix.os }}
+        name: dabri-appimage-${{ matrix.arch }}
         path: |
           dist/*.AppImage
           !dist/tools/

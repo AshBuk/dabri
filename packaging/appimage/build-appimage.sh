@@ -9,16 +9,29 @@ set -x  # Show commands being executed
 APP_NAME="dabri"
 APP_VERSION_RAW="${APP_VERSION:-${GITHUB_REF_NAME:-$(git describe --tags --abbrev=0 2>/dev/null || date +%Y%m%d)}}"
 APP_VERSION=$(echo "${APP_VERSION_RAW}" | sed 's/^v//')
-ARCH="x86_64"
+ARCH="${ARCH:-$(uname -m)}"
 OUTPUT_DIR="dist"
 APPDIR="${OUTPUT_DIR}/${APP_NAME}.AppDir"
 TOOLS_DIR="$(pwd)/tools"
 MODEL_URL="${MODEL_URL:-https://huggingface.co/ggerganov/whisper.cpp/resolve/main/ggml-small-q5_1.bin}"
 MODEL_SHA256="${MODEL_SHA256:-ae85e4a935d7a567bd102fe55afc16bb595bdb618e11b2fc7591bc08120411bb}"
 LINUXDEPLOY_TAG="${LINUXDEPLOY_TAG:-1-alpha-20251107-1}"
-LINUXDEPLOY_SHA256="${LINUXDEPLOY_SHA256:-c20cd71e3a4e3b80c3483cef793cda3f4e990aca14014d23c544ca3ce1270b4d}"
 APPIMAGETOOL_TAG="${APPIMAGETOOL_TAG:-continuous}"
-APPIMAGETOOL_SHA256="${APPIMAGETOOL_SHA256:-b90f4a8b18967545fda78a445b27680a1642f1ef9488ced28b65398f2be7add2}"
+# AppImage tool checksums differ per architecture
+case "${ARCH}" in
+    x86_64)
+        LINUXDEPLOY_SHA256="${LINUXDEPLOY_SHA256:-c20cd71e3a4e3b80c3483cef793cda3f4e990aca14014d23c544ca3ce1270b4d}"
+        APPIMAGETOOL_SHA256="${APPIMAGETOOL_SHA256:-b90f4a8b18967545fda78a445b27680a1642f1ef9488ced28b65398f2be7add2}"
+        ;;
+    aarch64)
+        LINUXDEPLOY_SHA256="${LINUXDEPLOY_SHA256:-620095110d693282b8ebeb244a95b5e911cf8f65f76c88b4b47d16ae6346fcff}"
+        APPIMAGETOOL_SHA256="${APPIMAGETOOL_SHA256:-a48972e5ae91c944c5a7c80214e7e0a42dd6aa3ae979d8756203512a74ff574d}"
+        ;;
+    *)
+        echo "Unsupported architecture: ${ARCH}"
+        exit 1
+        ;;
+esac
 GTK_PLUGIN_COMMIT="${GTK_PLUGIN_COMMIT:-3b67a1d1c1b0c8268f57f2bce40fe2d33d409cea}"
 GTK_PLUGIN_SHA256="${GTK_PLUGIN_SHA256:-b0f4cbc684a0103a9651f0955b635eaea0096b3a66c0f5a2c2aa337960375171}"
 # Determine script directory (works both locally and in Docker)
@@ -147,7 +160,7 @@ download_tools() {
 # Find and bundle system library
 find_lib() {
     local pattern="$1"
-    for d in /usr/lib/x86_64-linux-gnu /usr/lib64 /usr/lib; do
+    for d in /usr/lib/${ARCH}-linux-gnu /usr/lib64 /usr/lib; do
         local lib=$(ls -1 $d/${pattern}* 2>/dev/null | sort -V | tail -n1 || true)
         [ -n "$lib" ] && echo "$lib" && return
     done
