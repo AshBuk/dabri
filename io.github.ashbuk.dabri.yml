@@ -123,12 +123,16 @@ modules:
       - -DWHISPER_BUILD_EXAMPLES=OFF
       - -DWHISPER_BUILD_TESTS=OFF
       - -DGGML_NATIVE=OFF
-      - -DGGML_AVX=ON
-      - -DGGML_AVX2=ON
-      - -DGGML_FMA=ON
-      - -DGGML_F16C=ON
-      - -DGGML_AVX512=OFF
       - -DGGML_VULKAN=ON
+    build-options:
+      arch:
+        x86_64:
+          config-opts:
+            - -DGGML_AVX=ON
+            - -DGGML_AVX2=ON
+            - -DGGML_FMA=ON
+            - -DGGML_F16C=ON
+            - -DGGML_AVX512=OFF
     cleanup:
       - /lib/dabri/pkgconfig
       - /lib/dabri/cmake
