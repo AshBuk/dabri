@@ -31,23 +31,26 @@ done
 summary="${1:-}"
 body="${2:-}"
 
-# Send via the desktop portal (org.freedesktop.portal.Notification) so the
-# sandbox needs no direct --talk-name=org.freedesktop.Notifications hole; the
-# portal is always reachable inside Flatpak. app_name is unused here — the
-# portal derives the app name/icon from the installed .desktop entry.
-#
-# summary/body are app-controlled (error messages included), so escape
-# backslash and double-quote before embedding them in the GVariant dict.
+# Prefer the desktop portal (org.freedesktop.portal.Notification).
+# Notification portal isn't provided by every compositor's portal backend
+# (e.g. wlroots/Hyprland ship only ScreenCast/GlobalShortcuts), so fall back to
+# the notification service directly.
 esc() { printf '%s' "$1" | sed 's/\\/\\\\/g; s/"/\\"/g'; }
-summary=$(esc "$summary")
-body=$(esc "$body")
-icon=$(esc "$icon")
 
-# A fresh id per call yields a new notification (matching the old Notify id=0).
-gdbus call --session \
+if gdbus call --session \
     --dest org.freedesktop.portal.Desktop \
     --object-path /org/freedesktop/portal/Desktop \
     --method org.freedesktop.portal.Notification.AddNotification \
     "dabri-$(date +%s%N)" \
-    "{'title': <\"$summary\">, 'body': <\"$body\">, 'icon': <('themed', <[\"$icon\"]>)>}" \
-    >/dev/null
+    "{'title': <\"$(esc "$summary")\">, 'body': <\"$(esc "$body")\">, 'icon': <('themed', <[\"$(esc "$icon")\"]>)>}" \
+    >/dev/null 2>&1; then
+    exit 0
+fi
+
+# Fallback: the legacy notification service. gdbus passes summary/body as literal
+# positional arguments here, so they are used raw (no GVariant escaping).
+exec gdbus call --session \
+    --dest org.freedesktop.Notifications \
+    --object-path /org/freedesktop/Notifications \
+    --method org.freedesktop.Notifications.Notify \
+    "$app_name" 0 "$icon" "$summary" "$body" "[]" "{}" 5000 >/dev/null
