@@ -19,8 +19,16 @@ permissions:
 
 jobs:
   build-flatpak:
-    runs-on: ubuntu-latest
-    timeout-minutes: 60
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runner: ubuntu-latest
+            arch: x86_64
+          - runner: ubuntu-24.04-arm
+            arch: aarch64
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 90
 
     steps:
       - name: Checkout code
@@ -36,7 +44,7 @@ jobs:
 
       - name: Build Flatpak
         run: |
-          echo "=== Building Flatpak (runtime/SDK pulled from Flathub) ==="
+          echo "=== Building Flatpak for ${{ matrix.arch }} (runtime/SDK pulled from Flathub) ==="
           # App version is derived from io.github.ashbuk.dabri.appdata.xml by the manifest.
           # --disable-rofiles-fuse: FUSE is unavailable on GitHub runners.
           flatpak-builder \
@@ -61,8 +69,8 @@ jobs:
             # No tag context (plain manual build): fall back to the appdata version.
             VERSION="$(python3 -c 'import xml.etree.ElementTree as ET; print(ET.parse("io.github.ashbuk.dabri.appdata.xml").getroot().find("releases/release").attrib["version"])')"
           fi
-          echo "bundle=dabri-${VERSION}-x86_64.flatpak" >> "$GITHUB_OUTPUT"
-          echo "Bundle name: dabri-${VERSION}-x86_64.flatpak"
+          echo "bundle=dabri-${VERSION}-${{ matrix.arch }}.flatpak" >> "$GITHUB_OUTPUT"
+          echo "Bundle name: dabri-${VERSION}-${{ matrix.arch }}.flatpak"
 
       - name: Bundle Flatpak
         run: |
@@ -72,17 +80,28 @@ jobs:
       - name: Upload Flatpak artifact
         uses: actions/upload-artifact@v4
         with:
-          name: dabri-flatpak
+          name: dabri-flatpak-${{ matrix.arch }}
           path: ${{ steps.ver.outputs.bundle }}
 
-      - name: Attach Flatpak bundle to Release
-        if: startsWith(github.ref, 'refs/tags/') || github.event.inputs.release_tag != ''
+  release:
+    needs: build-flatpak
+    if: startsWith(github.ref, 'refs/tags/') || github.event.inputs.release_tag != ''
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download Flatpak bundles
+        uses: actions/download-artifact@v4
+        with:
+          pattern: dabri-flatpak-*
+          merge-multiple: true
+          path: dist
+
+      - name: Attach Flatpak bundles to Release
         uses: softprops/action-gh-release@v2
         with:
           # Attach to the pushed tag, or to an existing release given via
           # workflow_dispatch (release_tag).
           tag_name: ${{ github.event.inputs.release_tag || github.ref_name }}
-          files: ${{ steps.ver.outputs.bundle }}
+          files: dist/*.flatpak
           fail_on_unmatched_files: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
