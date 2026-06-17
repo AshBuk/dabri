@@ -47,6 +47,9 @@
     <binary>dabri</binary>
   </provides>
   <releases>
+    <release version="2.1.2" date="2026-06-17">
+      <description><p>Flathub-ready Flatpak: freedesktop runtime, desktop-portal notifications, and Go SDK extension build</p></description>
+    </release>
     <release version="2.1.1" date="2026-06-10">
       <description><p>Polish GNOME/Wayland portal global shortcuts and a single source of truth for config defaults</p></description>
     </release>

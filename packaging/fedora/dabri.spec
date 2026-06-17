@@ -5,7 +5,7 @@
 # =============================================================================
 # Version definitions (single source of truth)
 # =============================================================================
-%global app_version     2.1.1
+%global app_version     2.1.2
 %global go_version      1.21
 %global whisper_version 1.8.6
 
@@ -259,6 +259,9 @@ fi
 %{_datadir}/icons/hicolor/scalable/apps/io.github.ashbuk.dabri.svg
 
 %changelog
+* Wed Jun 17 2026 Asher Buk <AshBuk@users.noreply.github.com> - 2.1.2-1
+- Flathub-ready Flatpak: freedesktop runtime, desktop-portal notifications, and Go SDK extension build
+
 * Wed Jun 10 2026 Asher Buk <AshBuk@users.noreply.github.com> - 2.1.1-1
 - Polish GNOME/Wayland portal global shortcuts and a single source of truth for config defaults
 
