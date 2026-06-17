@@ -146,13 +146,9 @@ appimage-host: build
 # Build and install Flatpak into the user installation (host or flatpak'd builder)
 flatpak:
 	@echo "=== Building + installing Flatpak (--user) ==="
-	@if [ ! -f shared-modules/libayatana-appindicator/libayatana-appindicator-gtk3.json ]; then \
-		echo "Initializing Flathub shared-modules submodule..."; \
-		git submodule update --init --recursive shared-modules; \
-	fi
-	@RT_VER=$$(sed -n 's/^runtime-version:[[:space:]]*"\{0,1\}\([0-9]\{1,\}\)"\{0,1\}.*/\1/p' io.github.ashbuk.dabri.yml); \
-	echo "Ensuring GNOME $$RT_VER runtime/SDK (host flatpak)..."; \
-	flatpak install --user -y --noninteractive flathub org.gnome.Platform//$$RT_VER org.gnome.Sdk//$$RT_VER
+	@RT_VER=$$(sed -n 's/^runtime-version:[[:space:]]*"\{0,1\}\([0-9.]\{1,\}\)"\{0,1\}.*/\1/p' io.github.ashbuk.dabri.yml); \
+	echo "Ensuring freedesktop $$RT_VER runtime/SDK + Go extension (host flatpak)..."; \
+	flatpak install --user -y --noninteractive flathub org.freedesktop.Platform//$$RT_VER org.freedesktop.Sdk//$$RT_VER org.freedesktop.Sdk.Extension.golang//$$RT_VER
 	@if command -v flatpak-builder >/dev/null 2>&1; then \
 		flatpak-builder --user --force-clean --install build-flatpak io.github.ashbuk.dabri.yml; \
 	else \

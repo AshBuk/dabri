@@ -27,7 +27,6 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          submodules: recursive  # shared-modules (Ayatana AppIndicator) used by the manifest
 
       - name: Install flatpak and flatpak-builder
         run: |
