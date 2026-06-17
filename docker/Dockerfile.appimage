@@ -1,5 +1,9 @@
-# Container for building AppImage packages
-FROM ubuntu:22.04 AS builder
+# Container for building AppImage packages.
+# BASE_IMAGE is overridden per arch: x86_64 stays on 22.04 (lowest glibc for
+# portability, LunarG SDK provides glslc); aarch64 uses 24.04, which packages
+# glslc for arm (no LunarG arm SDK exists).
+ARG BASE_IMAGE=ubuntu:22.04
+FROM ${BASE_IMAGE} AS builder
 
 # Avoid timezone interaction
 ENV DEBIAN_FRONTEND=noninteractive

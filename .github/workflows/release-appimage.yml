@@ -26,8 +26,10 @@ jobs:
         include:
           - os: ubuntu-22.04
             arch: x86_64
+            base: ubuntu:22.04
           - os: ubuntu-22.04-arm
             arch: aarch64
+            base: ubuntu:24.04
     runs-on: ${{ matrix.os }}
     
     steps:
@@ -55,6 +57,7 @@ jobs:
         echo "Version: ${APP_VERSION}"
         docker buildx build \
           -f docker/Dockerfile.appimage \
+          --build-arg BASE_IMAGE="${{ matrix.base }}" \
           --build-arg APP_VERSION="${APP_VERSION}" \
           --target artifacts \
           --cache-from type=local,src=/tmp/.buildx-cache \
