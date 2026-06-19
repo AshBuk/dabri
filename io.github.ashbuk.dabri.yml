@@ -23,7 +23,6 @@ cleanup:
   - /include
   - /lib/pkgconfig
   - /lib/cmake
-  - /lib64
   - /share/man
   - /share/aclocal
 
@@ -95,9 +94,6 @@ modules:
     config-opts:
       - -DCMAKE_BUILD_TYPE=Release
       - -DBUILD_SHARED_LIBS=ON
-      # Pin /app/lib explicitly: GNUInstallDirs would otherwise pick lib64 and
-      # the ggml/whisper libs wouldn't be found at link time.
-      - -DCMAKE_INSTALL_LIBDIR=lib
       - -DWHISPER_BUILD_EXAMPLES=OFF
       - -DWHISPER_BUILD_TESTS=OFF
       - -DGGML_NATIVE=OFF
