@@ -5,7 +5,7 @@
 # =============================================================================
 # Version definitions (single source of truth)
 # =============================================================================
-%global app_version     2.1.3
+%global app_version     2.1.4
 %global go_version      1.21
 %global whisper_version 1.8.6
 
@@ -263,6 +263,9 @@ fi
 %{_datadir}/icons/hicolor/scalable/apps/io.github.ashbuk.dabri.svg
 
 %changelog
+* Fri Jun 19 2026 Asher Buk <AshBuk@users.noreply.github.com> - 2.1.4-1
+- Leaner Flatpak manifest and runtime version resolution
+
 * Wed Jun 17 2026 Asher Buk <AshBuk@users.noreply.github.com> - 2.1.3-1
 - add aarch64 package; plus first-run model-download progress in the log
 

@@ -34,6 +34,7 @@ func metainfoVersion() string {
 		} `xml:"releases>release"`
 	}
 	for _, dir := range dirs {
+		// #nosec G304 -- fixed metainfo filename under standard data dirs; read-only, value is just a version string.
 		data, err := os.ReadFile(filepath.Join(dir, "metainfo", appID+".metainfo.xml"))
 		if err == nil && xml.Unmarshal(data, &doc) == nil && len(doc.Release) > 0 {
 			return doc.Release[0].Version
