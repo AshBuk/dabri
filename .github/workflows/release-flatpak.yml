@@ -39,15 +39,14 @@ jobs:
       - name: Install flatpak and Builder
         run: |
           sudo apt-get update
-          sudo apt-get install -y flatpak
+          sudo apt-get install -y flatpak dbus
           flatpak remote-add --user --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
           flatpak install -y --user flathub org.flatpak.Builder
 
       - name: Build Flatpak
         run: |
           echo "=== Building Flatpak for ${{ matrix.arch }} (runtime/SDK pulled from Flathub) ==="
-          # --disable-rofiles-fuse: FUSE is unavailable on GitHub runners.
-          flatpak run org.flatpak.Builder \
+          dbus-run-session -- flatpak run org.flatpak.Builder \
             --user \
             --install-deps-from=flathub \
             --force-clean \
