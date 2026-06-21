@@ -13,9 +13,6 @@ finish-args:
   - --socket=fallback-x11
   - --socket=pulseaudio
   - --device=dri
-  # Notifications go through the portal first; this is the fallback path for
-  # compositors whose portal backend has no Notification frontend (wlroots).
-  - --talk-name=org.freedesktop.Notifications
   - --talk-name=com.canonical.AppMenu.Registrar
   - --talk-name=org.kde.StatusNotifierWatcher
 

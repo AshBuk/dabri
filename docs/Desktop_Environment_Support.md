@@ -62,6 +62,11 @@ sudo usermod -a -G input $USER   # re-login required
 
 Dabri starts its own `ydotoold` inside the sandbox when uinput is accessible.
 
+**Notifications** go through the `org.freedesktop.portal.Notification` portal (no
+extra permissions). It works wherever a Notification portal backend is present,
+which most desktops ship by default. If yours doesn't, install one (e.g.
+`xdg-desktop-portal-gtk`) or use the native package or AppImage instead.
+
 ## Direct typing on Wayland - Tool options (native)
 
 The application automatically selects the best available typing tool:
@@ -200,4 +205,4 @@ Add to `~/.config/hypr/hyprland.conf`:
 exec-once = dabri
 ```
 
-*Last updated: 2026-06-05*
+*Last updated: 2026-06-20*

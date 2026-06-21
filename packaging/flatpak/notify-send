@@ -1,14 +1,12 @@
 #!/bin/sh
-# Minimal notify-send compatible wrapper for Flatpak.
+# Notify-send compatible wrapper for Flatpak.
 set -eu
 
-app_name="Dabri"
 icon="dialog-information-symbolic"
 
 while [ "$#" -gt 0 ]; do
     case "$1" in
         --app-name)
-            app_name="$2"
             shift 2
             ;;
         --icon)
@@ -31,26 +29,14 @@ done
 summary="${1:-}"
 body="${2:-}"
 
-# Prefer the desktop portal (org.freedesktop.portal.Notification).
-# Notification portal isn't provided by every compositor's portal backend
-# (e.g. wlroots/Hyprland ship only ScreenCast/GlobalShortcuts), so fall back to
-# the notification service directly.
+# Portal-only: send via org.freedesktop.portal.Notification, which works inside
+# Flatpak with no extra permission.
 esc() { printf '%s' "$1" | sed 's/\\/\\\\/g; s/"/\\"/g'; }
 
-if gdbus call --session \
+exec gdbus call --session \
     --dest org.freedesktop.portal.Desktop \
-    --object-path /org/freedesktop/portal/Desktop \
+    --object-path /org/freedesktop/portal/desktop \
     --method org.freedesktop.portal.Notification.AddNotification \
     "dabri-$(date +%s%N)" \
     "{'title': <\"$(esc "$summary")\">, 'body': <\"$(esc "$body")\">, 'icon': <('themed', <[\"$(esc "$icon")\"]>)>}" \
-    >/dev/null 2>&1; then
-    exit 0
-fi
-
-# Fallback: the legacy notification service. gdbus passes summary/body as literal
-# positional arguments here, so they are used raw (no GVariant escaping).
-exec gdbus call --session \
-    --dest org.freedesktop.Notifications \
-    --object-path /org/freedesktop/Notifications \
-    --method org.freedesktop.Notifications.Notify \
-    "$app_name" 0 "$icon" "$summary" "$body" "[]" "{}" 5000 >/dev/null
+    >/dev/null
