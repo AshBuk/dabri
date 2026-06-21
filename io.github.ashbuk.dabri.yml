@@ -19,6 +19,10 @@ finish-args:
 cleanup:
   - /include
   - /lib/pkgconfig
+  - /lib/cmake
+  - /share/cmake
+  - /share/bash-completion
+  - /share/pkgconfig
   - /share/man
   - /share/aclocal
 
