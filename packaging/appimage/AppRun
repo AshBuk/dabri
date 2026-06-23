@@ -45,6 +45,16 @@ setup_first_launch() {
     fi
 }
 
+# True if <name> exists in a system applications dir (XDG_DATA_DIRS, not HOME)
+system_desktop_entry_exists() {
+    local name="$1"
+    local IFS=':'
+    for d in ${XDG_DATA_DIRS:-/usr/local/share:/usr/share}; do
+        [ -n "$d" ] && [ -f "${d}/applications/${name}" ] && return 0
+    done
+    return 1
+}
+
 # Desktop integration
 integrate_desktop() {
     local apps_dir="${HOME}/.local/share/applications"
@@ -54,6 +64,11 @@ integrate_desktop() {
     # Drop the legacy mis-named entry from older builds (if exist)
     # to avoid a duplicate menu launcher.
     rm -f "${apps_dir}/dabri.desktop"
+
+    # Defer to a system package (rpm/aur) that already ships this app id
+    if system_desktop_entry_exists "io.github.ashbuk.dabri.desktop"; then
+        return
+    fi
 
     if [ -f "$desktop_file" ]; then
         return
