@@ -8,6 +8,7 @@ package providers
 import (
 	"errors"
 	"fmt"
+	"os"
 	"path/filepath"
 	"strings"
 	"sync"
@@ -31,6 +32,7 @@ type EvdevKeyboardProvider struct {
 	logger        logger.Logger
 	wg            *sync.WaitGroup // Tracks device listener goroutines; pointer to allow safe replacement on restart
 	stopping      int32           // atomic flag to soften expected errors during shutdown
+	noAccessOnce  sync.Once       // Summarize "no accessible input devices" at most once per provider
 }
 
 // Create a new EvdevKeyboardProvider instance
@@ -70,10 +72,14 @@ func (p *EvdevKeyboardProvider) findKeyboardDevices() ([]*evdev.InputDevice, err
 		return nil, fmt.Errorf("failed to list input devices: %w", err)
 	}
 	// Filter for devices that are keyboards
+	permDenied := 0
 	for _, path := range devicePaths {
 		dev, err := evdev.Open(path)
 		if err != nil {
-			p.logger.Warning("Could not open input device %s: %v", path, err)
+			if errors.Is(err, os.ErrPermission) {
+				permDenied++
+			}
+			p.logger.Debug("Could not open input device %s: %v", path, err)
 			continue
 		}
 
@@ -87,6 +93,12 @@ func (p *EvdevKeyboardProvider) findKeyboardDevices() ([]*evdev.InputDevice, err
 				p.logger.Error("Failed to close evdev device: %v", err)
 			}
 		}
+	}
+	// One actionable line instead of a warning per inaccessible device.
+	if len(devices) == 0 && permDenied > 0 {
+		p.noAccessOnce.Do(func() {
+			p.logger.Warning("evdev hotkeys unavailable: %d/%d input devices not accessible — add your user to the 'input' group and re-login", permDenied, len(devicePaths))
+		})
 	}
 	return devices, nil
 }
