@@ -28,6 +28,7 @@ RUN apt-get update && apt-get install -y \
     xsel \
     wl-clipboard \
     xdotool \
+    wtype \
     ydotool \
     libnotify-bin \
     # Vulkan runtime library (SDK installed separately for glslc + headers)
