@@ -47,8 +47,13 @@ setup_first_launch() {
 
 # Desktop integration
 integrate_desktop() {
-    local desktop_file="${HOME}/.local/share/applications/dabri.desktop"
+    local apps_dir="${HOME}/.local/share/applications"
+    local desktop_file="${apps_dir}/io.github.ashbuk.dabri.desktop"
     local icon_dir="${HOME}/.local/share/icons/hicolor/128x128/apps"
+
+    # Drop the legacy mis-named entry from older builds (if exist)
+    # to avoid a duplicate menu launcher.
+    rm -f "${apps_dir}/dabri.desktop"
 
     if [ -f "$desktop_file" ]; then
         return
@@ -76,7 +81,7 @@ EOF
     chmod +x "$desktop_file"
     cp "${HERE}/io.github.ashbuk.dabri.png" "$icon_dir/io.github.ashbuk.dabri.png" 2>/dev/null || true
     command -v update-desktop-database >/dev/null 2>&1 && \
-        update-desktop-database "${HOME}/.local/share/applications" 2>/dev/null || true
+        update-desktop-database "${apps_dir}" 2>/dev/null || true
 }
 
 # Main

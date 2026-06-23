@@ -120,16 +120,14 @@ build_appdir() {
     chmod +x "${APPDIR}/AppRun"
 
     # Copy desktop file and icon (use existing files from repo)
-    cp "io.github.ashbuk.dabri.desktop" "${APPDIR}/usr/share/applications/${APP_NAME}.desktop"
-    cp "io.github.ashbuk.dabri.appdata.xml" "${APPDIR}/usr/share/metainfo/${APP_NAME}.appdata.xml"
+    cp "io.github.ashbuk.dabri.desktop" "${APPDIR}/usr/share/applications/io.github.ashbuk.dabri.desktop"
+    cp "io.github.ashbuk.dabri.appdata.xml" "${APPDIR}/usr/share/metainfo/io.github.ashbuk.dabri.appdata.xml"
     # Copy icon with name matching Icon= field in .desktop file
     mkdir -p "${APPDIR}/usr/share/icons/hicolor/128x128/apps"
     cp "icons/io.github.ashbuk.dabri.png" "${APPDIR}/usr/share/icons/hicolor/128x128/apps/io.github.ashbuk.dabri.png"
-    cp "icons/io.github.ashbuk.dabri.png" "${APPDIR}/usr/share/icons/hicolor/128x128/apps/${APP_NAME}.png"
 
-    # Create symlinks for AppImage standard
-    ln -sf "usr/share/applications/${APP_NAME}.desktop" "${APPDIR}/${APP_NAME}.desktop"
-    ln -sf "usr/share/icons/hicolor/128x128/apps/${APP_NAME}.png" "${APPDIR}/${APP_NAME}.png"
+    # Create symlinks for AppImage standard (single root .desktop named by AppID)
+    ln -sf "usr/share/applications/io.github.ashbuk.dabri.desktop" "${APPDIR}/io.github.ashbuk.dabri.desktop"
     ln -sf "usr/share/icons/hicolor/128x128/apps/io.github.ashbuk.dabri.png" "${APPDIR}/io.github.ashbuk.dabri.png"
 }
 
@@ -193,7 +191,7 @@ build_appimage() {
         --appdir "${APP_NAME}.AppDir" \
         $exec_args \
         $lib_args \
-        --desktop-file "${APP_NAME}.AppDir/${APP_NAME}.desktop" \
+        --desktop-file "${APP_NAME}.AppDir/io.github.ashbuk.dabri.desktop" \
         --icon-file "${APP_NAME}.AppDir/io.github.ashbuk.dabri.png" \
         --plugin gtk
 
