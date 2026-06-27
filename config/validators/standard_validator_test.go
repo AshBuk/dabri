@@ -26,7 +26,6 @@ func setDefaultConfigForTest(config *models.Config) {
 	config.Output.DefaultMode = models.OutputModeActiveWindow
 	config.Output.ClipboardTool = "auto"
 	config.Output.TypeTool = "auto"
-	config.Output.PasteShortcut = "ctrl+v"
 
 	config.Security.AllowedCommands = []string{"arecord", "ffmpeg", "whisper", "xdotool", "wtype", "ydotool", "wl-copy", "wl-paste", "xsel", "notify-send", "xdg-open"}
 	config.Security.CheckIntegrity = false
@@ -106,32 +105,6 @@ func TestValidateConfig(t *testing.T) {
 				"recordingMethod": "arecord",
 			},
 		},
-		{
-			name: "terminal paste shortcut",
-			setupConfig: func() *models.Config {
-				config := &models.Config{}
-				setDefaultConfigForTest(config)
-				config.Output.PasteShortcut = "Ctrl + Shift + V"
-				return config
-			},
-			expectError: false,
-			expectedValues: map[string]interface{}{
-				"pasteShortcut": "ctrl+shift+v",
-			},
-		},
-		{
-			name: "invalid paste shortcut",
-			setupConfig: func() *models.Config {
-				config := &models.Config{}
-				setDefaultConfigForTest(config)
-				config.Output.PasteShortcut = "super+v"
-				return config
-			},
-			expectError: true,
-			expectedValues: map[string]interface{}{
-				"pasteShortcut": "ctrl+v",
-			},
-		},
 	}
 
 	for _, tt := range tests {
@@ -159,11 +132,6 @@ func TestValidateConfig(t *testing.T) {
 			if recordingMethod, ok := tt.expectedValues["recordingMethod"]; ok {
 				if config.Audio.RecordingMethod != recordingMethod {
 					t.Errorf("expected RecordingMethod %v, got %v", recordingMethod, config.Audio.RecordingMethod)
-				}
-			}
-			if pasteShortcut, ok := tt.expectedValues["pasteShortcut"]; ok {
-				if config.Output.PasteShortcut != pasteShortcut {
-					t.Errorf("expected PasteShortcut %v, got %v", pasteShortcut, config.Output.PasteShortcut)
 				}
 			}
 		})
