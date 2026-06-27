@@ -6,6 +6,7 @@ package outputters
 import (
 	"fmt"
 	"os/exec"
+	"strings"
 	"time"
 
 	"github.com/AshBuk/dabri/v2/config"
@@ -13,9 +14,13 @@ import (
 )
 
 const (
-	pasteToolYdotool = "ydotool"
-	keyLeftCtrl      = "29"
-	keyV             = "47"
+	pasteToolYdotool         = "ydotool"
+	pasteShortcutCtrlV       = "ctrl+v"
+	pasteShortcutShiftInsert = "shift+insert"
+	keyLeftCtrl              = "29"
+	keyLeftShift             = "42"
+	keyV                     = "47"
+	keyInsert                = "110"
 )
 
 // AutoPasteOutputter types ASCII normally and pastes non-ASCII text via clipboard.
@@ -27,7 +32,7 @@ type AutoPasteOutputter struct {
 	pasteDelay time.Duration
 }
 
-// NewAutoPasteOutputter creates an outputter that uses Ctrl+V for Unicode text.
+// NewAutoPasteOutputter creates an outputter that pastes Unicode text.
 func NewAutoPasteOutputter(typing, clipboard interfaces.Outputter, pasteTool string, cfg *config.Config) interfaces.Outputter {
 	return &AutoPasteOutputter{
 		typing:     typing,
@@ -76,11 +81,33 @@ func (o *AutoPasteOutputter) pressPaste() error {
 		return fmt.Errorf("paste tool not found: %s", o.pasteTool)
 	}
 
-	args := []string{"key", keyLeftCtrl + ":1", keyV + ":1", keyV + ":0", keyLeftCtrl + ":0"}
+	args, err := pasteKeyArgs(o.config.Output.PasteShortcut)
+	if err != nil {
+		return err
+	}
 	// #nosec G204 -- Tool is allowlisted; arguments are fixed key codes.
 	cmd := exec.Command(o.pasteTool, args...)
 	if output, err := cmd.CombinedOutput(); err != nil {
 		return fmt.Errorf("failed to paste with %s: %w, output: %s", o.pasteTool, err, string(output))
 	}
 	return nil
+}
+
+func pasteKeyArgs(shortcut string) ([]string, error) {
+	switch normalizePasteShortcut(shortcut) {
+	case pasteShortcutShiftInsert:
+		return []string{"key", keyLeftShift + ":1", keyInsert + ":1", keyInsert + ":0", keyLeftShift + ":0"}, nil
+	case pasteShortcutCtrlV:
+		return []string{"key", keyLeftCtrl + ":1", keyV + ":1", keyV + ":0", keyLeftCtrl + ":0"}, nil
+	default:
+		return nil, fmt.Errorf("unsupported paste shortcut: %s", shortcut)
+	}
+}
+
+func normalizePasteShortcut(shortcut string) string {
+	shortcut = strings.ToLower(strings.TrimSpace(shortcut))
+	if shortcut == "" {
+		return pasteShortcutShiftInsert
+	}
+	return strings.ReplaceAll(shortcut, " ", "")
 }

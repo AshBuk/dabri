@@ -32,6 +32,7 @@ output:
   default_mode: "active_window"  # Options: "clipboard", "active_window"
   clipboard_tool: "auto"         # Options: "auto", "wl-copy", "xsel"
   type_tool: "auto"              # Options: "auto", "ydotool", "xdotool", "wl-clipboard", "dbus"
+  paste_shortcut: "shift+insert" # Clipboard paste fallback: "shift+insert", "ctrl+v"
 
 # Desktop notification settings
 notifications:

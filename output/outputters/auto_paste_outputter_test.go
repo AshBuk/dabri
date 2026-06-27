@@ -33,6 +33,28 @@ func TestAutoPasteOutputter_TypeToActiveWindow_NonASCIIUsesClipboardPaste(t *tes
 	}
 
 	args := readCapturedArgs(t, captureFile)
+	expected := []string{"key", "42:1", "110:1", "110:0", "42:0"}
+	if strings.Join(args, "\n") != strings.Join(expected, "\n") {
+		t.Fatalf("expected args %q, got %q", expected, args)
+	}
+}
+
+func TestAutoPasteOutputter_TypeToActiveWindow_NonASCIIUsesConfiguredPasteShortcut(t *testing.T) {
+	captureFile := installFakePasteTool(t)
+	typing := NewMockOutputter()
+	clipboard := NewMockOutputter()
+	cfg := &config.Config{}
+	cfg.Output.PasteShortcut = "ctrl+v"
+	cfg.Security.AllowedCommands = []string{"ydotool"}
+
+	outputter := NewAutoPasteOutputter(typing, clipboard, "ydotool", cfg).(*AutoPasteOutputter)
+	outputter.pasteDelay = 0
+
+	if err := outputter.TypeToActiveWindow("Привет"); err != nil {
+		t.Fatalf("expected configured paste shortcut to succeed, got %v", err)
+	}
+
+	args := readCapturedArgs(t, captureFile)
 	expected := []string{"key", "29:1", "47:1", "47:0", "29:0"}
 	if strings.Join(args, "\n") != strings.Join(expected, "\n") {
 		t.Fatalf("expected args %q, got %q", expected, args)

@@ -44,6 +44,7 @@ type Config struct {
 		DefaultMode   string `yaml:"default_mode"`   // Default output mode: "clipboard" or "active_window"
 		ClipboardTool string `yaml:"clipboard_tool"` // Tool for clipboard operations (e.g., "wl-copy", "xsel"). "auto" for detection
 		TypeTool      string `yaml:"type_tool"`      // Tool for typing text (e.g., "xdotool", "wtype"). "auto" for detection
+		PasteShortcut string `yaml:"paste_shortcut"` // Shortcut for clipboard paste fallback: "shift+insert" or "ctrl+v"
 	} `yaml:"output"`
 
 	Notifications struct {

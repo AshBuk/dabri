@@ -78,6 +78,20 @@ func validateWebServerConfig(config *models.Config, errors *[]string) {
 	}
 }
 
+func validateOutputConfig(config *models.Config, errors *[]string) {
+	shortcut := strings.ToLower(strings.ReplaceAll(strings.TrimSpace(config.Output.PasteShortcut), " ", ""))
+	if shortcut == "" {
+		shortcut = "shift+insert"
+	}
+	switch shortcut {
+	case "shift+insert", "ctrl+v":
+		config.Output.PasteShortcut = shortcut
+	default:
+		*errors = append(*errors, fmt.Sprintf("invalid paste shortcut: %s, correcting to 'shift+insert'", config.Output.PasteShortcut))
+		config.Output.PasteShortcut = "shift+insert"
+	}
+}
+
 // validateSecurityConfig validates security configuration settings
 func validateSecurityConfig(config *models.Config, errors *[]string) {
 	// Ensure there's always a baseline of allowed commands for security
@@ -96,6 +110,7 @@ func ValidateConfig(config *models.Config) error {
 	validateGeneralConfig(config, &errors)
 	validateAudioConfig(config, &errors)
 	validateWebServerConfig(config, &errors)
+	validateOutputConfig(config, &errors)
 	validateSecurityConfig(config, &errors)
 
 	if len(errors) > 0 {
