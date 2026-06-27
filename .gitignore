@@ -6,6 +6,7 @@ coverage.out
 
 # Project executables
 /dabri
+/dabri/
 /dabri-cli
 /daemon
 /cli

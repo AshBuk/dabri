@@ -164,17 +164,35 @@ func (f *Factory) createClipboardOutputter(env EnvironmentType) (interfaces.Outp
 // extra device permissions. Otherwise it falls back to a CLI tool.
 func (f *Factory) createTypeOutputter(env EnvironmentType) (interfaces.Outputter, error) {
 	if env == EnvironmentWayland && f.config.Output.TypeTool == "auto" && outputters.PortalRemoteDesktopAvailable() {
-		// Text the portal cannot type (non-ASCII) is handled one level up by
-		// IOService, which switches the whole output mode to clipboard.
+		// Text the portal cannot type (non-ASCII) is handled by the paste fallback.
 		if out, err := outputters.NewPortalOutputter(); err == nil {
-			return out, nil
+			return f.withWaylandPasteFallback(env, out)
 		}
 	}
 	tool := f.selectTypeTool(env)
 	if tool != "" && !config.IsCommandAllowed(f.config, tool) {
 		return nil, fmt.Errorf("type tool not allowed: %s", tool)
 	}
-	return outputters.NewTypeOutputter(tool, f.config)
+	out, err := outputters.NewTypeOutputter(tool, f.config)
+	if err != nil {
+		return nil, err
+	}
+	return f.withWaylandPasteFallback(env, out)
+}
+
+func (f *Factory) withWaylandPasteFallback(env EnvironmentType, out interfaces.Outputter) (interfaces.Outputter, error) {
+	if env != EnvironmentWayland || !f.isToolAvailable("ydotool") {
+		return out, nil
+	}
+	clipboardTool := f.selectClipboardTool(env)
+	if clipboardTool != "wl-copy" || !config.IsCommandAllowed(f.config, "ydotool") {
+		return out, nil
+	}
+	clipboard, err := f.createClipboardOutputter(env)
+	if err != nil {
+		return out, nil
+	}
+	return outputters.NewAutoPasteOutputter(out, clipboard, "ydotool", f.config), nil
 }
 
 // Create an outputter directly from a configuration
