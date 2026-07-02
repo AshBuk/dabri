@@ -47,6 +47,9 @@
     <binary>dabri</binary>
   </provides>
   <releases>
+    <release version="2.2.0" date="2026-07-02">
+      <description><p>Portal Unicode auto-paste in active-window mode; Flatpak bundles the small Whisper model</p></description>
+    </release>
     <release version="2.1.4" date="2026-06-19">
       <description><p>Leaner Flatpak manifest and runtime version resolution</p></description>
     </release>
