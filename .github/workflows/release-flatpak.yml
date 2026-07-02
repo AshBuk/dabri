@@ -36,6 +36,18 @@ jobs:
         with:
           fetch-depth: 0
 
+      # ggml's vulkan-shaders-gen forks a glslc per shader variant; on the 16 GB
+      # x86_64 runner this can hit ENOMEM, and the generator silently skips the
+      # failed variants, breaking the final link with undefined matmul_* symbols.
+      # Swap absorbs the peak (aarch64 has fewer variants but it doesn't hurt).
+      - name: Add swap for shader generation
+        run: |
+          sudo fallocate -l 8G /swapfile-ci
+          sudo chmod 600 /swapfile-ci
+          sudo mkswap /swapfile-ci
+          sudo swapon /swapfile-ci
+          free -h
+
       - name: Install flatpak and Builder
         run: |
           sudo apt-get update
