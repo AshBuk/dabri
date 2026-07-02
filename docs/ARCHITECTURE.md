@@ -164,7 +164,7 @@ Related constants:
 - **`factory/factory.go`**: Factory for creating appropriate output handlers with automatic tool selection
 - **`outputters/`**: Output implementations
   - `clipboard_outputter.go`: System clipboard integration (wl-copy/wl-paste for Wayland, xsel for X11)
-  - `portal_outputter.go`: RemoteDesktop portal typing on GNOME/KDE Wayland (via [go-wlportal](https://github.com/AshBuk/go-wlportal)); sandbox-clean, no extra permissions. Types through the compositor's active keyboard layout, so non-ASCII text it cannot inject makes `IOService` switch the output mode to clipboard.
+  - `portal_outputter.go`: RemoteDesktop portal typing on GNOME/KDE Wayland (via [go-wlportal](https://github.com/AshBuk/go-wlportal)); sandbox-clean, no extra permissions. Types through the compositor's active keyboard layout; non-ASCII text is copied to the clipboard and auto-pasted with `Shift+Insert` sent through the same portal session, keeping active-window mode.
   - `type_outputter.go`: Active window typing simulation
     - **X11**: Uses `xdotool` (works out-of-the-box)
     - **Wayland (non-GNOME)**: Prefers `wtype` → falls back to `ydotool` if available
@@ -256,4 +256,4 @@ Distribution-specific packaging scripts and configurations:
 
 ---
 
-*This architecture documentation is maintained alongside the codebase. Last updated: 2026-06-08*
+*This architecture documentation is maintained alongside the codebase. Last updated: 2026-07-02*

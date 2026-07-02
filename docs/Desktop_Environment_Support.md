@@ -26,7 +26,7 @@ sudo pacman -S gnome-shell-extension-appindicator
 | **🟢 Sway/Other Wayland** | wtype → ydotool | clipboard | ✅ Auto-detected |
 | **🟢 X11 (all DEs)** | xdotool | clipboard | ✅ Works out-of-box |
 
- GNOME/KDE use the RemoteDesktop portal when available (one-time permission dialog), with a tool/clipboard fallback.
+ GNOME/KDE use the RemoteDesktop portal when available (one-time permission dialog), with a tool/clipboard fallback. Text the portal can't type directly (non-ASCII) is copied to the clipboard and auto-pasted via `Shift+Insert` through the same portal session - active-window mode is preserved.
 
  Other Wayland compositors (Sway, Hyprland, etc.) use wtype out of the box.
 
@@ -45,8 +45,9 @@ The portal path is provided by [go-wlportal](https://github.com/AshBuk/go-wlport
 and needs no extra permissions.
 
 > **Note:** the portal types through the active keyboard layout, so it can't produce
-> characters outside it (e.g. any non-ASCII text on a Latin/US layout). In that case
-> Dabri switches to clipboard mode and notifies you — paste with `Ctrl+V`.
+> characters outside it (e.g. any non-ASCII text on a Latin/US layout). Dabri handles
+> this automatically: the text is copied to the clipboard and pasted into the active
+> window with `Shift+Insert` sent through the same portal session.
 
 For wlroots/Hyprland auto-typing, grant uinput access once (otherwise Dabri falls
 back to clipboard):
@@ -205,4 +206,4 @@ Add to `~/.config/hypr/hyprland.conf`:
 exec-once = dabri
 ```
 
-*Last updated: 2026-06-20*
+*Last updated: 2026-07-02*
