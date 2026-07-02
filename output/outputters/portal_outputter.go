@@ -21,13 +21,19 @@ func PortalRemoteDesktopAvailable() bool {
 	return typing.Available()
 }
 
+type portalKeyboard interface {
+	Type(text string) error
+	KeyCombo(keycodes ...typing.Keycode) error
+}
+
 // types text through the RemoteDesktop portal via the go-wlportal/typing adapter
 type PortalOutputter struct {
-	kbd *typing.Keyboard
+	kbd       portalKeyboard
+	clipboard interfaces.Outputter
 }
 
 // NewPortalOutputter creates a portal-based type outputter (session is opened lazily).
-func NewPortalOutputter() (interfaces.Outputter, error) {
+func NewPortalOutputter(clipboard interfaces.Outputter) (interfaces.Outputter, error) {
 	kbd, err := typing.NewKeyboard(
 		typing.WithRestoreTokenPath(portalTokenPath()),
 		typing.WithAppID(constants.AppID),
@@ -35,27 +41,40 @@ func NewPortalOutputter() (interfaces.Outputter, error) {
 	if err != nil {
 		return nil, err
 	}
-	return &PortalOutputter{kbd: kbd}, nil
+	return &PortalOutputter{kbd: kbd, clipboard: clipboard}, nil
 }
 
 // TypeToActiveWindow injects text as keyboard input into the focused window.
-// The portal can only type characters in the active keyboard layout, so it
-// errors on non-ASCII text and lets IOService fall back to clipboard.
+// The portal can only type characters in the active keyboard layout. For
+// non-ASCII text, keep active-window mode by copying the text and sending the
+// paste shortcut through the same RemoteDesktop portal session.
 func (o *PortalOutputter) TypeToActiveWindow(text string) error {
 	if isNonASCII(text) {
-		return fmt.Errorf("portal cannot type non-ASCII text through the active keyboard layout")
+		if o.clipboard == nil {
+			return fmt.Errorf("portal paste requires a clipboard outputter")
+		}
+		if err := o.clipboard.CopyToClipboard(text); err != nil {
+			return err
+		}
+		return o.kbd.KeyCombo(typing.KeycodeLeftShift, typing.KeycodeInsert)
 	}
 	return o.kbd.Type(text)
 }
 
-// CopyToClipboard is not supported by this outputter
+// CopyToClipboard delegates to the configured clipboard outputter.
 func (o *PortalOutputter) CopyToClipboard(text string) error {
-	return fmt.Errorf("copying to clipboard not supported by portal outputter")
+	if o.clipboard == nil {
+		return fmt.Errorf("copying to clipboard not supported by portal outputter")
+	}
+	return o.clipboard.CopyToClipboard(text)
 }
 
 // GetToolNames reports the active typing backend
 func (o *PortalOutputter) GetToolNames() (clipboardTool, typeTool string) {
-	return "", "portal"
+	if o.clipboard != nil {
+		clipboardTool, _ = o.clipboard.GetToolNames()
+	}
+	return clipboardTool, "portal"
 }
 
 // portalTokenPath returns where the portal permission token is persisted so the
