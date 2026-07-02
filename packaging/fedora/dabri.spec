@@ -7,7 +7,7 @@
 # =============================================================================
 %global app_version     2.1.4
 %global go_version      1.21
-%global whisper_version 1.8.6
+%global whisper_version 1.9.1
 
 # Exclude auto-requires for vendored whisper libraries
 %global __requires_exclude libwhisper\\.so|libggml.*\\.so
@@ -156,12 +156,11 @@ popd
 
 # Prepare lib directory for Go build
 mkdir -p lib
-cp build/whisper.cpp/build/src/libwhisper.so* lib/
+# whisper.cpp >= v1.9 places all libraries (incl. Vulkan backend) in build/bin
+cp build/whisper.cpp/build/bin/libwhisper.so* lib/
 cp build/whisper.cpp/include/whisper.h lib/
 cp build/whisper.cpp/ggml/include/*.h lib/ 2>/dev/null || :
-cp build/whisper.cpp/build/ggml/src/libggml*.so* lib/ 2>/dev/null || :
-# Copy Vulkan backend library from subdirectory
-cp build/whisper.cpp/build/ggml/src/ggml-vulkan/libggml-vulkan.so* lib/ 2>/dev/null || :
+cp build/whisper.cpp/build/bin/libggml*.so* lib/
 
 # =============================================================================
 # 2) Build Go binary with systray support (using vendored deps)

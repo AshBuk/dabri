@@ -109,8 +109,18 @@ modules:
             - -DGGML_AVX512=OFF
     sources:
       - type: archive
-        url: https://github.com/ggml-org/whisper.cpp/archive/refs/tags/v1.8.6.tar.gz
-        sha256: f8e632016ceae556f3132a16c7f704be1e7715595041f474fa81a2b64c1abf7c
+        url: https://github.com/ggml-org/whisper.cpp/archive/refs/tags/v1.9.1.tar.gz
+        sha256: 147267177eef7b22ec3d2476dd514d1b12e160e176230b740e3d1bd600118447
+
+  # Bundle the default Whisper model so first run works offline
+  - name: whisper-model-small
+    buildsystem: simple
+    build-commands:
+      - install -Dm644 ggml-small-q5_1.bin /app/share/dabri/language-models/small-q5_1.bin
+    sources:
+      - type: file
+        url: https://huggingface.co/ggerganov/whisper.cpp/resolve/main/ggml-small-q5_1.bin
+        sha256: ae85e4a935d7a567bd102fe55afc16bb595bdb618e11b2fc7591bc08120411bb
 
   - name: dabri
     buildsystem: simple

@@ -15,6 +15,8 @@ const (
 	AppDataDirName = "dabri"
 	// ModelsDirName is the subdirectory for model files
 	ModelsDirName = "models"
+	// FlatpakModelsDir is where the Flatpak build bundles models
+	FlatpakModelsDir = "/app/share/dabri/language-models"
 )
 
 // Implements the logic for resolving the path to the bundled model
@@ -35,8 +37,9 @@ func NewModelPathResolver(config *config.Config, fileName string) *ModelPathReso
 // GetBundledModelPath returns the path to the model file.
 // Search order:
 //  1. AppImage bundled path ($APPDIR/sources/language-models/)
-//  2. User data directory (~/.local/share/dabri/models/)
-//  3. Development path (sources/language-models/)
+//  2. Flatpak bundled path (/app/share/dabri/language-models/)
+//  3. User data directory (~/.local/share/dabri/models/)
+//  4. Development path (sources/language-models/)
 func (r *ModelPathResolver) GetBundledModelPath() string {
 	// 1. AppImage environment
 	if appDir := os.Getenv("APPDIR"); appDir != "" {
@@ -45,12 +48,19 @@ func (r *ModelPathResolver) GetBundledModelPath() string {
 			return path
 		}
 	}
-	// 2. User data directory (XDG_DATA_HOME or ~/.local/share)
+	// 2. Flatpak environment
+	if os.Getenv("FLATPAK_ID") != "" {
+		path := filepath.Join(FlatpakModelsDir, r.modelFileName)
+		if fileExists(path) {
+			return path
+		}
+	}
+	// 3. User data directory (XDG_DATA_HOME or ~/.local/share)
 	userDataPath := r.getUserDataModelPath()
 	if fileExists(userDataPath) {
 		return userDataPath
 	}
-	// 3. Development path
+	// 4. Development path
 	devPath := filepath.Join("sources/language-models", r.modelFileName)
 	if fileExists(devPath) {
 		return devPath

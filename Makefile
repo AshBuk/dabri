@@ -26,8 +26,8 @@ BUILD_DIR := build
 LIB_DIR := lib
 DIST_DIR := dist
 # Optional: set to a tag or commit hash to pin whisper.cpp version for reproducible builds
-# Example (CI recommended): make WHISPER_CPP_REF=v1.8.6
-WHISPER_CPP_REF ?= v1.8.6
+# Example (CI recommended): make WHISPER_CPP_REF=v1.9.1
+WHISPER_CPP_REF ?= v1.9.1
 
 # Docker helpers
 DOCKER_RUN := docker compose run --rm dev
@@ -110,11 +110,11 @@ $(LIB_DIR)/whisper.h:
 		cmake -B build -DGGML_NATIVE=OFF -DGGML_AVX512=OFF -DGGML_VULKAN=ON && \
 		cmake --build build --config Release
 	mkdir -p $(LIB_DIR)
-	cp $(BUILD_DIR)/whisper.cpp/build/src/libwhisper.so* $(LIB_DIR)/ || true
-	cp $(BUILD_DIR)/whisper.cpp/build/src/libwhisper.a $(LIB_DIR)/ || true
+	# whisper.cpp >= v1.9 places libraries in build/bin (build/src and build/ggml/src before)
+	find $(BUILD_DIR)/whisper.cpp/build \( -name 'libwhisper*' -o -name 'libggml*' \) \( -name '*.so*' -o -name '*.a' \) -exec cp {} $(LIB_DIR)/ \;
+	@test -f $(LIB_DIR)/libwhisper.so || { echo "ERROR: libwhisper.so was not produced"; exit 1; }
 	cp $(BUILD_DIR)/whisper.cpp/include/whisper.h $(LIB_DIR)/
 	cp $(BUILD_DIR)/whisper.cpp/ggml/include/*.h $(LIB_DIR)/ || true
-	find $(BUILD_DIR)/whisper.cpp/build/ggml/src -name 'libggml*' \( -name '*.so*' -o -name '*.a' \) -exec cp {} $(LIB_DIR)/ \; 2>/dev/null || true
 	@echo "Library files:"
 	@ls -la $(LIB_DIR)/
 

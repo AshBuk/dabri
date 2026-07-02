@@ -36,6 +36,27 @@ func TestGetBundledModelPath_AppImage(t *testing.T) {
 	}
 }
 
+func TestGetBundledModelPath_FlatpakFallback(t *testing.T) {
+	t.Setenv("APPDIR", "")
+	t.Setenv("FLATPAK_ID", "io.github.ashbuk.dabri")
+	dataHome := t.TempDir()
+	t.Setenv("XDG_DATA_HOME", dataHome)
+
+	modelDir := filepath.Join(dataHome, AppDataDirName, ModelsDirName)
+	if err := os.MkdirAll(modelDir, 0o755); err != nil {
+		t.Fatalf("failed to create model dir: %v", err)
+	}
+	modelPath := filepath.Join(modelDir, testModelFileName)
+	if err := os.WriteFile(modelPath, []byte("test"), 0o644); err != nil {
+		t.Fatalf("failed to create model file: %v", err)
+	}
+
+	resolver := NewModelPathResolver(&config.Config{}, testModelFileName)
+	if result := resolver.GetBundledModelPath(); result != modelPath {
+		t.Errorf("expected %q, got %q", modelPath, result)
+	}
+}
+
 func TestGetBundledModelPath_UserData(t *testing.T) {
 	// Clear APPDIR to skip AppImage check
 	t.Setenv("APPDIR", "")
