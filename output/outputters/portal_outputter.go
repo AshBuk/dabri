@@ -7,15 +7,12 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
-	"time"
 
 	"github.com/AshBuk/go-wlportal/typing"
 
 	"github.com/AshBuk/dabri/v2/internal/constants"
 	"github.com/AshBuk/dabri/v2/output/interfaces"
 )
-
-var portalPasteClipboardRestoreDelay = 750 * time.Millisecond
 
 // PortalRemoteDesktopAvailable reports whether the RemoteDesktop portal exposes
 // keyboard injection. This is the sandbox-clean typing path on GNOME/KDE; the
@@ -27,10 +24,6 @@ func PortalRemoteDesktopAvailable() bool {
 type portalKeyboard interface {
 	Type(text string) error
 	KeyCombo(keycodes ...typing.Keycode) error
-}
-
-type clipboardReader interface {
-	ReadClipboard() (string, bool)
 }
 
 // types text through the RemoteDesktop portal via the go-wlportal/typing adapter
@@ -60,17 +53,10 @@ func (o *PortalOutputter) TypeToActiveWindow(text string) error {
 		if o.clipboard == nil {
 			return fmt.Errorf("portal paste requires a clipboard outputter")
 		}
-		previousClipboard, restoreClipboard := o.readClipboard()
 		if err := o.clipboard.CopyToClipboard(text); err != nil {
 			return err
 		}
-		if err := o.kbd.KeyCombo(typing.KeycodeLeftShift, typing.KeycodeInsert); err != nil {
-			return err
-		}
-		if restoreClipboard {
-			o.restoreClipboardLater(previousClipboard)
-		}
-		return nil
+		return o.kbd.KeyCombo(typing.KeycodeLeftShift, typing.KeycodeInsert)
 	}
 	return o.kbd.Type(text)
 }
@@ -89,20 +75,6 @@ func (o *PortalOutputter) GetToolNames() (clipboardTool, typeTool string) {
 		clipboardTool, _ = o.clipboard.GetToolNames()
 	}
 	return clipboardTool, "portal"
-}
-
-func (o *PortalOutputter) readClipboard() (string, bool) {
-	reader, ok := o.clipboard.(clipboardReader)
-	if !ok {
-		return "", false
-	}
-	return reader.ReadClipboard()
-}
-
-func (o *PortalOutputter) restoreClipboardLater(text string) {
-	time.AfterFunc(portalPasteClipboardRestoreDelay, func() {
-		_ = o.clipboard.CopyToClipboard(text)
-	})
 }
 
 // portalTokenPath returns where the portal permission token is persisted so the

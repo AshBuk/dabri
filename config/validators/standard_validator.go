@@ -82,7 +82,7 @@ func validateWebServerConfig(config *models.Config, errors *[]string) {
 func validateSecurityConfig(config *models.Config, errors *[]string) {
 	// Ensure there's always a baseline of allowed commands for security
 	if len(config.Security.AllowedCommands) == 0 {
-		config.Security.AllowedCommands = []string{"arecord", "ffmpeg", "whisper", "xdotool", "wl-copy", "wl-paste", "xsel"}
+		config.Security.AllowedCommands = []string{"arecord", "ffmpeg", "whisper", "xdotool", "wl-copy", "xsel"}
 		*errors = append(*errors, "allowed_commands was empty, populated with defaults")
 	}
 }

@@ -64,27 +64,6 @@ func (o *ClipboardOutputter) CopyToClipboard(text string) error {
 	return nil
 }
 
-// ReadClipboard returns the current clipboard text when the configured backend
-// supports reading. It is best-effort and intended for preserving user clipboard
-// contents around paste-based output.
-func (o *ClipboardOutputter) ReadClipboard() (string, bool) {
-	if o.clipboardTool != "wl-copy" {
-		return "", false
-	}
-	if !config.IsCommandAllowed(o.config, "wl-paste") {
-		return "", false
-	}
-	if _, err := exec.LookPath("wl-paste"); err != nil {
-		return "", false
-	}
-	// #nosec G204 -- Fixed command name guarded by allowlist.
-	output, err := exec.Command("wl-paste", "--no-newline").Output()
-	if err != nil {
-		return "", false
-	}
-	return string(output), true
-}
-
 // Return an error as typing is not supported by this outputter
 func (o *ClipboardOutputter) TypeToActiveWindow(text string) error {
 	return fmt.Errorf("typing to active window not supported by clipboard outputter")
