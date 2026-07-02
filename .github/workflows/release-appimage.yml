@@ -119,6 +119,10 @@ jobs:
       env:
         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
+        # actions/checkout replaces the annotated tag with a lightweight one
+        # pointing at the commit (actions/checkout#290), so %(contents:*) would
+        # read the commit message. Re-fetch the real tag object first.
+        git fetch --force origin "+refs/tags/${GITHUB_REF_NAME}:refs/tags/${GITHUB_REF_NAME}"
         # Header: the annotated tag's body (everything after the subject + blank line).
         # Falls back to the subject line if the tag has no body.
         HEADER=$(git tag -l --format='%(contents:body)' "${GITHUB_REF_NAME}")
