@@ -1,7 +1,7 @@
 fyne.io/systray v1.12.0 h1:CA1Kk0e2zwFlxtc02L3QFSiIbxJ/P0n582YrZHT7aTM=
 fyne.io/systray v1.12.0/go.mod h1:RVwqP9nYMo7h5zViCBHri2FgjXF7H2cub7MAq4NSoLs=
-github.com/AshBuk/go-wlportal v1.0.3 h1:HL4EFQyS/eWNdxAtl6lCcqpqQYQo82OK8+SY8UI1AM0=
-github.com/AshBuk/go-wlportal v1.0.3/go.mod h1:/gHO8KLdr8/IgCzGtb84aKVuto2FIlMcLnB09MubuAY=
+github.com/AshBuk/go-wlportal v1.1.0 h1:C3ACHoXwEk32cU2oQjsRqN6ugs78f8CHo6QV4oCpzI8=
+github.com/AshBuk/go-wlportal v1.1.0/go.mod h1:/gHO8KLdr8/IgCzGtb84aKVuto2FIlMcLnB09MubuAY=
 github.com/cpuguy83/go-md2man/v2 v2.0.6/go.mod h1:oOW0eioCTA6cOiMLiUPZOpcVxMig6NIQQ7OS05n1F4g=
 github.com/creack/pty v1.1.9/go.mod h1:oKZEueFk5CKHvIhNR5MUki03XCEU+Q6VDXinZuGJ33E=
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
