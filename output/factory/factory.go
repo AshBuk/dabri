@@ -164,15 +164,12 @@ func (f *Factory) createClipboardOutputter(env EnvironmentType) (interfaces.Outp
 // extra device permissions. Otherwise it falls back to a CLI tool.
 func (f *Factory) createTypeOutputter(env EnvironmentType) (interfaces.Outputter, error) {
 	if env == EnvironmentWayland && f.config.Output.TypeTool == "auto" && outputters.PortalRemoteDesktopAvailable() {
-		// Text the portal cannot type (non-ASCII) stays in active-window mode:
-		// copy it to the clipboard and send the paste shortcut through the same
-		// RemoteDesktop portal session.
-		clipboard, err := f.createClipboardOutputter(env)
-		if err == nil {
-			out, err := outputters.NewPortalOutputter(clipboard)
-			if err != nil {
-				return nil, err
-			}
+		// Non-ASCII text stays in active-window mode: the portal outputter copies
+		// it to the clipboard and sends the paste shortcut through the same
+		// RemoteDesktop portal session. Without a clipboard outputter the portal
+		// still types ASCII; non-ASCII errors are handled one level up by IOService.
+		clipboard, _ := f.createClipboardOutputter(env)
+		if out, err := outputters.NewPortalOutputter(clipboard); err == nil {
 			return out, nil
 		}
 	}
