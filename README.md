@@ -138,8 +138,7 @@ Start onboarding with:
 - [DEVELOPMENT.md](docs/DEVELOPMENT.md) — development workflow and build instructions
 - [CONTRIBUTING.md](docs/CONTRIBUTING.md) — contribution guidelines and how to help improve the project
 - [docker/README.md](docker/README.md) — Docker-based development
-
-Technical dive into architecture and engineering challenges: [Building Dabri on Hashnode](https://ashbuk.hashnode.dev/an-offline-voice-to-text-solution-for-linux-users-using-whispercpp-and-go)
+- [Article](https://ashbuk.dev/posts/dabri/)
 
 ## ✦ Acknowledgments
 
