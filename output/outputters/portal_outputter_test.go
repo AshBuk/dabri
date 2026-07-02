@@ -6,6 +6,7 @@ package outputters
 import (
 	"errors"
 	"testing"
+	"time"
 
 	"github.com/AshBuk/go-wlportal/typing"
 )
@@ -52,6 +53,33 @@ func TestPortalOutputter_TypeToActiveWindow_NonASCIIUsesClipboardAndPortalPaste(
 	}
 }
 
+func TestPortalOutputter_TypeToActiveWindow_NonASCIIRestoresClipboard(t *testing.T) {
+	oldDelay := portalPasteClipboardRestoreDelay
+	portalPasteClipboardRestoreDelay = time.Millisecond
+	t.Cleanup(func() { portalPasteClipboardRestoreDelay = oldDelay })
+
+	kbd := &fakePortalKeyboard{}
+	clipboard := &fakePortalClipboard{current: "previous clipboard", readOK: true}
+	outputter := &PortalOutputter{kbd: kbd, clipboard: clipboard}
+
+	if err := outputter.TypeToActiveWindow("тест"); err != nil {
+		t.Fatalf("TypeToActiveWindow returned error: %v", err)
+	}
+
+	deadline := time.After(100 * time.Millisecond)
+	for {
+		if got := clipboard.copiedHistory; sameStrings(got, []string{"тест", "previous clipboard"}) {
+			return
+		}
+		select {
+		case <-deadline:
+			t.Fatalf("clipboard history = %v, want paste text then restored clipboard", clipboard.copiedHistory)
+		default:
+			time.Sleep(time.Millisecond)
+		}
+	}
+}
+
 func TestPortalOutputter_TypeToActiveWindow_NonASCIIClipboardError(t *testing.T) {
 	wantErr := errors.New("copy failed")
 	kbd := &fakePortalKeyboard{}
@@ -77,6 +105,9 @@ func TestPortalOutputter_TypeToActiveWindow_NonASCIIPasteError(t *testing.T) {
 	}
 	if clipboard.copied != "тест" {
 		t.Fatalf("clipboard copied = %q, want input text", clipboard.copied)
+	}
+	if len(clipboard.copiedHistory) != 1 {
+		t.Fatalf("clipboard history = %v, want only paste text", clipboard.copiedHistory)
 	}
 }
 
@@ -114,13 +145,21 @@ func (f *fakePortalKeyboard) KeyCombo(keycodes ...typing.Keycode) error {
 
 type fakePortalClipboard struct {
 	copied        string
+	copiedHistory []string
 	copyErr       error
 	clipboardTool string
+	current       string
+	readOK        bool
 }
 
 func (f *fakePortalClipboard) CopyToClipboard(text string) error {
 	f.copied = text
+	f.copiedHistory = append(f.copiedHistory, text)
 	return f.copyErr
+}
+
+func (f *fakePortalClipboard) ReadClipboard() (string, bool) {
+	return f.current, f.readOK
 }
 
 func (f *fakePortalClipboard) TypeToActiveWindow(text string) error {
@@ -132,6 +171,18 @@ func (f *fakePortalClipboard) GetToolNames() (clipboardTool, typeTool string) {
 }
 
 func sameKeycodes(a, b []typing.Keycode) bool {
+	if len(a) != len(b) {
+		return false
+	}
+	for i := range a {
+		if a[i] != b[i] {
+			return false
+		}
+	}
+	return true
+}
+
+func sameStrings(a, b []string) bool {
 	if len(a) != len(b) {
 		return false
 	}
