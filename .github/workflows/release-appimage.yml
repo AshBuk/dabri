@@ -114,28 +114,36 @@ jobs:
         path: ./artifacts/
         merge-multiple: true
 
-    - name: Extract annotated tag message
-      id: tag_message
+    - name: Compose release body
+      id: release_body
+      env:
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
-        # Use the annotated tag's body (everything after the subject + blank line).
+        # Header: the annotated tag's body (everything after the subject + blank line).
         # Falls back to the subject line if the tag has no body.
-        BODY=$(git tag -l --format='%(contents:body)' "${GITHUB_REF_NAME}")
-        if [ -z "${BODY}" ]; then
-          BODY=$(git tag -l --format='%(contents:subject)' "${GITHUB_REF_NAME}")
+        HEADER=$(git tag -l --format='%(contents:body)' "${GITHUB_REF_NAME}")
+        if [ -z "${HEADER}" ]; then
+          HEADER=$(git tag -l --format='%(contents:subject)' "${GITHUB_REF_NAME}")
         fi
+        # Fetch generated notes (What's Changed + Full Changelog) explicitly
+        # instead of generate_release_notes: true, so re-running the workflow
+        # rebuilds the same body rather than clobbering the existing release.
+        NOTES=$(gh api "repos/${GITHUB_REPOSITORY}/releases/generate-notes" \
+          -f tag_name="${GITHUB_REF_NAME}" -q .body)
         {
-          echo "body<<EOF"
-          echo "${BODY}"
-          echo "EOF"
+          echo "body<<RELEASE_BODY_EOF"
+          echo "${HEADER}"
+          echo ""
+          echo "${NOTES}"
+          echo "RELEASE_BODY_EOF"
         } >> "$GITHUB_OUTPUT"
 
     - name: Create Release
-      uses: softprops/action-gh-release@v1
+      uses: softprops/action-gh-release@v2
       with:
         files: |
           ./artifacts/*.AppImage
-        body: ${{ steps.tag_message.outputs.body }}
-        generate_release_notes: true
+        body: ${{ steps.release_body.outputs.body }}
         draft: false
         prerelease: false
       env:
