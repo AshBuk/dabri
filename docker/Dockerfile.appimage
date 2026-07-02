@@ -98,7 +98,7 @@ ARG APP_VERSION
 ENV APP_VERSION=${APP_VERSION}
 
 # Whisper.cpp version pin for reproducible builds
-ARG WHISPER_CPP_REF=v1.8.4
+ARG WHISPER_CPP_REF=v1.9.1
 ENV WHISPER_CPP_REF=${WHISPER_CPP_REF}
 
 # Build AppImage at image build time so docker build can produce artifacts
