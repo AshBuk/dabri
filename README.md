@@ -7,9 +7,6 @@
 <a href="https://pkg.go.dev/github.com/AshBuk/dabri/v2">
   <img src="https://pkg.go.dev/badge/github.com/AshBuk/dabri/v2.svg" alt="Go Reference">
 </a>
-<a href="https://goreportcard.com/report/github.com/AshBuk/dabri/v2">
-  <img src="https://goreportcard.com/badge/github.com/AshBuk/dabri/v2" alt="Go Report Card">
-</a>
 <a href="https://go.dev/">
   <img src="https://img.shields.io/badge/go-1.25-00ADD8?logo=go" alt="Go Version">
 </a>
