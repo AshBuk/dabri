@@ -164,11 +164,11 @@ PKG_CONFIG_PATH=/app/lib
 
 #### Whisper.cpp Version Pinning
 ```bash
-# Pin whisper.cpp to specific version (Makefile default: v1.9.1)
-make whisper-libs WHISPER_CPP_REF=v1.9.1
+# Pin whisper.cpp to specific version (Makefile default: v1.9.2)
+make whisper-libs WHISPER_CPP_REF=v1.9.2
 
 # Or set in environment
-export WHISPER_CPP_REF=v1.9.1
+export WHISPER_CPP_REF=v1.9.2
 make whisper-libs
 ```
 

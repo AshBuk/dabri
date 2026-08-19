@@ -23,7 +23,7 @@ func TestOutputFactory_ErrorHandling(t *testing.T) {
 			name:        "empty default mode",
 			env:         EnvironmentX11,
 			defaultMode: "",
-			expectError: true, // External tools not available in test environment
+			expectError: true, // Empty allowlist rejects every tool
 		},
 		{
 			name:        "invalid default mode",
@@ -35,19 +35,19 @@ func TestOutputFactory_ErrorHandling(t *testing.T) {
 			name:        "unknown environment",
 			env:         EnvironmentUnknown,
 			defaultMode: "clipboard",
-			expectError: true, // External tools not available in test environment
+			expectError: true, // Empty allowlist rejects every tool
 		},
 		{
 			name:        "valid X11 clipboard",
 			env:         EnvironmentX11,
 			defaultMode: "clipboard",
-			expectError: true, // External tools not available in test environment
+			expectError: true, // Empty allowlist rejects every tool
 		},
 		{
 			name:        "valid Wayland clipboard",
 			env:         EnvironmentWayland,
 			defaultMode: "clipboard",
-			expectError: true, // External tools not available in test environment
+			expectError: true, // Empty allowlist rejects every tool
 		},
 	}
 
@@ -363,7 +363,7 @@ func TestGetOutputterFromConfig_ErrorHandling(t *testing.T) {
 				return cfg
 			}(),
 			env:         EnvironmentX11,
-			expectError: true, // External tools not available in test environment
+			expectError: true, // Empty allowlist rejects every tool
 		},
 	}
 
