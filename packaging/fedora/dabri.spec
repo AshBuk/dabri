@@ -5,7 +5,7 @@
 # =============================================================================
 # Version definitions (single source of truth)
 # =============================================================================
-%global app_version     2.2.0
+%global app_version     2.2.1
 %global go_version      1.21
 %global whisper_version 1.9.2
 
@@ -262,6 +262,9 @@ fi
 %{_datadir}/icons/hicolor/scalable/apps/io.github.ashbuk.dabri.svg
 
 %changelog
+* Wed Aug 19 2026 Asher Buk <AshBuk@users.noreply.github.com> - 2.2.1-1
+- Global shortcuts keep working on Plasma 6.7.4; whisper.cpp updated to v1.9.2
+
 * Thu Jul 02 2026 Asher Buk <AshBuk@users.noreply.github.com> - 2.2.0-1
 - Portal Unicode auto-paste in active-window mode; Flatpak bundles the small Whisper model
 
