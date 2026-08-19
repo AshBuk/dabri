@@ -18,15 +18,15 @@
   type: archive
   url: https://proxy.golang.org/gopkg.in/yaml.v2/@v/v2.4.0.zip
 - dest: vendor/github.com/AshBuk/go-wlportal
-  sha256: c69da8b67512fd99d6959549f621471b7a225304ff55cd4b58411b8dafd91a7e
+  sha256: 80629b8e7c66ee0ac6a67227fabc2701d52d9e935d7a94e7fd78db133450deae
   strip-components: 3
   type: archive
-  url: https://proxy.golang.org/github.com/!ash!buk/go-wlportal/@v/v1.1.0.zip
+  url: https://proxy.golang.org/github.com/!ash!buk/go-wlportal/@v/v1.3.0.zip
 - dest: vendor/github.com/ggerganov/whisper.cpp/bindings/go
-  sha256: dca8ade6c1174e7b3cf6cabe69e8e19ec672f03bd4dedee797de97955a4cd445
+  sha256: 692d440b7e0b1b4c089fff13d0a5898b2209495b2f912d52c84c4a3d7a480b3e
   strip-components: 5
   type: archive
-  url: https://proxy.golang.org/github.com/ggerganov/whisper.cpp/bindings/go/@v/v0.0.0-20260619041237-f049fff95a08.zip
+  url: https://proxy.golang.org/github.com/ggerganov/whisper.cpp/bindings/go/@v/v0.0.0-20260804135651-306c88f4d128.zip
 - dest: vendor/github.com/go-audio/wav
   sha256: 884d351372627717f4779da1fa58751481db5bfe9a623bdfd9a9e887c13e2e62
   strip-components: 3
