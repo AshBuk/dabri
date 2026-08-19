@@ -23,6 +23,10 @@ const (
 	EnvironmentUnknown = platform.EnvironmentUnknown
 )
 
+// portalAvailable reports whether the RemoteDesktop portal can be used. It is a
+// variable so tests can pin the answer instead of inheriting the live session's.
+var portalAvailable = outputters.PortalRemoteDesktopAvailable
+
 // Factory creates output managers (clipboard/typing) based on environment and configuration
 // Specialized subfactory used by ServiceFactory hierarchy
 //
@@ -163,7 +167,7 @@ func (f *Factory) createClipboardOutputter(env EnvironmentType) (interfaces.Outp
 // auto-selected: it is the only path that works inside a Flatpak sandbox without
 // extra device permissions. Otherwise it falls back to a CLI tool.
 func (f *Factory) createTypeOutputter(env EnvironmentType) (interfaces.Outputter, error) {
-	if env == EnvironmentWayland && f.config.Output.TypeTool == "auto" && outputters.PortalRemoteDesktopAvailable() {
+	if env == EnvironmentWayland && f.config.Output.TypeTool == "auto" && portalAvailable() {
 		// Non-ASCII text stays in active-window mode: the portal outputter copies
 		// it to the clipboard and sends the paste shortcut through the same
 		// RemoteDesktop portal session. Without a clipboard outputter the portal

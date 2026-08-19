@@ -9,6 +9,16 @@ import (
 	"github.com/AshBuk/dabri/v2/config"
 )
 
+// pinPortal fixes the RemoteDesktop portal probe for one test. Without it the
+// Wayland active-window path depends on whether the session's portal implements
+// RemoteDesktop: GNOME does, wlroots does not.
+func pinPortal(t *testing.T, available bool) {
+	t.Helper()
+	prev := portalAvailable
+	portalAvailable = func() bool { return available }
+	t.Cleanup(func() { portalAvailable = prev })
+}
+
 func TestNewFactory(t *testing.T) {
 	config := &config.Config{}
 	factory := NewFactory(config)
@@ -18,6 +28,10 @@ func TestNewFactory(t *testing.T) {
 }
 
 func TestFactory_GetOutputter(t *testing.T) {
+	// The empty allowlist below is what makes every case fail; keep the portal
+	// out of it, since it is not a command and would bypass the allowlist.
+	pinPortal(t, false)
+
 	tests := []struct {
 		name        string
 		env         EnvironmentType
@@ -28,37 +42,37 @@ func TestFactory_GetOutputter(t *testing.T) {
 			name:        "X11 clipboard mode",
 			env:         EnvironmentX11,
 			defaultMode: "clipboard",
-			expectError: true, // External tools not available in test environment
+			expectError: true, // Empty allowlist rejects every tool
 		},
 		{
 			name:        "Wayland clipboard mode",
 			env:         EnvironmentWayland,
 			defaultMode: "clipboard",
-			expectError: true, // External tools not available in test environment
+			expectError: true, // Empty allowlist rejects every tool
 		},
 		{
 			name:        "X11 active window mode",
 			env:         EnvironmentX11,
 			defaultMode: "active_window",
-			expectError: true, // External tools not available in test environment
+			expectError: true, // Empty allowlist rejects every tool
 		},
 		{
 			name:        "Wayland active window mode",
 			env:         EnvironmentWayland,
 			defaultMode: "active_window",
-			expectError: true, // External tools not available in test environment
+			expectError: true, // Empty allowlist rejects every tool
 		},
 		{
 			name:        "Unknown environment default mode",
 			env:         EnvironmentUnknown,
 			defaultMode: "clipboard",
-			expectError: true, // External tools not available in test environment
+			expectError: true, // Empty allowlist rejects every tool
 		},
 		{
 			name:        "empty default mode falls back to clipboard",
 			env:         EnvironmentX11,
 			defaultMode: "",
-			expectError: true, // External tools not available in test environment
+			expectError: true, // Empty allowlist rejects every tool
 		},
 	}
 
@@ -101,7 +115,7 @@ func TestFactory_GetOutputter_ToolSelection(t *testing.T) {
 			typeTool:          "auto",
 			expectedClipboard: "xsel",
 			expectedType:      "xdotool",
-			expectError:       true, // External tools not available
+			expectError:       true, // Empty allowlist rejects every tool
 		},
 		{
 			name:              "Wayland auto selection",
@@ -110,7 +124,7 @@ func TestFactory_GetOutputter_ToolSelection(t *testing.T) {
 			typeTool:          "auto",
 			expectedClipboard: "wl-copy",
 			expectedType:      "wl-keyboard",
-			expectError:       true, // External tools not available
+			expectError:       true, // Empty allowlist rejects every tool
 		},
 		{
 			name:              "Unknown environment auto selection",
@@ -119,7 +133,7 @@ func TestFactory_GetOutputter_ToolSelection(t *testing.T) {
 			typeTool:          "auto",
 			expectedClipboard: "xsel",
 			expectedType:      "xdotool",
-			expectError:       true, // External tools not available
+			expectError:       true, // Empty allowlist rejects every tool
 		},
 		{
 			name:              "manual tool selection",
@@ -128,7 +142,7 @@ func TestFactory_GetOutputter_ToolSelection(t *testing.T) {
 			typeTool:          "custom-tool",
 			expectedClipboard: "wl-copy",
 			expectedType:      "custom-tool",
-			expectError:       true, // External tools not available
+			expectError:       true, // Empty allowlist rejects every tool
 		},
 	}
 
@@ -158,6 +172,10 @@ func TestFactory_GetOutputter_ToolSelection(t *testing.T) {
 }
 
 func TestGetOutputterFromConfig(t *testing.T) {
+	// The empty allowlist below is what makes every case fail; keep the portal
+	// out of it, since it is not a command and would bypass the allowlist.
+	pinPortal(t, false)
+
 	tests := []struct {
 		name        string
 		env         EnvironmentType
@@ -168,19 +186,19 @@ func TestGetOutputterFromConfig(t *testing.T) {
 			name:        "valid X11 config",
 			env:         EnvironmentX11,
 			defaultMode: "clipboard",
-			expectError: true, // External tools not available
+			expectError: true, // Empty allowlist rejects every tool
 		},
 		{
 			name:        "valid Wayland config",
 			env:         EnvironmentWayland,
 			defaultMode: "active_window",
-			expectError: true, // External tools not available
+			expectError: true, // Empty allowlist rejects every tool
 		},
 		{
 			name:        "unknown environment",
 			env:         EnvironmentUnknown,
 			defaultMode: "clipboard",
-			expectError: true, // External tools not available
+			expectError: true, // Empty allowlist rejects every tool
 		},
 	}
 
