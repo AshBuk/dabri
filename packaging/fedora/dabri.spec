@@ -5,7 +5,7 @@
 # =============================================================================
 # Version definitions (single source of truth)
 # =============================================================================
-%global app_version     2.2.1
+%global app_version     2.2.2
 %global go_version      1.21
 %global whisper_version 1.9.2
 
@@ -262,6 +262,9 @@ fi
 %{_datadir}/icons/hicolor/scalable/apps/io.github.ashbuk.dabri.svg
 
 %changelog
+* Thu Aug 20 2026 Asher Buk <AshBuk@users.noreply.github.com> - 2.2.2-1
+- Clearer tray/background button on desktops without a tray backend
+
 * Wed Aug 19 2026 Asher Buk <AshBuk@users.noreply.github.com> - 2.2.1-1
 - Global shortcuts keep working on Plasma 6.7.4; whisper.cpp updated to v1.9.2
 
