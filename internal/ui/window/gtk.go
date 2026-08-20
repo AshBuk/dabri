@@ -239,11 +239,19 @@ func (m *gtkManager) build() error {
 	})
 	outer.PackStart(m.startButton, false, false, 0)
 
-	bgButton, err := gtk.ButtonNewWithLabel("Run in Background")
+	bgButton, err := gtk.ButtonNew()
 	if err != nil {
 		return err
 	}
-	bgButton.Connect("clicked", func() { m.win.Hide() })
+	if m.opts.HasTray {
+		bgButton.SetLabel("Run in Tray")
+		bgButton.SetTooltipText("Minimizes to the tray icon; click the tray icon to reopen.")
+		bgButton.Connect("clicked", func() { m.win.Hide() })
+	} else {
+		bgButton.SetLabel("Need App Indicator")
+		bgButton.SetTooltipText("No tray icon backend detected. Install the \"AppIndicator and KStatusNotifierItem Support\" GNOME Shell extension (extensions.gnome.org/extension/615) to enable background mode.")
+		bgButton.SetSensitive(false)
+	}
 	outer.PackStart(bgButton, false, false, 0)
 
 	for _, w := range []interface{ SetCanFocus(bool) }{
