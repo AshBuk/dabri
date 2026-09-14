@@ -36,6 +36,7 @@ type gtkManager struct {
 	langCombo   *gtk.ComboBoxText
 	outputCombo *gtk.ComboBoxText
 	startButton *gtk.Button
+	trayButton  *gtk.Button
 
 	suppress   bool      // ignore combo "changed" while we set values programmatically
 	lastToggle time.Time // GTK-thread only: debounces record-button double-taps
@@ -74,6 +75,15 @@ func (m *gtkManager) SetActions(a Actions) {
 }
 
 func (m *gtkManager) Show() { idle(func() { m.show() }) }
+
+func (m *gtkManager) EnableTray() {
+	idle(func() {
+		m.opts.HasTray = true
+		if m.trayButton != nil {
+			m.applyTray()
+		}
+	})
+}
 
 func (m *gtkManager) SetState(s State) { idle(func() { m.applyState(s) }) }
 
@@ -239,23 +249,17 @@ func (m *gtkManager) build() error {
 	})
 	outer.PackStart(m.startButton, false, false, 0)
 
-	bgButton, err := gtk.ButtonNew()
+	m.trayButton, err = gtk.ButtonNew()
 	if err != nil {
 		return err
 	}
-	if m.opts.HasTray {
-		bgButton.SetLabel("Run in Tray")
-		bgButton.SetTooltipText("Minimizes to the tray icon; click the tray icon to reopen.")
-		bgButton.Connect("clicked", func() { m.win.Hide() })
-	} else {
-		bgButton.SetLabel("Need App Indicator")
-		bgButton.SetTooltipText("No tray icon backend detected. Install the \"AppIndicator and KStatusNotifierItem Support\" GNOME Shell extension (extensions.gnome.org/extension/615) to enable background mode.")
-		bgButton.SetSensitive(false)
-	}
-	outer.PackStart(bgButton, false, false, 0)
+	// Insensitive without a tray, so the click only fires in tray mode.
+	m.trayButton.Connect("clicked", func() { m.win.Hide() })
+	m.applyTray()
+	outer.PackStart(m.trayButton, false, false, 0)
 
 	for _, w := range []interface{ SetCanFocus(bool) }{
-		m.startButton, bgButton,
+		m.startButton, m.trayButton,
 	} {
 		w.SetCanFocus(false)
 	}
@@ -263,6 +267,18 @@ func (m *gtkManager) build() error {
 	win.Add(outer)
 	m.applyState(StateReady)
 	return nil
+}
+
+// applyTray sets the background button for the current tray availability.
+func (m *gtkManager) applyTray() {
+	if m.opts.HasTray {
+		m.trayButton.SetLabel("Run in Tray")
+		m.trayButton.SetTooltipText("Minimizes to the tray icon; click the tray icon to reopen.")
+	} else {
+		m.trayButton.SetLabel("Need App Indicator")
+		m.trayButton.SetTooltipText("No tray icon backend detected. Install the \"AppIndicator and KStatusNotifierItem Support\" GNOME Shell extension (extensions.gnome.org/extension/615) to enable background mode.")
+	}
+	m.trayButton.SetSensitive(m.opts.HasTray)
 }
 
 // addRow attaches a caption and a value label (read-only) on the given grid row.
