@@ -6,7 +6,7 @@
 # Version definitions (single source of truth)
 # =============================================================================
 %global app_version     2.2.2
-%global go_version      1.21
+%global go_version      1.26
 %global whisper_version 1.9.2
 
 # Exclude auto-requires for vendored whisper libraries

@@ -8,7 +8,7 @@
   <img src="https://pkg.go.dev/badge/github.com/AshBuk/dabri/v2.svg" alt="Go Reference">
 </a>
 <a href="https://go.dev/">
-  <img src="https://img.shields.io/badge/go-1.25-00ADD8?logo=go" alt="Go Version">
+  <img src="https://img.shields.io/badge/go-1.26-00ADD8?logo=go" alt="Go Version">
 </a>
 </p>
   

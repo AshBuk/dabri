@@ -7,10 +7,10 @@ This directory contains Docker infrastructure for the dabri project, providing i
 The project uses a **single-service Docker Compose setup** with one `dev` container that handles all development workflows.
 
 ### Service: `dev`
-- **Image**: `docker/Dockerfile.dev` (Go 1.25 + Debian Bookworm)
+- **Image**: `docker/Dockerfile.dev` (Go 1.26 + Debian Bookworm)
 - **Purpose**: Full development environment with GUI dependencies
 - **Includes**:
-  - Go 1.25.3
+  - Go 1.26.8
   - golangci-lint (for code quality)
   - GUI libraries (libayatana-appindicator3, libgtk-3, etc.)
   - Build tools (cmake, gcc, pkg-config)
@@ -181,7 +181,7 @@ make appimage VERSION=v1.2.3
 ## Dockerfiles
 
 ### `Dockerfile.dev` (Development)
-- **Base**: `golang:1.25-bookworm`
+- **Base**: `golang:1.26-bookworm`
 - **Purpose**: Development and testing
 - **Size**: ~2GB (includes all dev dependencies)
 - **Entrypoint**: `bash` (interactive shell)

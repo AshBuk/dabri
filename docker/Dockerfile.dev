@@ -1,5 +1,5 @@
 # Development environment with GUI dependencies
-FROM golang:1.25-bookworm
+FROM golang:1.26-bookworm
 
 ENV DEBIAN_FRONTEND=noninteractive
 
@@ -38,10 +38,10 @@ RUN curl -fsSL "https://sdk.lunarg.com/sdk/download/${VULKAN_SDK_VERSION}/linux/
 
 # Install golangci-lint
 RUN curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh \
-    | sh -s -- -b /usr/local/bin v2.6.1
+    | sh -s -- -b /usr/local/bin v2.13.2
 
 # Install gosec
-RUN go install github.com/securego/gosec/v2/cmd/gosec@v2.22.11
+RUN go install github.com/securego/gosec/v2/cmd/gosec@v2.29.0
 
 # Set working directory
 WORKDIR /app

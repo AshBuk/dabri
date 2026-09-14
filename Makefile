@@ -18,7 +18,7 @@
 .PHONY: help
 
 # Variables
-GO_VERSION := 1.25.3
+GO_VERSION := 1.26.8
 VERSION := $(shell git describe --tags --always --dirty 2>/dev/null || echo "dev")
 LDFLAGS := -s -w -X github.com/AshBuk/dabri/v2/internal/version.Version=$(VERSION)
 BINARY_NAME := dabri
