@@ -36,9 +36,16 @@ RUN curl -fsSL "https://sdk.lunarg.com/sdk/download/${VULKAN_SDK_VERSION}/linux/
     && cp -r /opt/vulkan-sdk/x86_64/include/vk_video /usr/include/ \
     && rm -rf /tmp/vulkan-sdk.tar.xz /opt/vulkan-sdk
 
-# Install golangci-lint
-RUN curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh \
-    | sh -s -- -b /usr/local/bin v2.13.2
+# Install golangci-lint from the release tarball, verified against a pinned
+# sha256. The upstream install.sh fails verification since v2.13: its grep also
+# matches the .sbom.json line in checksums.txt.
+ARG GOLANGCI_LINT_VERSION=2.13.2
+ARG GOLANGCI_LINT_SHA256=2277d43b98ec0054280f2ac26b53268bae97682444678a59a657dd565da021d6
+RUN curl -fsSL "https://github.com/golangci/golangci-lint/releases/download/v${GOLANGCI_LINT_VERSION}/golangci-lint-${GOLANGCI_LINT_VERSION}-linux-amd64.tar.gz" -o /tmp/golangci-lint.tar.gz \
+    && echo "${GOLANGCI_LINT_SHA256}  /tmp/golangci-lint.tar.gz" | sha256sum -c - \
+    && tar -xzf /tmp/golangci-lint.tar.gz -C /usr/local/bin --strip-components=1 \
+        "golangci-lint-${GOLANGCI_LINT_VERSION}-linux-amd64/golangci-lint" \
+    && rm /tmp/golangci-lint.tar.gz
 
 # Install gosec
 RUN go install github.com/securego/gosec/v2/cmd/gosec@v2.29.0
