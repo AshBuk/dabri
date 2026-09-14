@@ -64,6 +64,8 @@ type Manager interface {
 
 	SetActions(actions Actions)
 	Show()
+	// EnableTray switches the window to tray mode when a tray appears after startup.
+	EnableTray()
 
 	SetState(state State)
 	SetModel(modelID string)

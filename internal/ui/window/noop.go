@@ -29,6 +29,7 @@ func (m *noopManager) Quit()      { m.stopOnce.Do(func() { close(m.stop) }) }
 
 func (m *noopManager) SetActions(_ Actions) {}
 func (m *noopManager) Show()                {}
+func (m *noopManager) EnableTray()          {}
 func (m *noopManager) SetState(State)       {}
 func (m *noopManager) SetModel(string)      {}
 func (m *noopManager) SetLanguage(string)   {}

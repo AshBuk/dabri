@@ -18,7 +18,7 @@
 .PHONY: help
 
 # Variables
-GO_VERSION := 1.25.3
+GO_VERSION := 1.26.8
 VERSION := $(shell git describe --tags --always --dirty 2>/dev/null || echo "dev")
 LDFLAGS := -s -w -X github.com/AshBuk/dabri/v2/internal/version.Version=$(VERSION)
 BINARY_NAME := dabri
@@ -26,8 +26,8 @@ BUILD_DIR := build
 LIB_DIR := lib
 DIST_DIR := dist
 # Optional: set to a tag or commit hash to pin whisper.cpp version for reproducible builds
-# Example (CI recommended): make WHISPER_CPP_REF=v1.9.2
-WHISPER_CPP_REF ?= v1.9.2
+# Example (CI recommended): make WHISPER_CPP_REF=v1.9.4
+WHISPER_CPP_REF ?= v1.9.4
 
 # Docker helpers
 DOCKER_RUN := docker compose run --rm dev

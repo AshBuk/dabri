@@ -91,6 +91,7 @@ func (r *ModelPathResolver) getUserDataModelPath() string {
 
 // fileExists checks if a file exists and is not a directory
 func fileExists(path string) bool {
+	// #nosec G703 -- only stats the path to check that it exists; nothing is read or written.
 	info, err := os.Stat(path)
 	return err == nil && !info.IsDir()
 }

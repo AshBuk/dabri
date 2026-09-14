@@ -208,6 +208,7 @@ func (us *UIService) openWithSystem(target string) error {
 	if err := cmd.Start(); err != nil {
 		// Try gio as an alternative opener if available
 		if _, lookErr := exec.LookPath("gio"); lookErr == nil {
+			// #nosec G204 -- Safe: gio is a system tool; arguments are not shell-interpreted.
 			alt := exec.Command("gio", "open", target)
 			alt.Env = filtered
 			if err2 := alt.Start(); err2 == nil {

@@ -208,7 +208,21 @@ func (cf *FactoryComponents) createWindowManager() window.Manager {
 	for _, l := range constants.WhisperLanguages {
 		opts.Languages = append(opts.Languages, window.LangChoice{Code: l.Code, Name: l.Name})
 	}
-	return window.New(cf.config.Logger, opts)
+	win := window.New(cf.config.Logger, opts)
+	if !hasTray {
+		// On login, autostart can beat the GNOME AppIndicator extension to the
+		// session bus; pick up a tray that registers shortly after startup.
+		go func() {
+			for range 30 {
+				time.Sleep(time.Second)
+				if platform.HasStatusNotifierWatcher() {
+					win.EnableTray()
+					return
+				}
+			}
+		}()
+	}
+	return win
 }
 
 // isFirstRun reports whether the config file does not yet exist, used to show

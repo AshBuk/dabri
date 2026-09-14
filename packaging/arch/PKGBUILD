@@ -39,7 +39,7 @@ makedepends=(
 )
 options=('!lto')
 # Whisper.cpp version (pinned for reproducibility)
-_whisper_version=1.9.2
+_whisper_version=1.9.4
 
 source=(
     "${pkgname}-${pkgver}.tar.gz::https://github.com/AshBuk/dabri/archive/refs/tags/v${pkgver}.tar.gz"
