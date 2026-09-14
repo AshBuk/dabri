@@ -5,7 +5,7 @@
 # =============================================================================
 # Version definitions (single source of truth)
 # =============================================================================
-%global app_version     2.2.2
+%global app_version     2.2.3
 %global go_version      1.26
 %global whisper_version 1.9.4
 
@@ -262,6 +262,9 @@ fi
 %{_datadir}/icons/hicolor/scalable/apps/io.github.ashbuk.dabri.svg
 
 %changelog
+* Mon Sep 14 2026 Asher Buk <AshBuk@users.noreply.github.com> - 2.2.3-1
+- Tray button recovers when the tray starts after Dabri at login; whisper.cpp updated to v1.9.4
+
 * Thu Aug 20 2026 Asher Buk <AshBuk@users.noreply.github.com> - 2.2.2-1
 - Clearer tray/background button on desktops without a tray backend
 
