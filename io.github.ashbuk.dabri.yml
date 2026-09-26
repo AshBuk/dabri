@@ -30,8 +30,8 @@ modules:
   - name: xdotool
     buildsystem: simple
     build-commands:
-      - make -j${FLATPAK_BUILDER_N_JOBS} PREFIX=/app LDCONFIG=:
-      - make PREFIX=/app LDCONFIG=: INSTALLMAN=/app/share/man install
+      - "make -j${FLATPAK_BUILDER_N_JOBS} PREFIX=/app LDCONFIG=:"
+      - "make PREFIX=/app LDCONFIG=: INSTALLMAN=/app/share/man install"
     sources:
       - type: archive
         url: https://github.com/jordansissel/xdotool/archive/refs/tags/v3.20211022.1.tar.gz
