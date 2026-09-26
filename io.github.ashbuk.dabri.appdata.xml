@@ -47,6 +47,9 @@
     <binary>dabri</binary>
   </provides>
   <releases>
+    <release version="2.2.4" date="2026-09-26">
+      <description><p>Flatpak now bundles xdotool for X11 typing; runtime updated to Freedesktop 26.08</p></description>
+    </release>
     <release version="2.2.3" date="2026-09-14">
       <description><p>Tray button recovers when the tray starts after Dabri at login; whisper.cpp updated to v1.9.4</p></description>
     </release>
