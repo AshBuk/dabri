@@ -10,7 +10,7 @@
 %global whisper_version 1.9.5
 
 # Exclude auto-requires for vendored whisper libraries
-%global __requires_exclude libwhisper\\.so|libggml.*\\.so
+%global __requires_exclude libwhisper\\.so|libparakeet\\.so|libggml.*\\.so
 
 Name:           dabri
 Version:        %{app_version}
@@ -152,8 +152,8 @@ popd
 # Prepare lib directory for Go build
 mkdir -p lib
 # whisper.cpp >= v1.9 places all libraries (incl. Vulkan backend) in build/bin
-cp build/whisper.cpp/build/bin/libwhisper.so* lib/
-cp build/whisper.cpp/include/whisper.h lib/
+cp build/whisper.cpp/build/bin/libwhisper.so* build/whisper.cpp/build/bin/libparakeet.so* lib/
+cp build/whisper.cpp/include/whisper.h build/whisper.cpp/include/parakeet.h lib/
 cp build/whisper.cpp/ggml/include/*.h lib/ 2>/dev/null || :
 cp build/whisper.cpp/build/bin/libggml*.so* lib/
 # The Go bindings link -lggml-cpu, which is a runtime module with GGML_CPU_ALL_VARIANTS
@@ -187,7 +187,7 @@ install -D -m 0755 %{name} %{buildroot}%{_bindir}/%{name}
 install -d %{buildroot}%{_libdir}/%{name}
 
 # Find and install the actual versioned libraries, create symlinks for unversioned names
-for lib in lib/libwhisper.so lib/libggml.so lib/libggml-base.so lib/libggml-cpu-*.so lib/libggml-vulkan.so; do
+for lib in lib/libwhisper.so lib/libparakeet.so lib/libggml.so lib/libggml-base.so lib/libggml-cpu-*.so lib/libggml-vulkan.so; do
     [ ! -f "$lib" ] && continue
     base=$(basename "$lib" .so)
     # Find the fully versioned file (e.g., libwhisper.so.1.8.3)
@@ -251,6 +251,7 @@ fi
 # Bundled libraries
 %dir %{_libdir}/%{name}
 %{_libdir}/%{name}/libwhisper.so*
+%{_libdir}/%{name}/libparakeet.so*
 %{_libdir}/%{name}/libggml*.so*
 # Desktop integration
 %{_datadir}/applications/io.github.ashbuk.dabri.desktop

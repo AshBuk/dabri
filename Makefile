@@ -117,9 +117,9 @@ $(LIB_DIR)/whisper.h:
 	# The Go bindings link -lggml-cpu, which is a runtime module with GGML_CPU_ALL_VARIANTS
 	$(if $(GGML_CPU_ALL_VARIANTS),ar rcs $(LIB_DIR)/libggml-cpu.a)
 	# whisper.cpp >= v1.9 places libraries in build/bin (build/src and build/ggml/src before)
-	find $(BUILD_DIR)/whisper.cpp/build \( -name 'libwhisper*' -o -name 'libggml*' \) \( -name '*.so*' -o -name '*.a' \) -exec cp {} $(LIB_DIR)/ \;
+	find $(BUILD_DIR)/whisper.cpp/build \( -name 'libwhisper*' -o -name 'libparakeet*' -o -name 'libggml*' \) \( -name '*.so*' -o -name '*.a' \) -exec cp {} $(LIB_DIR)/ \;
 	@test -f $(LIB_DIR)/libwhisper.so || { echo "ERROR: libwhisper.so was not produced"; exit 1; }
-	cp $(BUILD_DIR)/whisper.cpp/include/whisper.h $(LIB_DIR)/
+	cp $(BUILD_DIR)/whisper.cpp/include/whisper.h $(BUILD_DIR)/whisper.cpp/include/parakeet.h $(LIB_DIR)/
 	cp $(BUILD_DIR)/whisper.cpp/ggml/include/*.h $(LIB_DIR)/ || true
 	@echo "Library files:"
 	@ls -la $(LIB_DIR)/

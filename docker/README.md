@@ -50,7 +50,7 @@ make docker-down            # Stop and remove containers (preserves volumes)
 ```bash
 make deps                   # Download Go dependencies (go mod download + tidy + verify)
 make whisper-libs           # Build whisper.cpp libraries (runs inside dev container)
-                           # Output: lib/libwhisper.so, lib/whisper.h, lib/libggml*.so
+                           # Output: lib/libwhisper.so, lib/libparakeet.so, lib/*.h, lib/libggml*.so
 ```
 
 ### 4. Code Quality (runs in Docker)

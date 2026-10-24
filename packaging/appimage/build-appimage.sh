@@ -108,7 +108,7 @@ build_appdir() {
     cp "${APP_NAME}" "${APPDIR}/usr/bin/"
 
     # Copy Whisper libraries
-    cp -a lib/libwhisper.so* lib/libggml*.so* "${APPDIR}/usr/lib/" 2>/dev/null || true
+    cp -a lib/libwhisper.so* lib/libparakeet.so* lib/libggml*.so* "${APPDIR}/usr/lib/" 2>/dev/null || true
     # ggml loads backend modules from the executable's directory
     if compgen -G "${APPDIR}/usr/lib/libggml-cpu-*.so" >/dev/null; then
         mv "${APPDIR}"/usr/lib/libggml-cpu-*.so "${APPDIR}/usr/lib/libggml-vulkan.so" "${APPDIR}/usr/bin/"
