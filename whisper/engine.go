@@ -24,6 +24,7 @@ import (
 type WhisperEngine struct {
 	config    func() *config.Config // Current config; language changes apply live
 	model     whisper.Model
+	parakeet  *parakeetModel // Set instead of model for Parakeet models
 	modelPath string
 	logger    logger.Logger
 }
@@ -35,13 +36,20 @@ func NewWhisperEngine(config func() *config.Config, modelPath string, loggers ..
 		return nil, fmt.Errorf("whisper model not found: %s", modelPath)
 	}
 	loadBackends()
-	model, err := whisper.New(modelPath)
-	if err != nil {
-		return nil, fmt.Errorf("failed to load whisper model: %w", err)
-	}
 	var logSink logger.Logger = logger.NewDefaultLogger(logger.WarningLevel)
 	if len(loggers) > 0 && loggers[0] != nil {
 		logSink = loggers[0]
+	}
+	if isParakeetModel(modelPath) {
+		p, err := newParakeetModel(modelPath)
+		if err != nil {
+			return nil, fmt.Errorf("failed to load parakeet model: %w", err)
+		}
+		return &WhisperEngine{config: config, parakeet: p, modelPath: modelPath, logger: logSink}, nil
+	}
+	model, err := whisper.New(modelPath)
+	if err != nil {
+		return nil, fmt.Errorf("failed to load whisper model: %w", err)
 	}
 
 	// Log system info including GPU backend status
@@ -59,6 +67,9 @@ func NewWhisperEngine(config func() *config.Config, modelPath string, loggers ..
 
 // Close releases the resources associated with the loaded Whisper model
 func (w *WhisperEngine) Close() error {
+	if w.parakeet != nil {
+		return w.parakeet.Close()
+	}
 	if w.model != nil {
 		return w.model.Close()
 	}
@@ -92,6 +103,13 @@ func (w *WhisperEngine) Transcribe(audioFile string) (string, error) {
 	// sample slice (index out of range).
 	if len(audioData) == 0 {
 		return "", fmt.Errorf("no audio samples decoded from %s", audioFile)
+	}
+	if w.parakeet != nil {
+		text, err := w.parakeet.transcribe(audioData)
+		if err != nil {
+			return "", err
+		}
+		return utils.SanitizeTranscript(text), nil
 	}
 	context, err := w.model.NewContext()
 	if err != nil {
