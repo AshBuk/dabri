@@ -12,6 +12,7 @@ import "C"
 
 import (
 	"errors"
+	"math"
 	"path/filepath"
 	"strings"
 	"unsafe"
@@ -47,12 +48,18 @@ func (p *parakeetModel) Close() error {
 // transcribe decodes 16 kHz mono samples; Parakeet detects the language itself
 func (p *parakeetModel) transcribe(samples []float32) (string, error) {
 	params := C.parakeet_full_default_params(C.PARAKEET_SAMPLING_GREEDY)
-	if C.parakeet_full(p.ctx, params, (*C.float)(&samples[0]), C.int(len(samples))) != 0 {
+	// gosec needs both bounds and the conversion outside the cgo call; cgo output drops #nosec comments
+	n := len(samples)
+	if n < 0 || n > math.MaxInt32 {
+		return "", errors.New("audio too long for parakeet")
+	}
+	nSamples := C.int(n)
+	if C.parakeet_full(p.ctx, params, (*C.float)(&samples[0]), nSamples) != 0 {
 		return "", errors.New("parakeet failed to process audio")
 	}
 	var transcript strings.Builder
-	for i := range int(C.parakeet_full_n_segments(p.ctx)) {
-		transcript.WriteString(C.GoString(C.parakeet_full_get_segment_text(p.ctx, C.int(i))))
+	for i := range C.parakeet_full_n_segments(p.ctx) {
+		transcript.WriteString(C.GoString(C.parakeet_full_get_segment_text(p.ctx, i)))
 		transcript.WriteString(" ")
 	}
 	return transcript.String(), nil
