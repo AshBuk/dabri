@@ -28,9 +28,8 @@ type backend interface {
 // Engine provides an interface for speech recognition with Whisper or Parakeet models.
 // It validates and decodes the audio, and the model's backend runs the inference
 type Engine struct {
-	backend   backend
-	modelPath string
-	logger    logger.Logger
+	backend backend
+	logger  logger.Logger
 }
 
 // NewEngine initializes and loads a new model from the given path,
@@ -55,7 +54,7 @@ func NewEngine(config func() *config.Config, modelPath string, loggers ...logger
 	if err != nil {
 		return nil, err
 	}
-	return &Engine{backend: b, modelPath: modelPath, logger: logSink}, nil
+	return &Engine{backend: b, logger: logSink}, nil
 }
 
 // Close releases the resources associated with the loaded model

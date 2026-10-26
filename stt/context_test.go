@@ -15,7 +15,7 @@ import (
 // TestTranscribeWithContextCancellation verifies context cancellation works
 func TestTranscribeWithContextCancellation(t *testing.T) {
 	// Use non-existent model to avoid long transcription
-	engine := &Engine{modelPath: "/nonexistent/model.bin"}
+	engine := &Engine{}
 	// Create context with immediate cancellation
 	ctx, cancel := context.WithCancel(context.Background())
 	cancel() // Cancel immediately
@@ -43,7 +43,7 @@ func TestTranscribeWithContextCancellation(t *testing.T) {
 
 // TestTranscribeWithContextTimeout verifies timeout works
 func TestTranscribeWithContextTimeout(t *testing.T) {
-	engine := &Engine{modelPath: "/nonexistent/model.bin"}
+	engine := &Engine{}
 
 	// Create context with very short timeout
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Millisecond)
