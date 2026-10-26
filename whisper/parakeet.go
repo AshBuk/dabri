@@ -15,11 +15,13 @@ import (
 	"math"
 	"path/filepath"
 	"strings"
+	"sync"
 	"unsafe"
 )
 
 // parakeetModel wraps an NVIDIA Parakeet model loaded through whisper.cpp's libparakeet
 type parakeetModel struct {
+	mu  sync.Mutex // parakeet_full keeps results in the context's default state, so calls must not overlap
 	ctx *C.struct_parakeet_context
 }
 
@@ -47,6 +49,8 @@ func (p *parakeetModel) Close() error {
 
 // transcribe decodes 16 kHz mono samples; Parakeet detects the language itself
 func (p *parakeetModel) transcribe(samples []float32) (string, error) {
+	p.mu.Lock()
+	defer p.mu.Unlock()
 	params := C.parakeet_full_default_params(C.PARAKEET_SAMPLING_GREEDY)
 	// gosec needs both bounds and the conversion outside the cgo call; cgo output drops #nosec comments
 	n := len(samples)
