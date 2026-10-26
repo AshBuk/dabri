@@ -247,7 +247,7 @@ func (as *AudioService) GetLastTranscript() string {
 	return as.lastTranscript
 }
 
-// SwitchModel hot-reloads the whisper engine.
+// SwitchModel hot-reloads the engine.
 func (as *AudioService) SwitchModel(ctx context.Context, modelID string) error {
 	as.mu.Lock()
 	if as.isRecording {
@@ -296,7 +296,7 @@ func (as *AudioService) DeleteModel(modelID string) error {
 	return as.modelManager.DeleteModel(modelID)
 }
 
-// ensureModelAvailable ensures whisper model is ready
+// ensureModelAvailable ensures the model is ready
 func (as *AudioService) ensureModelAvailable() error {
 	if as.modelManager == nil {
 		return fmt.Errorf("model manager not available")
@@ -413,7 +413,7 @@ func (as *AudioService) transcribeWithCurrentEngine(ctx context.Context, audioFi
 	as.engineMu.RLock()
 	defer as.engineMu.RUnlock()
 	if as.engine == nil {
-		return "", fmt.Errorf("whisper engine not available")
+		return "", fmt.Errorf("engine not available")
 	}
 	return as.engine.TranscribeWithContext(ctx, audioFile)
 }

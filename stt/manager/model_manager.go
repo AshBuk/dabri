@@ -15,13 +15,13 @@ import (
 	"github.com/AshBuk/dabri/v2/stt/providers"
 )
 
-// ModelManager manages Whisper model lifecycle: resolution, download, and validation
+// ModelManager manages model lifecycle: resolution, download, and validation
 type ModelManager struct {
 	config func() *config.Config // Current config; the active model applies live
 	logger logger.Logger
 }
 
-// NewModelManager creates a new manager responsible for the Whisper model.
+// NewModelManager creates a new manager responsible for the configured model.
 // An optional logger enables download-progress reporting.
 func NewModelManager(config func() *config.Config, loggers ...logger.Logger) *ModelManager {
 	m := &ModelManager{config: config}

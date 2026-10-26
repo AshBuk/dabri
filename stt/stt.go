@@ -23,7 +23,7 @@ type (
 	ModelManager = interfaces.ModelManager
 )
 
-// NewModelManager creates a new manager for the bundled Whisper model.
+// NewModelManager creates a new manager for the configured model.
 // An optional logger enables download-progress reporting.
 func NewModelManager(config func() *config.Config, loggers ...logger.Logger) ModelManager {
 	return manager.NewModelManager(config, loggers...)

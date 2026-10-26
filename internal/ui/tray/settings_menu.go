@@ -19,7 +19,7 @@ func (tm *TrayManager) createSettingsSubmenus() {
 	tm.hotkeysMenu = tm.settingsItem.AddSubMenuItem("Hotkeys", "Hotkey settings")
 	tm.audioRecorderMenu = tm.settingsItem.AddSubMenuItem("Audio Recorder", "Select audio recorder")
 	tm.languageMenu = tm.settingsItem.AddSubMenuItem("Set Language", "Select recognition language")
-	tm.modelMenu = tm.settingsItem.AddSubMenuItem("Whisper Model", "Select whisper model")
+	tm.modelMenu = tm.settingsItem.AddSubMenuItem("Model", "Select speech model")
 
 	tm.outputMenu = tm.settingsItem.AddSubMenuItem("Output", "Output settings")
 
@@ -162,7 +162,7 @@ func (tm *TrayManager) setupLanguageMenu() {
 	}
 }
 
-// setupModelMenu creates and configures the whisper model selection submenu.
+// setupModelMenu creates and configures the model selection submenu.
 // Unlike other radio menus, model items use custom click handling that supports
 // cancel-on-reclick: clicking a downloading model cancels the download (✖ indicator).
 func (tm *TrayManager) setupModelMenu() {

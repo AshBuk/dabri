@@ -141,7 +141,7 @@ func (a *App) ipcHandleLastTranscript(ipc.Request) (ipc.Response, error) {
 	}), nil
 }
 
-// ipcHandleSetModel Command handler - switches whisper model and persists config
+// ipcHandleSetModel Command handler - switches model and persists config
 func (a *App) ipcHandleSetModel(req ipc.Request) (ipc.Response, error) {
 	modelID := req.Params["model"]
 	if modelID == "" {
@@ -155,7 +155,7 @@ func (a *App) ipcHandleSetModel(req ipc.Request) (ipc.Response, error) {
 	}), nil
 }
 
-// ipcHandleDeleteModel Command handler - deletes a downloaded whisper model
+// ipcHandleDeleteModel Command handler - deletes a downloaded model
 func (a *App) ipcHandleDeleteModel(req ipc.Request) (ipc.Response, error) {
 	modelID := req.Params["model"]
 	if modelID == "" {

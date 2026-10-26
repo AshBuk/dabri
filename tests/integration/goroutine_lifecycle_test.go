@@ -42,7 +42,7 @@ func TestMain(m *testing.M) {
 	goleak.VerifyTestMain(m, goLeakIgnores...)
 }
 
-// TestAppLifecycle builds the full app (real whisper engine, mock tray, no-op
+// TestAppLifecycle builds the full app (real engine, mock tray, no-op
 // window) and checks that shutdown is quick and leaves no goroutines behind.
 func TestAppLifecycle(t *testing.T) {
 	if testing.Short() {

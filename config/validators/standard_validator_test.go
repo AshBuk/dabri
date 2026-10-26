@@ -53,7 +53,7 @@ func TestValidateConfig(t *testing.T) {
 			},
 		},
 		{
-			name: "invalid whisper model",
+			name: "invalid model",
 			setupConfig: func() *models.Config {
 				config := &models.Config{}
 				setDefaultConfigForTest(config)

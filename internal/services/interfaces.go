@@ -28,9 +28,9 @@ type AudioServiceInterface interface {
 	// ClearSession resets the current recording session
 	ClearSession()
 
-	// SwitchModel loads a different whisper model
+	// SwitchModel loads a different model
 	SwitchModel(ctx context.Context, modelID string) error
-	// DeleteModel removes a downloaded whisper model
+	// DeleteModel removes a downloaded model
 	DeleteModel(modelID string) error
 
 	// GetLastTranscript returns the most recent transcription result

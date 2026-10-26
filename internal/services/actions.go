@@ -62,7 +62,7 @@ func (c *ServiceContainer) ResetToDefaults() error {
 	return c.reloadHotkeys()
 }
 
-// SwitchModel hot-swaps the whisper engine and persists the choice. If saving
+// SwitchModel hot-swaps the engine and persists the choice. If saving
 // fails, the engine rolls back so runtime state matches the config.
 func (c *ServiceContainer) SwitchModel(ctx context.Context, modelID string) error {
 	previous := c.Config.GetConfig().General.Model

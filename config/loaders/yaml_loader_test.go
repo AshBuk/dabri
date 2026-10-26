@@ -56,7 +56,7 @@ hotkeys:
 					t.Errorf("expected debug to be true")
 				}
 				if cfg.General.Model != "small-q5_1" {
-					t.Errorf("expected whisper model to be 'small-q5_1', got %s", cfg.General.Model)
+					t.Errorf("expected model to be 'small-q5_1', got %s", cfg.General.Model)
 				}
 				if cfg.Audio.SampleRate != 16000 {
 					t.Errorf("expected sample rate to be 16000, got %d", cfg.Audio.SampleRate)
@@ -75,7 +75,7 @@ general:
 			expectError: false,
 			checkValues: func(t *testing.T, cfg *models.Config) {
 				if cfg.General.Model != "small-q5_1" {
-					t.Errorf("expected whisper model to be 'small-q5_1', got %s", cfg.General.Model)
+					t.Errorf("expected model to be 'small-q5_1', got %s", cfg.General.Model)
 				}
 				// Other fields should have default values
 			},
@@ -139,7 +139,7 @@ func TestLoadConfig_NonExistentFile(t *testing.T) {
 	}
 	// Check that default values are set
 	if config.General.Model != "small-q5_1" {
-		t.Errorf("expected default whisper model to be 'small-q5_1', got %s", config.General.Model)
+		t.Errorf("expected default model to be 'small-q5_1', got %s", config.General.Model)
 	}
 }
 
@@ -167,7 +167,7 @@ func TestLoadConfig_InvalidPermissions(t *testing.T) {
 	}
 	// Check that default values are set
 	if config.General.Model != "small-q5_1" {
-		t.Errorf("expected default whisper model to be 'small-q5_1', got %s", config.General.Model)
+		t.Errorf("expected default model to be 'small-q5_1', got %s", config.General.Model)
 	}
 }
 
@@ -238,7 +238,7 @@ func TestConfig_DefaultValues(t *testing.T) {
 	}
 	// Verify defaults
 	if config.General.Model != "small-q5_1" {
-		t.Errorf("expected default whisper model to be 'small-q5_1', got %s", config.General.Model)
+		t.Errorf("expected default model to be 'small-q5_1', got %s", config.General.Model)
 	}
 	if config.Audio.SampleRate != 16000 {
 		t.Errorf("expected default sample rate to be 16000, got %d", config.Audio.SampleRate)

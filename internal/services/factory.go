@@ -60,7 +60,7 @@ func NewContainer(ctx context.Context, log logger.Logger, cfg *config.Config, cf
 	}
 	engine, err := stt.NewEngine(current, modelPath, log)
 	if err != nil {
-		return nil, fmt.Errorf("failed to initialize whisper engine: %w", err)
+		return nil, fmt.Errorf("failed to initialize engine: %w", err)
 	}
 
 	// Graceful degradation: if typing fails, fall back to clipboard only.
