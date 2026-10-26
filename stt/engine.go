@@ -98,7 +98,7 @@ func (e *Engine) Transcribe(audioFile string) (string, error) {
 }
 
 // TranscribeWithContext performs speech-to-text conversion.
-// whisper.cpp processing cannot be interrupted safely, so context cancellation is
+// whisper.cpp and libparakeet processing cannot be interrupted safely, so context cancellation is
 // checked before and after the synchronous call instead of spawning hidden work.
 func (e *Engine) TranscribeWithContext(ctx context.Context, audioFile string) (string, error) {
 	select {

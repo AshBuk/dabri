@@ -377,7 +377,7 @@ func (as *AudioService) startStandardRecording() error {
 
 // transcribeAsync performs async transcription.
 // Note: The inner goroutine calling TranscribeWithContext is intentionally not tracked
-// by the WaitGroup. Whisper.cpp CGO calls cannot be cancelled, so tracking them would
+// by the WaitGroup. whisper.cpp and libparakeet CGO calls cannot be cancelled, so tracking them would
 // cause Shutdown() to block for up to 2 minutes. Instead, we accept that the CGO work
 // may outlive shutdown (bounded to ~30s max). See stt/engine.go for details.
 func (as *AudioService) transcribeAsync(audioFile string) {
