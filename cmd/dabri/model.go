@@ -104,8 +104,8 @@ func runModelMutation(cmd *cobra.Command, ipcCommand, modelID string) error {
 func activeModelID() string {
 	activeID := constants.DefaultModelID
 	if path, err := config.ConfigFilePath(); err == nil {
-		if cfg, err := config.LoadConfig(path); err == nil && cfg.General.WhisperModel != "" {
-			activeID = cfg.General.WhisperModel
+		if cfg, err := config.LoadConfig(path); err == nil && cfg.General.Model != "" {
+			activeID = cfg.General.Model
 		}
 	}
 	return activeID
@@ -124,7 +124,7 @@ func printModelList() {
 	activeID := activeModelID()
 	fmt.Println("Whisper models:")
 	fmt.Println()
-	for _, m := range constants.WhisperModels {
+	for _, m := range constants.Models {
 		status := "  "
 		if m.ID == activeID {
 			status = "● "

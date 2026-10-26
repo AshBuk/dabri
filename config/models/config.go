@@ -21,7 +21,7 @@ const (
 type Config struct {
 	General struct {
 		Debug         bool   `yaml:"debug"`
-		WhisperModel  string `yaml:"whisper_model"`   // The specific Whisper model to use (e.g., "small-q5_1")
+		Model         string `yaml:"whisper_model"`   // Speech model ID; the key keeps its old name for existing configs
 		TempAudioPath string `yaml:"temp_audio_path"` // Directory to store temporary audio files
 		Language      string `yaml:"language"`        // Language for speech recognition (e.g., "en", "ru")
 	} `yaml:"general"`

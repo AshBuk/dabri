@@ -30,7 +30,7 @@ import (
 
 // NewContainer builds every component, assembles the services and wires the
 // tray and window callbacks. Order matters:
-//  1. ModelManager → TempFileManager → Recorder → WhisperEngine (core pipeline)
+//  1. ModelManager → TempFileManager → Recorder → Engine (core pipeline)
 //  2. Outputter (falls back to clipboard-only), ydotoold when needed
 //  3. Hotkeys, WebSocket, tray, window, notifications (UI/control)
 //  4. Services and their cross-references, then UI callbacks
@@ -58,7 +58,7 @@ func NewContainer(ctx context.Context, log logger.Logger, cfg *config.Config, cf
 	if err != nil {
 		return nil, fmt.Errorf("failed to initialize audio recorder: %w", err)
 	}
-	engine, err := stt.NewWhisperEngine(current, modelPath, log)
+	engine, err := stt.NewEngine(current, modelPath, log)
 	if err != nil {
 		return nil, fmt.Errorf("failed to initialize whisper engine: %w", err)
 	}
@@ -165,13 +165,13 @@ func newWindow(ctx context.Context, cfg *config.Config, log logger.Logger) windo
 	opts := window.Options{
 		HasTray:        hasTray,
 		StartVisible:   !hasTray || isFirstRun(),
-		ActiveModel:    cfg.General.WhisperModel,
+		ActiveModel:    cfg.General.Model,
 		ActiveLanguage: cfg.General.Language,
 		OutputMode:     cfg.Output.DefaultMode,
 		Hotkey:         cfg.Hotkeys.StartRecording,
 		HotkeyMode:     cfg.Hotkeys.Mode,
 	}
-	for _, m := range constants.WhisperModels {
+	for _, m := range constants.Models {
 		opts.Models = append(opts.Models, window.ModelChoice{ID: m.ID, Name: m.Name})
 	}
 	for _, l := range constants.WhisperLanguages {

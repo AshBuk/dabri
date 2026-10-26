@@ -50,7 +50,7 @@ func TestAppLifecycle(t *testing.T) {
 	}
 	var defaults config.Config
 	config.SetDefaultConfig(&defaults)
-	model := constants.ModelByID(defaults.General.WhisperModel)
+	model := constants.ModelByID(defaults.General.Model)
 	if _, err := os.Stat(sttproviders.NewModelPathResolver(&defaults, model.FileName).GetBundledModelPath()); err != nil {
 		t.Skipf("No local %s model; Initialize would download it", model.ID)
 	}

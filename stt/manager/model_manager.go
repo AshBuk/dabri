@@ -122,7 +122,7 @@ func (m *ModelManager) DeleteModel(modelID string) error {
 
 // configuredModelID returns the model ID from config, falling back to default
 func (m *ModelManager) configuredModelID() string {
-	if id := m.config().General.WhisperModel; id != "" {
+	if id := m.config().General.Model; id != "" {
 		return id
 	}
 	return constants.DefaultModelID

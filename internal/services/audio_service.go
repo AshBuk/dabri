@@ -22,12 +22,12 @@ import (
 
 // AudioService orchestrates recording, transcription, and output workflows
 type AudioService struct {
-	logger        logger.Logger
-	config        func() *config.Config // Current config; read per operation
-	recorder      interfaces.AudioRecorder
-	whisperEngine *stt.WhisperEngine
-	modelManager  stt.ModelManager
-	tempManager   *processing.TempFileManager
+	logger       logger.Logger
+	config       func() *config.Config // Current config; read per operation
+	recorder     interfaces.AudioRecorder
+	engine       *stt.Engine
+	modelManager stt.ModelManager
+	tempManager  *processing.TempFileManager
 
 	// State management
 	mu                       sync.RWMutex
@@ -35,7 +35,7 @@ type AudioService struct {
 	lastTranscript           string
 	audioRecorderNeedsReinit bool
 
-	// Guards whisperEngine while transcription is using it.
+	// Guards engine while transcription is using it.
 	engineMu sync.RWMutex
 
 	// Goroutine ownership: tracks background transcription tasks
@@ -59,21 +59,21 @@ func NewAudioService(
 	logger logger.Logger,
 	config func() *config.Config,
 	recorder interfaces.AudioRecorder,
-	whisperEngine *stt.WhisperEngine,
+	engine *stt.Engine,
 	modelManager stt.ModelManager,
 	tempManager *processing.TempFileManager,
 ) *AudioService {
 	ctx, cancel := context.WithCancel(context.Background())
 
 	return &AudioService{
-		logger:        logger,
-		config:        config,
-		recorder:      recorder,
-		whisperEngine: whisperEngine,
-		modelManager:  modelManager,
-		tempManager:   tempManager,
-		ctx:           ctx,
-		cancel:        cancel,
+		logger:       logger,
+		config:       config,
+		recorder:     recorder,
+		engine:       engine,
+		modelManager: modelManager,
+		tempManager:  tempManager,
+		ctx:          ctx,
+		cancel:       cancel,
 	}
 }
 
@@ -261,7 +261,7 @@ func (as *AudioService) SwitchModel(ctx context.Context, modelID string) error {
 		return fmt.Errorf("model switch failed: %w", err)
 	}
 
-	newEngine, err := stt.NewWhisperEngine(as.config, newPath, as.logger)
+	newEngine, err := stt.NewEngine(as.config, newPath, as.logger)
 	if err != nil {
 		return fmt.Errorf("failed to create engine for model %s: %w", modelID, err)
 	}
@@ -273,8 +273,8 @@ func (as *AudioService) SwitchModel(ctx context.Context, modelID string) error {
 		return fmt.Errorf("cannot switch model while recording")
 	}
 	as.engineMu.Lock()
-	oldEngine := as.whisperEngine
-	as.whisperEngine = newEngine
+	oldEngine := as.engine
+	as.engine = newEngine
 	as.engineMu.Unlock()
 	as.mu.Unlock()
 
@@ -412,10 +412,10 @@ func (as *AudioService) transcribeAsync(audioFile string) {
 func (as *AudioService) transcribeWithCurrentEngine(ctx context.Context, audioFile string) (string, error) {
 	as.engineMu.RLock()
 	defer as.engineMu.RUnlock()
-	if as.whisperEngine == nil {
+	if as.engine == nil {
 		return "", fmt.Errorf("whisper engine not available")
 	}
-	return as.whisperEngine.TranscribeWithContext(ctx, audioFile)
+	return as.engine.TranscribeWithContext(ctx, audioFile)
 }
 
 // handleTranscriptionResult processes transcription results

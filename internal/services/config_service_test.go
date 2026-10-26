@@ -17,7 +17,7 @@ import (
 func createTestConfig() *models.Config {
 	cfg := &models.Config{}
 	cfg.General.Language = "en"
-	cfg.General.WhisperModel = "small-q5_1"
+	cfg.General.Model = "small-q5_1"
 	cfg.Notifications.EnableWorkflowNotifications = true
 	return cfg
 }

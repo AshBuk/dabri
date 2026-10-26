@@ -12,7 +12,7 @@ import (
 // setDefaultConfigForTest sets default values for testing
 func setDefaultConfigForTest(config *models.Config) {
 	config.General.Debug = false
-	config.General.WhisperModel = "small-q5_1"
+	config.General.Model = "small-q5_1"
 	config.General.TempAudioPath = "/tmp"
 	config.General.Language = "en"
 
@@ -57,7 +57,7 @@ func TestValidateConfig(t *testing.T) {
 			setupConfig: func() *models.Config {
 				config := &models.Config{}
 				setDefaultConfigForTest(config)
-				config.General.WhisperModel = "invalid"
+				config.General.Model = "invalid"
 				return config
 			},
 			expectError: true,
@@ -118,8 +118,8 @@ func TestValidateConfig(t *testing.T) {
 			}
 			// Check expected values
 			if whisperModel, ok := tt.expectedValues["whisperModel"]; ok {
-				if config.General.WhisperModel != whisperModel {
-					t.Errorf("expected WhisperModel %v, got %v", whisperModel, config.General.WhisperModel)
+				if config.General.Model != whisperModel {
+					t.Errorf("expected Model %v, got %v", whisperModel, config.General.Model)
 				}
 			}
 			if sampleRate, ok := tt.expectedValues["sampleRate"]; ok {

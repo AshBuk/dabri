@@ -166,8 +166,8 @@ func (tm *TrayManager) setupLanguageMenu() {
 // Unlike other radio menus, model items use custom click handling that supports
 // cancel-on-reclick: clicking a downloading model cancels the download (✖ indicator).
 func (tm *TrayManager) setupModelMenu() {
-	currentModel := constants.ModelByID(tm.cfg().General.WhisperModel)
-	currentName := tm.cfg().General.WhisperModel
+	currentModel := constants.ModelByID(tm.cfg().General.Model)
+	currentName := tm.cfg().General.Model
 	if currentModel != nil {
 		currentName = currentModel.Name
 	}
@@ -177,9 +177,9 @@ func (tm *TrayManager) setupModelMenu() {
 	)
 	tm.modelItems["current"].Disable()
 
-	for _, m := range constants.WhisperModels {
+	for _, m := range constants.Models {
 		indicator := "○ "
-		if tm.cfg().General.WhisperModel == m.ID {
+		if tm.cfg().General.Model == m.ID {
 			indicator = "● "
 		}
 		itm := tm.modelMenu.AddSubMenuItem(indicator+menuLabel(m.Name), m.ID)
@@ -206,7 +206,7 @@ func (tm *TrayManager) handleModelClick(modelID string) {
 		cancel()
 		tm.logger.Info("Model download cancelled by user: %s", modelID)
 		if tm.cfg() != nil {
-			tm.updateModelRadioUI(tm.cfg().General.WhisperModel)
+			tm.updateModelRadioUI(tm.cfg().General.Model)
 		}
 		return
 	}
@@ -224,7 +224,7 @@ func (tm *TrayManager) handleModelClick(modelID string) {
 
 	// Restore UI for the previously downloading model
 	if prevModelID != "" && prevModelID != modelID && tm.cfg() != nil {
-		tm.updateModelRadioUI(tm.cfg().General.WhisperModel)
+		tm.updateModelRadioUI(tm.cfg().General.Model)
 	}
 
 	tm.setModelDownloadingUI(modelID)
@@ -252,7 +252,7 @@ func (tm *TrayManager) handleModelClick(modelID string) {
 		if err != nil {
 			tm.logger.Error("Model switch failed: %v", err)
 			if tm.cfg() != nil {
-				tm.updateModelRadioUI(tm.cfg().General.WhisperModel)
+				tm.updateModelRadioUI(tm.cfg().General.Model)
 			}
 			return
 		}
@@ -277,7 +277,7 @@ func (tm *TrayManager) setModelDownloadingUI(modelID string) {
 
 // updateModelRadioUI updates selection marks for model menu
 func (tm *TrayManager) updateModelRadioUI(modelID string) {
-	for _, m := range constants.WhisperModels {
+	for _, m := range constants.Models {
 		if itm := tm.modelItems["model_"+m.ID]; itm != nil {
 			if m.ID == modelID {
 				itm.SetTitle("● " + menuLabel(m.Name))

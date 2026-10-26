@@ -177,7 +177,7 @@ func (tm *TrayManager) UpdateSettings(config *config.Config) {
 	tm.updateRecorderRadioUI(config.Audio.RecordingMethod)
 	tm.updateHotkeyModeRadioUI(config.Hotkeys.Mode)
 	tm.updateLanguageRadioUI(config.General.Language)
-	tm.updateModelRadioUI(config.General.WhisperModel)
+	tm.updateModelRadioUI(config.General.Model)
 	tm.updateWorkflowNotificationUI(config.Notifications.EnableWorkflowNotifications)
 	tm.updateOutputUI()
 }

@@ -21,7 +21,7 @@ func TestTranscribeWithContextCancellation(t *testing.T) {
 	config.SetDefaultConfig(cfg)
 
 	// Use non-existent model to avoid long transcription
-	engine := &WhisperEngine{
+	engine := &Engine{
 		config:    testutils.StaticConfig(cfg),
 		modelPath: "/nonexistent/model.bin",
 	}
@@ -55,7 +55,7 @@ func TestTranscribeWithContextTimeout(t *testing.T) {
 	cfg := &config.Config{}
 	config.SetDefaultConfig(cfg)
 
-	engine := &WhisperEngine{
+	engine := &Engine{
 		config:    testutils.StaticConfig(cfg),
 		modelPath: "/nonexistent/model.bin",
 	}

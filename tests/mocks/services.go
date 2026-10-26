@@ -131,7 +131,7 @@ func (m *MockConfigService) UpdateLanguage(language string) error {
 	m.Log.add("Config.Language:" + language)
 	return nil
 }
-func (m *MockConfigService) UpdateWhisperModel(modelID string) error {
+func (m *MockConfigService) UpdateModel(modelID string) error {
 	m.Log.add("Config.Model:" + modelID)
 	return m.UpdateModelErr
 }

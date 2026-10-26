@@ -96,8 +96,8 @@ type ConfigServiceInterface interface {
 
 	// UpdateLanguage changes the transcription language
 	UpdateLanguage(language string) error
-	// UpdateWhisperModel changes the active whisper model
-	UpdateWhisperModel(modelID string) error
+	// UpdateModel changes the active model
+	UpdateModel(modelID string) error
 	// ToggleWorkflowNotifications toggles workflow notification setting
 	ToggleWorkflowNotifications() error
 	// UpdateRecordingMethod changes the audio recording method

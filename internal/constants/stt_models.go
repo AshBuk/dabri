@@ -3,11 +3,11 @@
 
 package constants
 
-// DefaultModelID is the default whisper model used when none is configured
+// DefaultModelID is the default model used when none is configured
 const DefaultModelID = "small-q5_1"
 
-// WhisperModelDef describes an available whisper model variant
-type WhisperModelDef struct {
+// ModelDef describes an available speech model variant
+type ModelDef struct {
 	ID       string // Unique identifier (matches config value)
 	Name     string // Human-readable name for UI
 	FileName string // File name on disk
@@ -15,8 +15,8 @@ type WhisperModelDef struct {
 	MinSize  int64  // Minimum valid file size in bytes
 }
 
-// WhisperModels contains curated quantized whisper models for machines with varying GPU compute power
-var WhisperModels = []WhisperModelDef{
+// Models contains curated quantized speech models for machines with varying GPU compute power
+var Models = []ModelDef{
 	{
 		ID:       "base-q5_1",
 		Name:     "Base (Q5_1)",
@@ -63,8 +63,8 @@ var WhisperModels = []WhisperModelDef{
 }
 
 // ModelByID returns model definition by its ID, or nil if not found
-func ModelByID(id string) *WhisperModelDef {
-	for _, m := range WhisperModels {
+func ModelByID(id string) *ModelDef {
+	for _, m := range Models {
 		if m.ID == id {
 			return &m
 		}

@@ -115,7 +115,7 @@ func (a *App) ipcHandleStatus(ipc.Request) (ipc.Response, error) {
 	status := map[string]any{
 		"recording": a.Services.Audio.IsRecording(),
 		"config": map[string]any{
-			"model":        cfg.General.WhisperModel,
+			"model":        cfg.General.Model,
 			"language":     cfg.General.Language,
 			"output_mode":  cfg.Output.DefaultMode,
 			"audio_method": cfg.Audio.RecordingMethod,
