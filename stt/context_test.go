@@ -10,21 +10,12 @@ import (
 	"errors"
 	"testing"
 	"time"
-
-	"github.com/AshBuk/dabri/v2/config"
-	"github.com/AshBuk/dabri/v2/internal/testutils"
 )
 
 // TestTranscribeWithContextCancellation verifies context cancellation works
 func TestTranscribeWithContextCancellation(t *testing.T) {
-	cfg := &config.Config{}
-	config.SetDefaultConfig(cfg)
-
 	// Use non-existent model to avoid long transcription
-	engine := &Engine{
-		config:    testutils.StaticConfig(cfg),
-		modelPath: "/nonexistent/model.bin",
-	}
+	engine := &Engine{modelPath: "/nonexistent/model.bin"}
 	// Create context with immediate cancellation
 	ctx, cancel := context.WithCancel(context.Background())
 	cancel() // Cancel immediately
@@ -52,13 +43,7 @@ func TestTranscribeWithContextCancellation(t *testing.T) {
 
 // TestTranscribeWithContextTimeout verifies timeout works
 func TestTranscribeWithContextTimeout(t *testing.T) {
-	cfg := &config.Config{}
-	config.SetDefaultConfig(cfg)
-
-	engine := &Engine{
-		config:    testutils.StaticConfig(cfg),
-		modelPath: "/nonexistent/model.bin",
-	}
+	engine := &Engine{modelPath: "/nonexistent/model.bin"}
 
 	// Create context with very short timeout
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Millisecond)

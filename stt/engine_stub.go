@@ -18,7 +18,7 @@ type Engine struct{}
 
 // NewEngine returns an error indicating that CGO is required
 func NewEngine(config func() *config.Config, modelPath string, _ ...logger.Logger) (*Engine, error) {
-	return nil, errors.New("whisper engine is unavailable: built without cgo")
+	return nil, errors.New("speech recognition is unavailable: built without cgo")
 }
 
 // Close is a no-op in the stub implementation

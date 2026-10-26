@@ -25,7 +25,7 @@ func TestNewEngine(t *testing.T) {
 		t.Errorf("Expected nil engine when model doesn't exist")
 	}
 	// Test error message
-	expectedError := "whisper model not found: /non/existent/model.bin"
+	expectedError := "model not found: /non/existent/model.bin"
 	if err.Error() != expectedError {
 		t.Errorf("Expected error message %q, got %q", expectedError, err.Error())
 	}

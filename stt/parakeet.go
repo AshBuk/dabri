@@ -13,10 +13,11 @@ import "C"
 import (
 	"errors"
 	"math"
-	"path/filepath"
 	"strings"
 	"sync"
 	"unsafe"
+
+	"github.com/AshBuk/dabri/v2/internal/logger"
 )
 
 // parakeetModel wraps an NVIDIA Parakeet model loaded through whisper.cpp's libparakeet
@@ -25,19 +26,15 @@ type parakeetModel struct {
 	ctx *C.struct_parakeet_context
 }
 
-// isParakeetModel reports whether the file is a Parakeet model, following the ggml-org file naming
-func isParakeetModel(modelPath string) bool {
-	return strings.HasPrefix(filepath.Base(modelPath), "ggml-parakeet")
-}
-
-// newParakeetModel loads the model on the first GPU device, falling back to CPU
-func newParakeetModel(modelPath string) (*parakeetModel, error) {
+// newParakeetModel loads the model on the first GPU device, falling back to CPU, and logs system info
+func newParakeetModel(modelPath string, log logger.Logger) (*parakeetModel, error) {
 	cPath := C.CString(modelPath)
 	defer C.free(unsafe.Pointer(cPath))
 	ctx := C.parakeet_init_from_file_with_params(cPath, C.parakeet_context_default_params())
 	if ctx == nil {
-		return nil, errors.New("failed to initialize parakeet context")
+		return nil, errors.New("failed to load parakeet model")
 	}
+	log.Info("Parakeet %s", C.GoString(C.parakeet_print_system_info()))
 	return &parakeetModel{ctx: ctx}, nil
 }
 
