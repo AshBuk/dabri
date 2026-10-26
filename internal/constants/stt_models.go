@@ -52,6 +52,14 @@ var WhisperModels = []WhisperModelDef{
 		URL:      "https://huggingface.co/ggerganov/whisper.cpp/resolve/main/ggml-large-v3-q5_0.bin",
 		MinSize:  1000 * 1024 * 1024, // ~1.1 GB
 	},
+	{
+		// Runs through libparakeet, detected by the ggml-parakeet file name prefix; ignores the language setting
+		ID:       "parakeet-tdt-0.6b-v3-q8_0",
+		Name:     "Parakeet TDT 0.6B v3 (Q8_0)",
+		FileName: "ggml-parakeet-tdt-0.6b-v3-q8_0.bin",
+		URL:      "https://huggingface.co/ggml-org/parakeet-GGUF/resolve/main/ggml-parakeet-tdt-0.6b-v3-q8_0.bin",
+		MinSize:  600 * 1024 * 1024, // ~669 MB
+	},
 }
 
 // ModelByID returns model definition by its ID, or nil if not found
