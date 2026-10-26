@@ -62,7 +62,7 @@ func TestValidateConfig(t *testing.T) {
 			},
 			expectError: true,
 			expectedValues: map[string]interface{}{
-				"whisperModel": "small-q5_1",
+				"model": "small-q5_1",
 			},
 		},
 		{
@@ -117,9 +117,9 @@ func TestValidateConfig(t *testing.T) {
 				t.Errorf("unexpected error: %v", err)
 			}
 			// Check expected values
-			if whisperModel, ok := tt.expectedValues["whisperModel"]; ok {
-				if config.General.Model != whisperModel {
-					t.Errorf("expected Model %v, got %v", whisperModel, config.General.Model)
+			if model, ok := tt.expectedValues["model"]; ok {
+				if config.General.Model != model {
+					t.Errorf("expected Model %v, got %v", model, config.General.Model)
 				}
 			}
 			if sampleRate, ok := tt.expectedValues["sampleRate"]; ok {
