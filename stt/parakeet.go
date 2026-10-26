@@ -34,7 +34,7 @@ func newParakeetModel(modelPath string, log logger.Logger) (*parakeetModel, erro
 	if ctx == nil {
 		return nil, errors.New("failed to load parakeet model")
 	}
-	log.Info("Parakeet %s", C.GoString(C.parakeet_print_system_info()))
+	log.Info("Parakeet system_info: %s", strings.TrimPrefix(C.GoString(C.parakeet_print_system_info()), "PARAKEET : "))
 	return &parakeetModel{ctx: ctx}, nil
 }
 
