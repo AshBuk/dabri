@@ -22,8 +22,8 @@ import (
 
 // parakeetModel wraps an NVIDIA Parakeet model loaded through whisper.cpp's libparakeet
 type parakeetModel struct {
-	mu  sync.Mutex // parakeet_full keeps results in the context's default state, so calls must not overlap
-	ctx *C.struct_parakeet_context
+	mu  sync.Mutex                 // parakeet_full keeps results in the context's default state, so calls must not overlap; Close waits for them too
+	ctx *C.struct_parakeet_context // nil after Close
 }
 
 // newParakeetModel loads the model on the first GPU device, falling back to CPU, and logs system info
@@ -38,9 +38,14 @@ func newParakeetModel(modelPath string, log logger.Logger) (*parakeetModel, erro
 	return &parakeetModel{ctx: ctx}, nil
 }
 
-// Close releases the parakeet context
+// Close releases the parakeet context once no transcription is running
 func (p *parakeetModel) Close() error {
-	C.parakeet_free(p.ctx)
+	p.mu.Lock()
+	defer p.mu.Unlock()
+	if p.ctx != nil {
+		C.parakeet_free(p.ctx)
+		p.ctx = nil
+	}
 	return nil
 }
 
@@ -48,6 +53,9 @@ func (p *parakeetModel) Close() error {
 func (p *parakeetModel) transcribe(samples []float32) (string, error) {
 	p.mu.Lock()
 	defer p.mu.Unlock()
+	if p.ctx == nil {
+		return "", errors.New("parakeet model is closed")
+	}
 	params := C.parakeet_full_default_params(C.PARAKEET_SAMPLING_GREEDY)
 	// gosec needs both bounds and the conversion outside the cgo call; cgo output drops #nosec comments
 	n := len(samples)
