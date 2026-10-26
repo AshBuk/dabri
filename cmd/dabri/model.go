@@ -14,7 +14,7 @@ import (
 	"github.com/AshBuk/dabri/v2/internal/constants"
 	"github.com/AshBuk/dabri/v2/internal/ipc"
 	"github.com/AshBuk/dabri/v2/internal/utils"
-	"github.com/AshBuk/dabri/v2/whisper/providers"
+	"github.com/AshBuk/dabri/v2/stt/providers"
 )
 
 // addModelCommand registers the "model" command tree:

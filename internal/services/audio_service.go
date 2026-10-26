@@ -17,7 +17,7 @@ import (
 	"github.com/AshBuk/dabri/v2/internal/constants"
 	"github.com/AshBuk/dabri/v2/internal/logger"
 	"github.com/AshBuk/dabri/v2/internal/utils"
-	"github.com/AshBuk/dabri/v2/whisper"
+	"github.com/AshBuk/dabri/v2/stt"
 )
 
 // AudioService orchestrates recording, transcription, and output workflows
@@ -25,8 +25,8 @@ type AudioService struct {
 	logger        logger.Logger
 	config        func() *config.Config // Current config; read per operation
 	recorder      interfaces.AudioRecorder
-	whisperEngine *whisper.WhisperEngine
-	modelManager  whisper.ModelManager
+	whisperEngine *stt.WhisperEngine
+	modelManager  stt.ModelManager
 	tempManager   *processing.TempFileManager
 
 	// State management
@@ -59,8 +59,8 @@ func NewAudioService(
 	logger logger.Logger,
 	config func() *config.Config,
 	recorder interfaces.AudioRecorder,
-	whisperEngine *whisper.WhisperEngine,
-	modelManager whisper.ModelManager,
+	whisperEngine *stt.WhisperEngine,
+	modelManager stt.ModelManager,
 	tempManager *processing.TempFileManager,
 ) *AudioService {
 	ctx, cancel := context.WithCancel(context.Background())
@@ -261,7 +261,7 @@ func (as *AudioService) SwitchModel(ctx context.Context, modelID string) error {
 		return fmt.Errorf("model switch failed: %w", err)
 	}
 
-	newEngine, err := whisper.NewWhisperEngine(as.config, newPath, as.logger)
+	newEngine, err := stt.NewWhisperEngine(as.config, newPath, as.logger)
 	if err != nil {
 		return fmt.Errorf("failed to create engine for model %s: %w", modelID, err)
 	}
@@ -379,7 +379,7 @@ func (as *AudioService) startStandardRecording() error {
 // Note: The inner goroutine calling TranscribeWithContext is intentionally not tracked
 // by the WaitGroup. Whisper.cpp CGO calls cannot be cancelled, so tracking them would
 // cause Shutdown() to block for up to 2 minutes. Instead, we accept that the CGO work
-// may outlive shutdown (bounded to ~30s max). See whisper/engine.go for details.
+// may outlive shutdown (bounded to ~30s max). See stt/engine.go for details.
 func (as *AudioService) transcribeAsync(audioFile string) {
 	ctx, cancel := context.WithTimeout(as.ctx, 2*time.Minute)
 	defer cancel()

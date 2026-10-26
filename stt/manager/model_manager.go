@@ -12,7 +12,7 @@ import (
 	"github.com/AshBuk/dabri/v2/internal/constants"
 	"github.com/AshBuk/dabri/v2/internal/logger"
 	"github.com/AshBuk/dabri/v2/internal/utils"
-	"github.com/AshBuk/dabri/v2/whisper/providers"
+	"github.com/AshBuk/dabri/v2/stt/providers"
 )
 
 // ModelManager manages Whisper model lifecycle: resolution, download, and validation

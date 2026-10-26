@@ -24,8 +24,8 @@ import (
 	outputFactory "github.com/AshBuk/dabri/v2/output/factory"
 	outputInterfaces "github.com/AshBuk/dabri/v2/output/interfaces"
 	"github.com/AshBuk/dabri/v2/output/outputters"
+	"github.com/AshBuk/dabri/v2/stt"
 	"github.com/AshBuk/dabri/v2/websocket"
-	"github.com/AshBuk/dabri/v2/whisper"
 )
 
 // NewContainer builds every component, assembles the services and wires the
@@ -39,7 +39,7 @@ func NewContainer(ctx context.Context, log logger.Logger, cfg *config.Config, cf
 	// The rest keep cfg, which later updates never mutate.
 	configSvc := NewConfigService(log, cfg, cfgFile)
 	current := configSvc.GetConfig
-	modelManager := whisper.NewModelManager(current, log)
+	modelManager := stt.NewModelManager(current, log)
 	// Resolving the model downloads it when missing
 	modelPath, err := modelManager.GetModelPath(ctx)
 	if err != nil {
@@ -58,7 +58,7 @@ func NewContainer(ctx context.Context, log logger.Logger, cfg *config.Config, cf
 	if err != nil {
 		return nil, fmt.Errorf("failed to initialize audio recorder: %w", err)
 	}
-	engine, err := whisper.NewWhisperEngine(current, modelPath, log)
+	engine, err := stt.NewWhisperEngine(current, modelPath, log)
 	if err != nil {
 		return nil, fmt.Errorf("failed to initialize whisper engine: %w", err)
 	}

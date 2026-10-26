@@ -9,13 +9,13 @@
 //   - interfaces: Define contracts for model lifecycle and transcription flows
 //   - manager:    Provide the default model manager implementation
 //   - providers:  Supply adapters for resolving bundled and custom model paths
-package whisper
+package stt
 
 import (
 	"github.com/AshBuk/dabri/v2/config"
 	"github.com/AshBuk/dabri/v2/internal/logger"
-	"github.com/AshBuk/dabri/v2/whisper/interfaces"
-	"github.com/AshBuk/dabri/v2/whisper/manager"
+	"github.com/AshBuk/dabri/v2/stt/interfaces"
+	"github.com/AshBuk/dabri/v2/stt/manager"
 )
 
 // ModelManager re-exports the model manager interface for convenience

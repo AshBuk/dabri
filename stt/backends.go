@@ -3,7 +3,7 @@
 // Copyright (c) 2025 Asher Buk
 // SPDX-License-Identifier: MIT
 
-package whisper
+package stt
 
 // // Declared from ggml-backend.h; libggml is already linked by the whisper.cpp Go bindings
 // void ggml_backend_load_all(void);

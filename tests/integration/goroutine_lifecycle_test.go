@@ -18,7 +18,7 @@ import (
 	"github.com/AshBuk/dabri/v2/internal/app"
 	"github.com/AshBuk/dabri/v2/internal/constants"
 	"github.com/AshBuk/dabri/v2/internal/testutils"
-	whisperproviders "github.com/AshBuk/dabri/v2/whisper/providers"
+	sttproviders "github.com/AshBuk/dabri/v2/stt/providers"
 	"go.uber.org/goleak"
 )
 
@@ -51,7 +51,7 @@ func TestAppLifecycle(t *testing.T) {
 	var defaults config.Config
 	config.SetDefaultConfig(&defaults)
 	model := constants.ModelByID(defaults.General.WhisperModel)
-	if _, err := os.Stat(whisperproviders.NewModelPathResolver(&defaults, model.FileName).GetBundledModelPath()); err != nil {
+	if _, err := os.Stat(sttproviders.NewModelPathResolver(&defaults, model.FileName).GetBundledModelPath()); err != nil {
 		t.Skipf("No local %s model; Initialize would download it", model.ID)
 	}
 	if _, err := exec.LookPath(defaults.Audio.RecordingMethod); err != nil {

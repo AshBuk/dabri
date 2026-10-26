@@ -3,7 +3,7 @@
 
 //go:build cgo
 
-package whisper
+package stt
 
 import (
 	"context"
