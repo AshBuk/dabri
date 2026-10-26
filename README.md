@@ -48,7 +48,7 @@ https://github.com/user-attachments/assets/b798f350-c6a8-4408-83eb-51eef392a731
 - **Voice typing or clipboard mode**
 - **Flexible audio recording**: arecord (ALSA) or ffmpeg (PulseAudio/PipeWire), see [audio pipeline](docs/AUDIO_PIPELINE_DIAGRAM.txt)
 - **Multi-language support, custom hotkey binding, visual notifications**
-- **Model management**: switch between base, small, medium, large-v3-turbo, and large-v3 whisper models via tray or CLI
+- **Model management**: switch between Whisper models (base, small, medium, large-v3-turbo, large-v3) and NVIDIA Parakeet TDT 0.6B v3 via tray or CLI
 
 ## Beyond Minimalism
 

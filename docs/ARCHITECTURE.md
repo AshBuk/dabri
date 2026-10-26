@@ -18,7 +18,7 @@ The application follows a **dual-mode daemon architecture** with clear separatio
 ┌─────────────────────────────────────────────────────────────────┐
 │                       Service Modules                           │
 ├─────────────────────────────────────────────────────────────────┤
-│  audio/     │  hotkeys/   │  whisper/   │  output/    │  config/│
+│  audio/     │  hotkeys/   │  stt/       │  output/    │  config/│
 │  websocket/ │                                                   │
 └─────────────────────────────────────────────────────────────────┘
 ┌─────────────────────────────────────────────────────────────────┐
@@ -44,7 +44,7 @@ The application follows a **dual-mode daemon architecture** with clear separatio
 // Audio pipeline
   AudioService -> AudioRecorder -> (arecord/ffmpeg)
   AudioService -> TempFileManager -> cleanup logic
-  AudioService -> WhisperEngine -> transcription
+  AudioService -> Engine -> transcription
 
 // Config pipeline  
   ConfigService -> YAMLLoader -> validation
@@ -96,12 +96,12 @@ The application follows a **dual-mode daemon architecture** with clear separatio
 
 ### **Service Layer** (`internal/services/`)
 - **`interfaces.go`**: Service contracts and ServiceContainer definition
-- **`factory.go`**: `NewContainer` builds the components (recorder, whisper, output, hotkeys, tray, window, notify, websocket), assembles the services and wires tray and window callbacks
+- **`factory.go`**: `NewContainer` builds the components (recorder, stt engine, output, hotkeys, tray, window, notify, websocket), assembles the services and wires tray and window callbacks
 - **`actions.go`**: User actions shared by hotkeys, tray, window and IPC (recording toggle, reset to defaults, model switch with rollback, language/output/recorder selection, hotkey rebinding)
-- **`audio_service.go`**: Audio recording, Whisper transcription
+- **`audio_service.go`**: Audio recording, speech transcription
 - **`ui_service.go`**: System tray, main window, notifications, UI state (fans state/config changes out to both tray and window)
 - **`io_service.go`**: Text output, WebSocket server
-- **`config_service.go`**: Configuration file operations. A change is saved as a new copy and published only after the save succeeds, so a config returned by `GetConfig` is never mutated. Components that apply settings live (notifications, the whisper engine and model manager, the audio, IO and UI services) read through `GetConfig`. The rest keep the startup config.
+- **`config_service.go`**: Configuration file operations. A change is saved as a new copy and published only after the save succeeds, so a config returned by `GetConfig` is never mutated. Components that apply settings live (notifications, the stt engine and model manager, the audio, IO and UI services) read through `GetConfig`. The rest keep the startup config.
 - **`hotkey_service.go`**: Hotkey registration, reload and capture for rebinding
 
 Related constants:
@@ -145,14 +145,16 @@ Related constants:
 - **Push-to-talk** (`hotkeys.mode: ptt`): evdev when accessible, since the portal does not report key release reliably
 - **Failover**: Seamless re-registration on provider switching
 
-### **Speech Recognition** (`whisper/`)
+### **Speech Recognition** (`stt/`)
 
 #### Engine Components
-- **`engine.go`**: Main Whisper engine using CGO bindings
+- **`engine.go`**: `Engine` validates and decodes the WAV file and passes the samples to the backend named by the model's `Engine` field in `internal/constants/stt_models.go`
+- **`whisper.go`**: Whisper backend using the whisper.cpp Go bindings
+- **`parakeet.go`**: Parakeet backend using libparakeet from whisper.cpp through CGO; it detects the language itself, so the language pickers are disabled for it
 - **`engine_stub.go`**: Stub implementation when CGO is disabled
-- **`manager/model_manager.go`**: Whisper model lifecycle management
+- **`manager/model_manager.go`**: Model lifecycle management
 - **`providers/model_path_resolver.go`**: Bundled model path resolution for different environments
-- **`whisper.go`**: Public facade and type re-exports for external use
+- **`stt.go`**: Public facade and type re-exports for external use
 
 ### **Output Management** (`output/`)
 

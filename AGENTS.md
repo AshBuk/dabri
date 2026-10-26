@@ -115,7 +115,7 @@ make help
 - `cmd/dabri/` - Main entry point (main.go, daemon.go, commands.go, model.go, environment.go) — cobra-based CLI
 - `hotkeys/` - Hotkey handling
 - `audio/` - Audio recording
-- `whisper/` - Speech recognition
+- `stt/` - Speech recognition (Whisper and Parakeet models)
 - `output/` - Text output (clipboard/typing)
 - `config/` - Configuration management
 - `lib/` - Whisper.cpp libraries (built)
