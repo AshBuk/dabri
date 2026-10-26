@@ -26,6 +26,7 @@
 //
 // Packaging:
 //   - AppImage package with first-run configuration and model copy
+//   - Flatpak package published on Flathub (io.github.ashbuk.dabri)
 //
 // Testing strategy:
 //   - Unit tests colocated with packages (default go test ./...)

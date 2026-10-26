@@ -103,3 +103,13 @@ For a shorter command, create a symlink:
 ```bash
 ln -sf /path/to/dabri-x.x.x-x86_64.AppImage ~/.local/bin/dabri
 ```
+## Flatpak CLI Usage
+
+Run CLI commands through `flatpak run`, e.g. `flatpak run io.github.ashbuk.dabri toggle`.
+The daemon socket lives inside the sandbox, so a host `dabri` binary can't reach a Flatpak daemon.
+For a shorter command, add an alias to your shell config:
+```bash
+alias dabri='flatpak run io.github.ashbuk.dabri'
+```
+Use the full `flatpak run io.github.ashbuk.dabri toggle` command for DE/WM shortcuts, since they don't read shell aliases.
+The Flatpak config file is `~/.var/app/io.github.ashbuk.dabri/config/dabri/config.yaml`.

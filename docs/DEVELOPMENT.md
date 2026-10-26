@@ -47,10 +47,16 @@ packaging/
 │   └── build-appimage.sh         # AppImage creation with linuxdeploy
 ├── arch/
 │   └── PKGBUILD                  # Arch Linux AUR package
-└── fedora/
-    ├── dabri.spec          # RPM spec for Fedora/RHEL
-    ├── create-srpm.sh            # SRPM creation script
-    └── .rpmlintrc                # rpmlint configuration
+├── fedora/
+│   ├── dabri.spec          # RPM spec for Fedora/RHEL
+│   ├── create-srpm.sh            # SRPM creation script
+│   └── .rpmlintrc                # rpmlint configuration
+└── flatpak/
+    ├── go.mod.yml, modules.txt   # Vendored Go modules (flatpak-go-mod)
+    ├── arecord, notify-send      # Sandbox wrappers for host tools
+    └── ydotool-*.patch           # Client-only ydotool build
+
+io.github.ashbuk.dabri.yml        # Flatpak manifest (Flathub)
 
 bash-scripts/dev-env.sh           # CGO environment configuration
 ```
@@ -80,7 +86,8 @@ GitHub Actions handle complex builds, releases, and distribution:
 ├── pre-release.yml         # Pre-release validation
 ├── release-appimage.yml    # AppImage build & GitHub Release
 ├── release-arch.yml        # AUR publish (on tag)
-└── release-fedora.yml      # COPR submit (on tag)
+├── release-fedora.yml      # COPR submit (on tag)
+└── release-flatpak.yml     # Flatpak bundles attached to the GitHub Release
 ```
 
 ### Test Types & Current Coverage 
@@ -105,13 +112,13 @@ GitHub Actions handle complex builds, releases, and distribution:
 
 ### Provider Selection & Fallback Strategy ([manager_linux.go](../hotkeys/manager/manager_linux.go))
 ```
-System (GNOME/KDE):  DBus (primary) → Evdev (fallback)
+System / AppImage:   DBus (primary) → Evdev (fallback)
                        ↑                 ↑
                     (portal)       (direct input)
 
-AppImage:            Evdev (primary) → DBus (fallback)
-                       ↑                 ↑
-                 (direct input)       (portal)
+Flatpak:             DBus only (no /dev/input in the sandbox)
+
+mode: ptt            Evdev when accessible (needs key release)
 ```
 
 ### Module Structure
@@ -124,7 +131,7 @@ hotkeys/
 │   └── provider_fallback.go # Fallback registration
 ├── providers/           # Hotkey providers implementation
 │   ├── dbus_provider.go # GlobalShortcuts portal (GNOME/KDE)
-│   ├── evdev_provider.go # Direct input devices (i3/XFCE/AppImage)
+│   ├── evdev_provider.go # Direct input devices (i3/XFCE, push-to-talk)
 │   └── dummy_provider.go # Testing provider
 ├── utils/               # Parser utilities
 └── hotkeys.go          # Main entry point
@@ -134,4 +141,4 @@ hotkeys/
 
 See [`config/loaders/default_config.yaml`](../config/loaders/default_config.yaml) for the complete configuration file with all available options and detailed comments. It is embedded in the binary and written to `~/.config/dabri/config.yaml` on first run.
 
-*Last updated: 2026-06-10*
+*Last updated: 2026-10-26*

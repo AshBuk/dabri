@@ -14,6 +14,7 @@
   
 [![CI](https://github.com/AshBuk/dabri/actions/workflows/ci.yml/badge.svg)](https://github.com/AshBuk/dabri/actions/workflows/ci.yml)
 [![Release](https://img.shields.io/github/v/release/AshBuk/dabri?sort=semver)](https://github.com/AshBuk/dabri/releases)
+[![Flathub](https://img.shields.io/flathub/v/io.github.ashbuk.dabri?logo=flathub)](https://flathub.org/apps/io.github.ashbuk.dabri)
 [![AppImage](https://img.shields.io/badge/AppImage-available-0a7cff?logo=appimage)](https://github.com/AshBuk/dabri/releases)
 [![AUR](https://img.shields.io/aur/version/dabri?logo=archlinux)](https://aur.archlinux.org/packages/dabri)
 [![COPR](https://img.shields.io/badge/COPR-Fedora-51a2da?logo=fedora)](https://copr.fedorainfracloud.org/coprs/ashbuk/dabri/)
@@ -40,7 +41,7 @@ https://github.com/user-attachments/assets/b798f350-c6a8-4408-83eb-51eef392a731
 ▸ For integration enthusiasts, a WebSocket server is available at `localhost:8080`. Enable it in your config with web_server enabled: true (disabled by default).
 
 - **Offline speech-to-text, privacy-first**: all processing happens locally
-- **Portable**: AppImage package
+- **Portable**: Flatpak and AppImage packages
 - **Cross-platform support** for X11 and Wayland
 - **Linux DEs**: native integration with GNOME, KDE, and others
 - **GPU + CPU support**: Vulkan backend for faster transcription (auto-fallback to CPU)
@@ -65,6 +66,11 @@ transcript=$(dabri --json stop | jq -r '.data.transcript')
 ```
 
 ## ✦ Installation
+
+### Flatpak [Flathub](https://flathub.org/apps/io.github.ashbuk.dabri):
+```bash
+flatpak install flathub io.github.ashbuk.dabri
+```
 
 ### AppImage
 

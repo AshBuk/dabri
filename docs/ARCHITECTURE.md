@@ -134,14 +134,15 @@ Related constants:
 
 #### Provider Implementations
 - **`providers/dbus_provider.go`**: DBus GlobalShortcuts portal (preferred for GNOME/KDE), via the [go-wlportal](https://github.com/AshBuk/go-wlportal) shortcuts adapter
-- **`providers/evdev_provider.go`**: Direct evdev input handling (primary for AppImage)
+- **`providers/evdev_provider.go`**: Direct evdev input handling (fallback, push-to-talk)
 - **`manager/provider_fallback.go`**: Fallback logic and hotkey re-registration
 - **`providers/dummy_provider.go`**: Dummy provider for testing
 
 #### Provider Selection & Fallback
 - **Override** (config): `hotkeys.provider: auto | dbus | evdev` (default: `auto`)
-- **System (GNOME/KDE)**: D-Bus primary → evdev fallback
-- **AppImage**: evdev primary → D-Bus fallback
+- **System and AppImage**: D-Bus primary → evdev fallback
+- **Flatpak**: D-Bus only, the sandbox has no `/dev/input` access
+- **Push-to-talk** (`hotkeys.mode: ptt`): evdev when accessible, since the portal does not report key release reliably
 - **Failover**: Seamless re-registration on provider switching
 
 ### **Speech Recognition** (`whisper/`)
@@ -219,7 +220,9 @@ Related constants:
 #### Packaging (`packaging/`)
 Distribution-specific packaging scripts and configurations:
 - `appimage/` - AppImage build scripts
+- `arch/` - PKGBUILD for the AUR
 - `fedora/` - RPM spec and SRPM creation for Fedora/RHEL
+- `flatpak/` - Vendored Go modules and sandbox wrappers for the Flatpak build
 
 #### Bash Scripts (`bash-scripts/`)
 - **`check-license-headers.sh`**: License compliance validation
@@ -233,6 +236,7 @@ Distribution-specific packaging scripts and configurations:
 #### Package Metadata
 - **`io.github.ashbuk.dabri.desktop`**: Desktop entry
 - **`io.github.ashbuk.dabri.appdata.xml`**: AppStream metadata
+- **`io.github.ashbuk.dabri.yml`**: Flatpak manifest, published on [Flathub](https://flathub.org/apps/io.github.ashbuk.dabri)
 
 ###  **Testing Infrastructure** (`tests/`)
 
@@ -249,4 +253,4 @@ Distribution-specific packaging scripts and configurations:
 
 ---
 
-*This architecture documentation is maintained alongside the codebase. Last updated: 2026-10-15*
+*This architecture documentation is maintained alongside the codebase. Last updated: 2026-10-26*

@@ -25,7 +25,7 @@
       <li>Voice typing or clipboard mode</li>
       <li>Flexible audio recording with ALSA or PulseAudio/PipeWire</li>
       <li>Multi-language support, custom hotkey binding, visual notifications</li>
-      <li>Model management: switch between base, small, medium, and large-v3 whisper models via tray or CLI</li>
+      <li>Model management: switch between base, small, medium, large-v3-turbo, and large-v3 whisper models via tray or CLI</li>
     </ul>
   </description>
   <screenshots>
