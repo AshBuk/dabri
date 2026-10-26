@@ -7,6 +7,7 @@ package tray
 
 import (
 	"context"
+	"strings"
 
 	"fyne.io/systray"
 	"github.com/AshBuk/dabri/v2/config"
@@ -171,7 +172,7 @@ func (tm *TrayManager) setupModelMenu() {
 		currentName = currentModel.Name
 	}
 	tm.modelItems["current"] = tm.modelMenu.AddSubMenuItem(
-		"● "+currentName,
+		"● "+menuLabel(currentName),
 		"Current model",
 	)
 	tm.modelItems["current"].Disable()
@@ -181,7 +182,7 @@ func (tm *TrayManager) setupModelMenu() {
 		if tm.cfg().General.WhisperModel == m.ID {
 			indicator = "● "
 		}
-		itm := tm.modelMenu.AddSubMenuItem(indicator+m.Name, m.ID)
+		itm := tm.modelMenu.AddSubMenuItem(indicator+menuLabel(m.Name), m.ID)
 		tm.modelItems["model_"+m.ID] = itm
 
 		modelID := m.ID
@@ -265,6 +266,7 @@ func (tm *TrayManager) setModelDownloadingUI(modelID string) {
 	if model := constants.ModelByID(modelID); model != nil {
 		name = model.Name
 	}
+	name = menuLabel(name)
 	if itm := tm.modelItems["model_"+modelID]; itm != nil {
 		itm.SetTitle("✖ " + name + " (downloading…)")
 	}
@@ -278,9 +280,9 @@ func (tm *TrayManager) updateModelRadioUI(modelID string) {
 	for _, m := range constants.WhisperModels {
 		if itm := tm.modelItems["model_"+m.ID]; itm != nil {
 			if m.ID == modelID {
-				itm.SetTitle("● " + m.Name)
+				itm.SetTitle("● " + menuLabel(m.Name))
 			} else {
-				itm.SetTitle("○ " + m.Name)
+				itm.SetTitle("○ " + menuLabel(m.Name))
 			}
 		}
 	}
@@ -290,8 +292,13 @@ func (tm *TrayManager) updateModelRadioUI(modelID string) {
 		if model != nil {
 			name = model.Name
 		}
-		currentDisplay.SetTitle("● " + name)
+		currentDisplay.SetTitle("● " + menuLabel(name))
 	}
+}
+
+// menuLabel escapes underscores, which dbusmenu treats as mnemonics ("Q5_1" shows as "Q51")
+func menuLabel(s string) string {
+	return strings.ReplaceAll(s, "_", "__")
 }
 
 // setupOutputMenu creates and configures the output mode submenu
