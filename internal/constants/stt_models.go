@@ -74,6 +74,11 @@ var Models = []ModelDef{
 	},
 }
 
+// DetectsLanguage reports whether the model ignores the language setting
+func (m ModelDef) DetectsLanguage() bool {
+	return m.Engine == EngineParakeet
+}
+
 // ModelByID returns model definition by its ID, or nil if not found
 func ModelByID(id string) *ModelDef {
 	for _, m := range Models {

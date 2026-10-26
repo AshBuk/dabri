@@ -190,6 +190,7 @@ func (tm *TrayManager) setupModelMenu() {
 			tm.handleModelClick(modelID)
 		})
 	}
+	tm.syncLanguageMenu(tm.cfg().General.Model)
 }
 
 // handleModelClick handles model item click with download cancellation support.
@@ -293,6 +294,19 @@ func (tm *TrayManager) updateModelRadioUI(modelID string) {
 			name = model.Name
 		}
 		currentDisplay.SetTitle("● " + menuLabel(name))
+	}
+	tm.syncLanguageMenu(modelID)
+}
+
+// syncLanguageMenu greys out the language menu for models that detect the language themselves
+func (tm *TrayManager) syncLanguageMenu(modelID string) {
+	if tm.languageMenu == nil {
+		return
+	}
+	if m := constants.ModelByID(modelID); m != nil && m.DetectsLanguage() {
+		tm.languageMenu.Disable()
+	} else {
+		tm.languageMenu.Enable()
 	}
 }
 

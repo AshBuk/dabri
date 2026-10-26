@@ -172,7 +172,7 @@ func newWindow(ctx context.Context, cfg *config.Config, log logger.Logger) windo
 		HotkeyMode:     cfg.Hotkeys.Mode,
 	}
 	for _, m := range constants.Models {
-		opts.Models = append(opts.Models, window.ModelChoice{ID: m.ID, Name: m.Name})
+		opts.Models = append(opts.Models, window.ModelChoice{ID: m.ID, Name: m.Name, DetectsLanguage: m.DetectsLanguage()})
 	}
 	for _, l := range constants.WhisperLanguages {
 		opts.Languages = append(opts.Languages, window.LangChoice{Code: l.Code, Name: l.Name})
