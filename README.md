@@ -67,7 +67,12 @@ transcript=$(dabri --json stop | jq -r '.data.transcript')
 
 ## ✦ Installation
 
-### Flatpak [Flathub](https://flathub.org/apps/io.github.ashbuk.dabri):
+### Flatpak
+
+<a href="https://flathub.org/apps/io.github.ashbuk.dabri">
+  <img src="https://flathub.org/api/badge?locale=en" width="190" alt="Get it on Flathub">
+</a>
+
 ```bash
 flatpak install flathub io.github.ashbuk.dabri
 ```
