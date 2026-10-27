@@ -22,7 +22,7 @@ type Manager interface {
 	SetShowWindowAction(onShowWindow func())
 	// SetAudioActions sets callbacks for audio-related actions
 	SetAudioActions(onSelectRecorder func(method string) error)
-	// SetModelAction sets callback for whisper model selection.
+	// SetModelAction sets callback for model selection.
 	// The callback receives a cancellable context and a progress reporter for download feedback.
 	SetModelAction(onSelectModel func(ctx context.Context, modelID string) error)
 	// SetHotkeyRebindAction sets callback to rebind hotkeys by action name

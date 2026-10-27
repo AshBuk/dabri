@@ -177,7 +177,7 @@ func (tm *TrayManager) UpdateSettings(config *config.Config) {
 	tm.updateRecorderRadioUI(config.Audio.RecordingMethod)
 	tm.updateHotkeyModeRadioUI(config.Hotkeys.Mode)
 	tm.updateLanguageRadioUI(config.General.Language)
-	tm.updateModelRadioUI(config.General.WhisperModel)
+	tm.updateModelRadioUI(config.General.Model)
 	tm.updateWorkflowNotificationUI(config.Notifications.EnableWorkflowNotifications)
 	tm.updateOutputUI()
 }
@@ -259,7 +259,7 @@ func (tm *TrayManager) SetAudioActions(onSelectRecorder func(method string) erro
 	tm.onSelectRecorder = onSelectRecorder
 }
 
-// SetModelAction sets callback for whisper model selection
+// SetModelAction sets callback for model selection
 func (tm *TrayManager) SetModelAction(onSelectModel func(ctx context.Context, modelID string) error) {
 	tm.onSelectModel = onSelectModel
 }

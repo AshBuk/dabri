@@ -3,7 +3,7 @@
 // Copyright (c) 2025 Asher Buk
 // SPDX-License-Identifier: MIT
 
-package whisper
+package stt
 
 import (
 	"context"
@@ -13,72 +13,58 @@ import (
 	"strings"
 
 	"github.com/AshBuk/dabri/v2/config"
+	"github.com/AshBuk/dabri/v2/internal/constants"
 	"github.com/AshBuk/dabri/v2/internal/logger"
 	"github.com/AshBuk/dabri/v2/internal/utils"
-	"github.com/ggerganov/whisper.cpp/bindings/go/pkg/whisper"
 	"github.com/go-audio/wav"
 )
 
-// WhisperEngine provides an interface for interacting with the whisper.cpp model.
-// It encapsulates model loading, context management, and the transcription process
-type WhisperEngine struct {
-	config    func() *config.Config // Current config; language changes apply live
-	model     whisper.Model
-	parakeet  *parakeetModel // Set instead of model for Parakeet models
-	modelPath string
-	logger    logger.Logger
+// backend runs a loaded model on decoded 16 kHz mono samples
+type backend interface {
+	transcribe(samples []float32) (string, error)
+	Close() error
 }
 
-// NewWhisperEngine initializes and loads a new Whisper model from the given path.
+// Engine provides an interface for speech recognition with Whisper or Parakeet models.
+// It validates and decodes the audio, and the model's backend runs the inference
+type Engine struct {
+	backend backend
+	logger  logger.Logger
+}
+
+// NewEngine initializes and loads a new model from the given path,
+// picking the backend from the model's catalog entry.
 // Return an error if the model file is not found or fails to load
-func NewWhisperEngine(config func() *config.Config, modelPath string, loggers ...logger.Logger) (*WhisperEngine, error) {
+func NewEngine(config func() *config.Config, modelPath string, loggers ...logger.Logger) (*Engine, error) {
 	if !utils.IsValidFile(modelPath) {
-		return nil, fmt.Errorf("whisper model not found: %s", modelPath)
+		return nil, fmt.Errorf("model not found: %s", modelPath)
 	}
 	loadBackends()
 	var logSink logger.Logger = logger.NewDefaultLogger(logger.WarningLevel)
 	if len(loggers) > 0 && loggers[0] != nil {
 		logSink = loggers[0]
 	}
-	if isParakeetModel(modelPath) {
-		p, err := newParakeetModel(modelPath)
-		if err != nil {
-			return nil, fmt.Errorf("failed to load parakeet model: %w", err)
-		}
-		return &WhisperEngine{config: config, parakeet: p, modelPath: modelPath, logger: logSink}, nil
+	var b backend
+	var err error
+	if m := constants.ModelByFileName(filepath.Base(modelPath)); m != nil && m.Engine == constants.EngineParakeet {
+		b, err = newParakeetModel(modelPath, logSink)
+	} else {
+		b, err = newWhisperModel(config, modelPath, logSink)
 	}
-	model, err := whisper.New(modelPath)
 	if err != nil {
-		return nil, fmt.Errorf("failed to load whisper model: %w", err)
+		return nil, err
 	}
-
-	// Log system info including GPU backend status
-	if ctx, err := model.NewContext(); err == nil {
-		logSink.Info("Whisper %s", ctx.SystemInfo())
-	}
-
-	return &WhisperEngine{
-		config:    config,
-		model:     model,
-		modelPath: modelPath,
-		logger:    logSink,
-	}, nil
+	return &Engine{backend: b, logger: logSink}, nil
 }
 
-// Close releases the resources associated with the loaded Whisper model
-func (w *WhisperEngine) Close() error {
-	if w.parakeet != nil {
-		return w.parakeet.Close()
-	}
-	if w.model != nil {
-		return w.model.Close()
-	}
-	return nil
+// Close releases the resources associated with the loaded model
+func (e *Engine) Close() error {
+	return e.backend.Close()
 }
 
 // Transcribe performs speech-to-text conversion on the given audio file.
 // Handle file validation, audio loading, context management, and processing
-func (w *WhisperEngine) Transcribe(audioFile string) (string, error) {
+func (e *Engine) Transcribe(audioFile string) (string, error) {
 	if !utils.IsValidFile(audioFile) {
 		return "", fmt.Errorf("audio file not found or invalid: %s", audioFile)
 	}
@@ -95,7 +81,7 @@ func (w *WhisperEngine) Transcribe(audioFile string) (string, error) {
 	if err := utils.CheckDiskSpace(audioFile); err != nil {
 		return "", fmt.Errorf("insufficient disk space: %w", err)
 	}
-	audioData, err := w.loadAudioData(audioFile)
+	audioData, err := e.loadAudioData(audioFile)
 	if err != nil {
 		return "", fmt.Errorf("failed to load audio data: %w", err)
 	}
@@ -104,53 +90,24 @@ func (w *WhisperEngine) Transcribe(audioFile string) (string, error) {
 	if len(audioData) == 0 {
 		return "", fmt.Errorf("no audio samples decoded from %s", audioFile)
 	}
-	if w.parakeet != nil {
-		text, err := w.parakeet.transcribe(audioData)
-		if err != nil {
-			return "", err
-		}
-		return utils.SanitizeTranscript(text), nil
-	}
-	context, err := w.model.NewContext()
+	text, err := e.backend.transcribe(audioData)
 	if err != nil {
-		return "", fmt.Errorf("failed to create whisper context: %w", err)
+		return "", err
 	}
-	// Set the target language for transcription if specified in the config
-	if lang := w.config().General.Language; lang != "" {
-		if err := context.SetLanguage(lang); err != nil {
-			return "", fmt.Errorf("failed to set language: %w", err)
-		}
-	}
-
-	if err := context.Process(audioData, nil, nil, nil); err != nil {
-		return "", fmt.Errorf("failed to process audio: %w", err)
-	}
-	// Collect all text segments from the processed audio
-	var transcript strings.Builder
-	for {
-		segment, err := context.NextSegment()
-		if err != nil {
-			break // End of segments
-		}
-		transcript.WriteString(segment.Text)
-		transcript.WriteString(" ")
-	}
-	result := strings.TrimSpace(transcript.String())
-	result = utils.SanitizeTranscript(result)
-	return result, nil
+	return utils.SanitizeTranscript(text), nil
 }
 
 // TranscribeWithContext performs speech-to-text conversion.
-// whisper.cpp processing cannot be interrupted safely, so context cancellation is
+// whisper.cpp and libparakeet processing cannot be interrupted safely, so context cancellation is
 // checked before and after the synchronous call instead of spawning hidden work.
-func (w *WhisperEngine) TranscribeWithContext(ctx context.Context, audioFile string) (string, error) {
+func (e *Engine) TranscribeWithContext(ctx context.Context, audioFile string) (string, error) {
 	select {
 	case <-ctx.Done():
 		return "", fmt.Errorf("transcription cancelled: %w", ctx.Err())
 	default:
 	}
 
-	txt, err := w.Transcribe(audioFile)
+	txt, err := e.Transcribe(audioFile)
 	if err != nil {
 		return "", err
 	}
@@ -163,8 +120,8 @@ func (w *WhisperEngine) TranscribeWithContext(ctx context.Context, audioFile str
 }
 
 // Open a WAV file, decode it, and convert the PCM data
-// into the float32 sample format required by the Whisper model
-func (w *WhisperEngine) loadAudioData(audioFile string) ([]float32, error) {
+// into the float32 sample format both backends expect
+func (e *Engine) loadAudioData(audioFile string) ([]float32, error) {
 	// Sanitize path to prevent directory traversal and other file-based attacks
 	clean := filepath.Clean(audioFile)
 	if clean != audioFile || strings.Contains(clean, "..") {
@@ -177,7 +134,7 @@ func (w *WhisperEngine) loadAudioData(audioFile string) ([]float32, error) {
 	}
 	defer func() {
 		if err := file.Close(); err != nil {
-			w.logger.Warning("Failed to close audio file: %v", err)
+			e.logger.Warning("Failed to close audio file: %v", err)
 		}
 	}()
 	decoder := wav.NewDecoder(file)

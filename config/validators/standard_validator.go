@@ -15,10 +15,10 @@ import (
 
 // validateGeneralConfig validates general configuration settings
 func validateGeneralConfig(config *models.Config, errors *[]string) {
-	// Validate whisper model against known model IDs
-	if constants.ModelByID(config.General.WhisperModel) == nil {
-		*errors = append(*errors, fmt.Sprintf("invalid whisper model: %s, using '%s'", config.General.WhisperModel, constants.DefaultModelID))
-		config.General.WhisperModel = constants.DefaultModelID
+	// Validate model against known model IDs
+	if constants.ModelByID(config.General.Model) == nil {
+		*errors = append(*errors, fmt.Sprintf("invalid model: %s, using '%s'", config.General.Model, constants.DefaultModelID))
+		config.General.Model = constants.DefaultModelID
 	}
 
 	if config.General.TempAudioPath != "" {

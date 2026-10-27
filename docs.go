@@ -4,7 +4,7 @@
 // Package dabri provides a high-level overview of the Dabri project.
 //
 // Dabri is a minimalist, privacy-focused desktop application written in Go
-// that converts speech to text offline using local Whisper models.
+// that converts speech to text offline using local Whisper and Parakeet models.
 //
 // Dual-mode architecture:
 //   - Daemon mode: Background service with system tray integration for GUI usage

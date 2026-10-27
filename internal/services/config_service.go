@@ -88,19 +88,19 @@ func (cs *ConfigService) GetConfig() *config.Config {
 	return cs.current.Load()
 }
 
-// UpdateWhisperModel changes whisper model setting; a failed save keeps the old value
-func (cs *ConfigService) UpdateWhisperModel(modelID string) error {
-	cs.logger.Info("Updating whisper model to: %s", modelID)
-	if cs.GetConfig().General.WhisperModel == modelID {
+// UpdateModel changes the model setting; a failed save keeps the old value
+func (cs *ConfigService) UpdateModel(modelID string) error {
+	cs.logger.Info("Updating model to: %s", modelID)
+	if cs.GetConfig().General.Model == modelID {
 		return nil
 	}
-	if err := cs.update(func(c *config.Config) { c.General.WhisperModel = modelID }); err != nil {
+	if err := cs.update(func(c *config.Config) { c.General.Model = modelID }); err != nil {
 		return fmt.Errorf("failed to save config: %w", err)
 	}
 	return nil
 }
 
-// UpdateLanguage changes whisper language setting; a failed save keeps the old value
+// UpdateLanguage changes the language setting; a failed save keeps the old value
 func (cs *ConfigService) UpdateLanguage(language string) error {
 	cs.logger.Info("Updating language to: %s", language)
 	if cs.GetConfig().General.Language == language {

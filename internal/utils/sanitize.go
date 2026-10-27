@@ -12,7 +12,7 @@ import (
 var tokenPattern = regexp.MustCompile(`(?i)\[[\p{L}0-9_\-]+\]`)
 
 // SanitizeTranscript removes placeholder tokens and normalizes whitespace.
-// This package is broadly used across app and whisper layers
+// This package is broadly used across app and stt layers
 func SanitizeTranscript(input string) string {
 	if input == "" {
 		return ""

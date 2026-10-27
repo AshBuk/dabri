@@ -18,9 +18,9 @@ dabri toggle                   # Toggle recording (start/stop with one command)
 dabri status                   # Show state and configuration
 dabri transcript               # Show last transcript
 
-# Whisper model selection
+# Model selection
 dabri model list               # List available models (works without daemon)
-dabri model set <model-id>     # Switch whisper model (requires daemon)
+dabri model set <model-id>     # Switch model (requires daemon)
 dabri model set base-q5_1      # ~57 MB, fast
 dabri model set small-q5_1     # ~181 MB, default
 dabri model set medium-q5_0    # ~539 MB

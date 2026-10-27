@@ -62,8 +62,8 @@
                       │
                       ▼
          ┌─────────────────────────────────┐
-         │ WhisperEngine                   │
-         │ [whisper/engine.go]             │
+         │ Engine (Whisper or Parakeet)    │
+         │ [stt/engine.go]                 │
          │ Speech → Text                   │
          └─────────────────────────────────┘
                       │

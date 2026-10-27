@@ -62,14 +62,14 @@ func (c *ServiceContainer) ResetToDefaults() error {
 	return c.reloadHotkeys()
 }
 
-// SwitchModel hot-swaps the whisper engine and persists the choice. If saving
+// SwitchModel hot-swaps the engine and persists the choice. If saving
 // fails, the engine rolls back so runtime state matches the config.
 func (c *ServiceContainer) SwitchModel(ctx context.Context, modelID string) error {
-	previous := c.Config.GetConfig().General.WhisperModel
+	previous := c.Config.GetConfig().General.Model
 	if err := c.Audio.SwitchModel(ctx, modelID); err != nil {
 		return err
 	}
-	if err := c.Config.UpdateWhisperModel(modelID); err != nil {
+	if err := c.Config.UpdateModel(modelID); err != nil {
 		if previous != "" {
 			if rbErr := c.Audio.SwitchModel(ctx, previous); rbErr != nil {
 				c.Logger.Error("Failed to rollback model after config save error: %v", rbErr)

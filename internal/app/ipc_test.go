@@ -19,7 +19,7 @@ func newMockedApp() (*App, *mocks.CallLog, *mocks.MockAudioService, *mocks.MockC
 	log := &mocks.CallLog{}
 	audio := &mocks.MockAudioService{Log: log}
 	cfg := &mocks.MockConfigService{Log: log, Cfg: &config.Config{}}
-	cfg.Cfg.General.WhisperModel = "base"
+	cfg.Cfg.General.Model = "base"
 	cfg.Cfg.Hotkeys.StartRecording = "alt+r"
 	a := NewApp(testutils.NewMockLogger())
 	a.Services = &services.ServiceContainer{

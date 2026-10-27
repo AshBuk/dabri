@@ -52,7 +52,7 @@ tar --transform "s,^,dabri-${APP_VERSION}/," \
     --exclude='*.AppImage' \
     --exclude='rpm/*.src.rpm' \
     -czf "$RPMBUILD_DIR/SOURCES/$VENDORED_TARBALL" \
-    cmd/ config/ hotkeys/ audio/ whisper/ output/ websocket/ internal/ \
+    cmd/ config/ hotkeys/ audio/ stt/ output/ websocket/ internal/ \
     vendor/ \
     go.mod go.sum \
     Makefile LICENSE README.md \

@@ -12,7 +12,7 @@ import (
 // setDefaultConfigForTest sets default values for testing
 func setDefaultConfigForTest(config *models.Config) {
 	config.General.Debug = false
-	config.General.WhisperModel = "small-q5_1"
+	config.General.Model = "small-q5_1"
 	config.General.TempAudioPath = "/tmp"
 	config.General.Language = "en"
 
@@ -53,16 +53,16 @@ func TestValidateConfig(t *testing.T) {
 			},
 		},
 		{
-			name: "invalid whisper model",
+			name: "invalid model",
 			setupConfig: func() *models.Config {
 				config := &models.Config{}
 				setDefaultConfigForTest(config)
-				config.General.WhisperModel = "invalid"
+				config.General.Model = "invalid"
 				return config
 			},
 			expectError: true,
 			expectedValues: map[string]interface{}{
-				"whisperModel": "small-q5_1",
+				"model": "small-q5_1",
 			},
 		},
 		{
@@ -117,9 +117,9 @@ func TestValidateConfig(t *testing.T) {
 				t.Errorf("unexpected error: %v", err)
 			}
 			// Check expected values
-			if whisperModel, ok := tt.expectedValues["whisperModel"]; ok {
-				if config.General.WhisperModel != whisperModel {
-					t.Errorf("expected WhisperModel %v, got %v", whisperModel, config.General.WhisperModel)
+			if model, ok := tt.expectedValues["model"]; ok {
+				if config.General.Model != model {
+					t.Errorf("expected Model %v, got %v", model, config.General.Model)
 				}
 			}
 			if sampleRate, ok := tt.expectedValues["sampleRate"]; ok {

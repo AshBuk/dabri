@@ -14,7 +14,7 @@ import (
 	"github.com/AshBuk/dabri/v2/internal/constants"
 	"github.com/AshBuk/dabri/v2/internal/ipc"
 	"github.com/AshBuk/dabri/v2/internal/utils"
-	"github.com/AshBuk/dabri/v2/whisper/providers"
+	"github.com/AshBuk/dabri/v2/stt/providers"
 )
 
 // addModelCommand registers the "model" command tree:
@@ -26,7 +26,7 @@ import (
 func addModelCommand(root *cobra.Command) {
 	modelCmd := &cobra.Command{
 		Use:   "model",
-		Short: "Manage whisper models (list/set/delete)",
+		Short: "Manage speech models (list/set/delete)",
 		Args:  cobra.NoArgs,
 		// Bare "model" with no subcommand → show current model
 		Run: func(cmd *cobra.Command, args []string) {
@@ -36,7 +36,7 @@ func addModelCommand(root *cobra.Command) {
 
 	listCmd := &cobra.Command{
 		Use:   "list",
-		Short: "List available whisper models",
+		Short: "List available models",
 		Args:  cobra.NoArgs,
 		Run: func(cmd *cobra.Command, args []string) {
 			printModelList()
@@ -45,7 +45,7 @@ func addModelCommand(root *cobra.Command) {
 
 	setCmd := &cobra.Command{
 		Use:   "set <model-id>",
-		Short: "Switch to a different whisper model",
+		Short: "Switch to a different model",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			return runModelMutation(cmd, "set-model", args[0])
@@ -56,7 +56,7 @@ func addModelCommand(root *cobra.Command) {
 
 	deleteCmd := &cobra.Command{
 		Use:   "delete <model-id>",
-		Short: "Delete a downloaded whisper model",
+		Short: "Delete a downloaded model",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			return runModelMutation(cmd, "delete-model", args[0])
@@ -104,8 +104,8 @@ func runModelMutation(cmd *cobra.Command, ipcCommand, modelID string) error {
 func activeModelID() string {
 	activeID := constants.DefaultModelID
 	if path, err := config.ConfigFilePath(); err == nil {
-		if cfg, err := config.LoadConfig(path); err == nil && cfg.General.WhisperModel != "" {
-			activeID = cfg.General.WhisperModel
+		if cfg, err := config.LoadConfig(path); err == nil && cfg.General.Model != "" {
+			activeID = cfg.General.Model
 		}
 	}
 	return activeID
@@ -122,9 +122,9 @@ func printActiveModel() {
 
 func printModelList() {
 	activeID := activeModelID()
-	fmt.Println("Whisper models:")
+	fmt.Println("Speech models:")
 	fmt.Println()
-	for _, m := range constants.WhisperModels {
+	for _, m := range constants.Models {
 		status := "  "
 		if m.ID == activeID {
 			status = "● "
@@ -134,7 +134,7 @@ func printModelList() {
 		if isModelDownloaded(resolver) {
 			downloaded = " [downloaded]"
 		}
-		fmt.Printf("  %s%-18s %s%s\n", status, m.ID, m.Name, downloaded)
+		fmt.Printf("  %s%-25s %s%s\n", status, m.ID, m.Name, downloaded)
 	}
 	fmt.Println("\nUsage: dabri model set <model-id>")
 	fmt.Println("       dabri model delete <model-id>")

@@ -30,7 +30,7 @@ var httpClient = &http.Client{
 // size in bytes (total is -1 when the server omits Content-Length).
 type ProgressFunc func(downloaded, total int64)
 
-// ModelDownloader handles downloading the whisper model from Hugging Face
+// ModelDownloader handles downloading the model from Hugging Face
 type ModelDownloader struct {
 	url      string
 	minSize  int64

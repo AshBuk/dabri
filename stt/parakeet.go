@@ -3,7 +3,7 @@
 // Copyright (c) 2025 Asher Buk
 // SPDX-License-Identifier: MIT
 
-package whisper
+package stt
 
 // #cgo LDFLAGS: -lparakeet
 // #include <stdlib.h>
@@ -13,37 +13,39 @@ import "C"
 import (
 	"errors"
 	"math"
-	"path/filepath"
 	"strings"
 	"sync"
 	"unsafe"
+
+	"github.com/AshBuk/dabri/v2/internal/logger"
 )
 
 // parakeetModel wraps an NVIDIA Parakeet model loaded through whisper.cpp's libparakeet
 type parakeetModel struct {
-	mu  sync.Mutex // parakeet_full keeps results in the context's default state, so calls must not overlap
-	ctx *C.struct_parakeet_context
+	mu  sync.Mutex                 // parakeet_full keeps results in the context's default state, so calls must not overlap; Close waits for them too
+	ctx *C.struct_parakeet_context // nil after Close
 }
 
-// isParakeetModel reports whether the file is a Parakeet model, following the ggml-org file naming
-func isParakeetModel(modelPath string) bool {
-	return strings.HasPrefix(filepath.Base(modelPath), "ggml-parakeet")
-}
-
-// newParakeetModel loads the model on the first GPU device, falling back to CPU
-func newParakeetModel(modelPath string) (*parakeetModel, error) {
+// newParakeetModel loads the model on the first GPU device, falling back to CPU, and logs system info
+func newParakeetModel(modelPath string, log logger.Logger) (*parakeetModel, error) {
 	cPath := C.CString(modelPath)
 	defer C.free(unsafe.Pointer(cPath))
 	ctx := C.parakeet_init_from_file_with_params(cPath, C.parakeet_context_default_params())
 	if ctx == nil {
-		return nil, errors.New("failed to initialize parakeet context")
+		return nil, errors.New("failed to load parakeet model")
 	}
+	log.Info("Parakeet system_info: %s", strings.TrimPrefix(C.GoString(C.parakeet_print_system_info()), "PARAKEET : "))
 	return &parakeetModel{ctx: ctx}, nil
 }
 
-// Close releases the parakeet context
+// Close releases the parakeet context once no transcription is running
 func (p *parakeetModel) Close() error {
-	C.parakeet_free(p.ctx)
+	p.mu.Lock()
+	defer p.mu.Unlock()
+	if p.ctx != nil {
+		C.parakeet_free(p.ctx)
+		p.ctx = nil
+	}
 	return nil
 }
 
@@ -51,6 +53,9 @@ func (p *parakeetModel) Close() error {
 func (p *parakeetModel) transcribe(samples []float32) (string, error) {
 	p.mu.Lock()
 	defer p.mu.Unlock()
+	if p.ctx == nil {
+		return "", errors.New("parakeet model is closed")
+	}
 	params := C.parakeet_full_default_params(C.PARAKEET_SAMPLING_GREEDY)
 	// gosec needs both bounds and the conversion outside the cgo call; cgo output drops #nosec comments
 	n := len(samples)

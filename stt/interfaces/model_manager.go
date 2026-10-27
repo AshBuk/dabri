@@ -7,7 +7,7 @@ import (
 	"context"
 )
 
-// ModelManager defines the contract for managing the lifecycle of Whisper models
+// ModelManager defines the contract for managing the lifecycle of speech models
 type ModelManager interface {
 	// Return the absolute path to the validated model file
 	GetModelPath(ctx context.Context) (string, error)

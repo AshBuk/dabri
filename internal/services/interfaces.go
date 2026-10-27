@@ -28,9 +28,9 @@ type AudioServiceInterface interface {
 	// ClearSession resets the current recording session
 	ClearSession()
 
-	// SwitchModel loads a different whisper model
+	// SwitchModel loads a different model
 	SwitchModel(ctx context.Context, modelID string) error
-	// DeleteModel removes a downloaded whisper model
+	// DeleteModel removes a downloaded model
 	DeleteModel(modelID string) error
 
 	// GetLastTranscript returns the most recent transcription result
@@ -96,8 +96,8 @@ type ConfigServiceInterface interface {
 
 	// UpdateLanguage changes the transcription language
 	UpdateLanguage(language string) error
-	// UpdateWhisperModel changes the active whisper model
-	UpdateWhisperModel(modelID string) error
+	// UpdateModel changes the active model
+	UpdateModel(modelID string) error
 	// ToggleWorkflowNotifications toggles workflow notification setting
 	ToggleWorkflowNotifications() error
 	// UpdateRecordingMethod changes the audio recording method

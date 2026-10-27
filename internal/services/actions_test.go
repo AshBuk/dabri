@@ -30,7 +30,7 @@ func newActionFixture() *actionFixture {
 		cfg:     &mocks.MockConfigService{Log: log, Cfg: &config.Config{}},
 		hotkeys: &mocks.MockHotkeyService{Log: log},
 	}
-	f.cfg.Cfg.General.WhisperModel = "base"
+	f.cfg.Cfg.General.Model = "base"
 	f.cfg.Cfg.Hotkeys.StartRecording = "alt+r"
 	f.c = &ServiceContainer{
 		Logger:  testutils.NewMockLogger(),

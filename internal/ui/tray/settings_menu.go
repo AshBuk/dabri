@@ -7,6 +7,7 @@ package tray
 
 import (
 	"context"
+	"strings"
 
 	"fyne.io/systray"
 	"github.com/AshBuk/dabri/v2/config"
@@ -18,7 +19,7 @@ func (tm *TrayManager) createSettingsSubmenus() {
 	tm.hotkeysMenu = tm.settingsItem.AddSubMenuItem("Hotkeys", "Hotkey settings")
 	tm.audioRecorderMenu = tm.settingsItem.AddSubMenuItem("Audio Recorder", "Select audio recorder")
 	tm.languageMenu = tm.settingsItem.AddSubMenuItem("Set Language", "Select recognition language")
-	tm.modelMenu = tm.settingsItem.AddSubMenuItem("Whisper Model", "Select whisper model")
+	tm.modelMenu = tm.settingsItem.AddSubMenuItem("Model", "Select speech model")
 
 	tm.outputMenu = tm.settingsItem.AddSubMenuItem("Output", "Output settings")
 
@@ -161,27 +162,27 @@ func (tm *TrayManager) setupLanguageMenu() {
 	}
 }
 
-// setupModelMenu creates and configures the whisper model selection submenu.
+// setupModelMenu creates and configures the model selection submenu.
 // Unlike other radio menus, model items use custom click handling that supports
 // cancel-on-reclick: clicking a downloading model cancels the download (✖ indicator).
 func (tm *TrayManager) setupModelMenu() {
-	currentModel := constants.ModelByID(tm.cfg().General.WhisperModel)
-	currentName := tm.cfg().General.WhisperModel
+	currentModel := constants.ModelByID(tm.cfg().General.Model)
+	currentName := tm.cfg().General.Model
 	if currentModel != nil {
 		currentName = currentModel.Name
 	}
 	tm.modelItems["current"] = tm.modelMenu.AddSubMenuItem(
-		"● "+currentName,
+		"● "+menuLabel(currentName),
 		"Current model",
 	)
 	tm.modelItems["current"].Disable()
 
-	for _, m := range constants.WhisperModels {
+	for _, m := range constants.Models {
 		indicator := "○ "
-		if tm.cfg().General.WhisperModel == m.ID {
+		if tm.cfg().General.Model == m.ID {
 			indicator = "● "
 		}
-		itm := tm.modelMenu.AddSubMenuItem(indicator+m.Name, m.ID)
+		itm := tm.modelMenu.AddSubMenuItem(indicator+menuLabel(m.Name), m.ID)
 		tm.modelItems["model_"+m.ID] = itm
 
 		modelID := m.ID
@@ -189,6 +190,7 @@ func (tm *TrayManager) setupModelMenu() {
 			tm.handleModelClick(modelID)
 		})
 	}
+	tm.syncLanguageMenu(tm.cfg().General.Model)
 }
 
 // handleModelClick handles model item click with download cancellation support.
@@ -205,7 +207,7 @@ func (tm *TrayManager) handleModelClick(modelID string) {
 		cancel()
 		tm.logger.Info("Model download cancelled by user: %s", modelID)
 		if tm.cfg() != nil {
-			tm.updateModelRadioUI(tm.cfg().General.WhisperModel)
+			tm.updateModelRadioUI(tm.cfg().General.Model)
 		}
 		return
 	}
@@ -223,7 +225,7 @@ func (tm *TrayManager) handleModelClick(modelID string) {
 
 	// Restore UI for the previously downloading model
 	if prevModelID != "" && prevModelID != modelID && tm.cfg() != nil {
-		tm.updateModelRadioUI(tm.cfg().General.WhisperModel)
+		tm.updateModelRadioUI(tm.cfg().General.Model)
 	}
 
 	tm.setModelDownloadingUI(modelID)
@@ -251,7 +253,7 @@ func (tm *TrayManager) handleModelClick(modelID string) {
 		if err != nil {
 			tm.logger.Error("Model switch failed: %v", err)
 			if tm.cfg() != nil {
-				tm.updateModelRadioUI(tm.cfg().General.WhisperModel)
+				tm.updateModelRadioUI(tm.cfg().General.Model)
 			}
 			return
 		}
@@ -265,6 +267,7 @@ func (tm *TrayManager) setModelDownloadingUI(modelID string) {
 	if model := constants.ModelByID(modelID); model != nil {
 		name = model.Name
 	}
+	name = menuLabel(name)
 	if itm := tm.modelItems["model_"+modelID]; itm != nil {
 		itm.SetTitle("✖ " + name + " (downloading…)")
 	}
@@ -275,12 +278,12 @@ func (tm *TrayManager) setModelDownloadingUI(modelID string) {
 
 // updateModelRadioUI updates selection marks for model menu
 func (tm *TrayManager) updateModelRadioUI(modelID string) {
-	for _, m := range constants.WhisperModels {
+	for _, m := range constants.Models {
 		if itm := tm.modelItems["model_"+m.ID]; itm != nil {
 			if m.ID == modelID {
-				itm.SetTitle("● " + m.Name)
+				itm.SetTitle("● " + menuLabel(m.Name))
 			} else {
-				itm.SetTitle("○ " + m.Name)
+				itm.SetTitle("○ " + menuLabel(m.Name))
 			}
 		}
 	}
@@ -290,8 +293,26 @@ func (tm *TrayManager) updateModelRadioUI(modelID string) {
 		if model != nil {
 			name = model.Name
 		}
-		currentDisplay.SetTitle("● " + name)
+		currentDisplay.SetTitle("● " + menuLabel(name))
 	}
+	tm.syncLanguageMenu(modelID)
+}
+
+// syncLanguageMenu greys out the language menu for models that detect the language themselves
+func (tm *TrayManager) syncLanguageMenu(modelID string) {
+	if tm.languageMenu == nil {
+		return
+	}
+	if m := constants.ModelByID(modelID); m != nil && m.DetectsLanguage() {
+		tm.languageMenu.Disable()
+	} else {
+		tm.languageMenu.Enable()
+	}
+}
+
+// menuLabel escapes underscores, which dbusmenu treats as mnemonics ("Q5_1" shows as "Q51")
+func menuLabel(s string) string {
+	return strings.ReplaceAll(s, "_", "__")
 }
 
 // setupOutputMenu creates and configures the output mode submenu

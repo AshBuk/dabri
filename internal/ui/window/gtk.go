@@ -96,7 +96,17 @@ func (m *gtkManager) SetModel(id string) {
 		m.suppress = true
 		m.modelCombo.SetActiveID(id)
 		m.suppress = false
+		m.syncLanguage(id)
 	})
+}
+
+// syncLanguage greys out the language picker for models that detect the language themselves
+func (m *gtkManager) syncLanguage(modelID string) {
+	for _, mc := range m.opts.Models {
+		if mc.ID == modelID {
+			m.langCombo.SetSensitive(!mc.DetectsLanguage)
+		}
+	}
 }
 
 func (m *gtkManager) SetLanguage(code string) {
@@ -220,6 +230,7 @@ func (m *gtkManager) buildGrid() (*gtk.Grid, error) {
 		return nil, err
 	}
 	m.attachRow(grid, 2, "Language", m.langCombo)
+	m.syncLanguage(m.opts.ActiveModel)
 
 	m.outputCombo, err = m.newCombo(m.opts.OutputMode, func(c *gtk.ComboBoxText) {
 		c.Append(configmodels.OutputModeActiveWindow, "Type to window")

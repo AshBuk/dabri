@@ -21,10 +21,11 @@ const (
 	StateError
 )
 
-// ModelChoice is one selectable whisper model: a stable ID and a display name.
+// ModelChoice is one selectable model: a stable ID and a display name.
 type ModelChoice struct {
-	ID   string
-	Name string
+	ID              string
+	Name            string
+	DetectsLanguage bool // the language picker does not apply
 }
 
 // LangChoice is one selectable language: an ISO code and a display name.

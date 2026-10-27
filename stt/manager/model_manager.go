@@ -12,16 +12,16 @@ import (
 	"github.com/AshBuk/dabri/v2/internal/constants"
 	"github.com/AshBuk/dabri/v2/internal/logger"
 	"github.com/AshBuk/dabri/v2/internal/utils"
-	"github.com/AshBuk/dabri/v2/whisper/providers"
+	"github.com/AshBuk/dabri/v2/stt/providers"
 )
 
-// ModelManager manages Whisper model lifecycle: resolution, download, and validation
+// ModelManager manages model lifecycle: resolution, download, and validation
 type ModelManager struct {
 	config func() *config.Config // Current config; the active model applies live
 	logger logger.Logger
 }
 
-// NewModelManager creates a new manager responsible for the Whisper model.
+// NewModelManager creates a new manager responsible for the configured model.
 // An optional logger enables download-progress reporting.
 func NewModelManager(config func() *config.Config, loggers ...logger.Logger) *ModelManager {
 	m := &ModelManager{config: config}
@@ -122,7 +122,7 @@ func (m *ModelManager) DeleteModel(modelID string) error {
 
 // configuredModelID returns the model ID from config, falling back to default
 func (m *ModelManager) configuredModelID() string {
-	if id := m.config().General.WhisperModel; id != "" {
+	if id := m.config().General.Model; id != "" {
 		return id
 	}
 	return constants.DefaultModelID
