@@ -9,7 +9,7 @@
     <p>
       A minimalist, privacy-focused desktop application for offline speech-to-text.
       Converts voice input directly into any active window (editors, browsers, IDEs, AI assistants)
-      using the Whisper model locally for speech recognition.
+      using Whisper or NVIDIA Parakeet models locally for speech recognition.
     </p>
     <p>
       For system tray integration on GNOME and automatic typing on Wayland,
@@ -51,6 +51,9 @@
     <binary>dabri</binary>
   </provides>
   <releases>
+    <release version="2.4.0" date="2026-10-27">
+      <description><p>NVIDIA Parakeet TDT 0.6B v3 as a second speech engine that detects the spoken language itself</p></description>
+    </release>
     <release version="2.3.0" date="2026-10-18">
       <description><p>Push-to-talk recording and faster text after you stop; runs on CPUs without AVX2</p></description>
     </release>
@@ -122,6 +125,7 @@
     <keyword>transcription</keyword>
     <keyword>ai</keyword>
     <keyword>whisper</keyword>
+    <keyword>parakeet</keyword>
     <keyword>offline</keyword>
     <keyword>privacy</keyword>
   </keywords>

@@ -2,9 +2,9 @@
 # https://github.com/AshBuk/dabri
 
 pkgname=dabri
-pkgver=2.3.0
+pkgver=2.4.0
 pkgrel=1
-pkgdesc="Offline speech-to-text desktop application using Whisper"
+pkgdesc="Offline speech-to-text desktop application using Whisper and Parakeet"
 arch=('x86_64' 'aarch64')
 url="https://github.com/AshBuk/dabri"
 license=('MIT')

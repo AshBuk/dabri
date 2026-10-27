@@ -5,6 +5,6 @@ Exec=dabri
 Icon=io.github.ashbuk.dabri
 Type=Application
 Categories=Utility;Accessibility;
-Keywords=speech;voice;transcription;ai;whisper;offline;privacy;
+Keywords=speech;voice;transcription;ai;whisper;parakeet;offline;privacy;
 Terminal=false
 StartupNotify=true

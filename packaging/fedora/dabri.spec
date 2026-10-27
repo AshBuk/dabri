@@ -5,7 +5,7 @@
 # =============================================================================
 # Version definitions (single source of truth)
 # =============================================================================
-%global app_version     2.3.0
+%global app_version     2.4.0
 %global go_version      1.26
 %global whisper_version 1.9.5
 
@@ -105,7 +105,8 @@ Provides:       bundled(golang(gopkg.in/yaml.v2)) = 2.4.0
 %description
 Dabri is a minimalist, privacy-focused desktop application for offline
 speech-to-text. It converts voice input directly into any active window
-(editors, browsers, IDEs, AI assistants) using the Whisper model locally.
+(editors, browsers, IDEs, AI assistants) using Whisper or NVIDIA Parakeet
+models locally.
 
 Features:
 - Offline speech-to-text with local processing (privacy-first)
@@ -260,6 +261,9 @@ fi
 %{_datadir}/icons/hicolor/scalable/apps/io.github.ashbuk.dabri.svg
 
 %changelog
+* Tue Oct 27 2026 Asher Buk <AshBuk@users.noreply.github.com> - 2.4.0-1
+- NVIDIA Parakeet TDT 0.6B v3 as a second speech engine that detects the spoken language itself
+
 * Sun Oct 18 2026 Asher Buk <AshBuk@users.noreply.github.com> - 2.3.0-1
 - Push-to-talk recording and faster text after you stop; runs on CPUs without AVX2
 
