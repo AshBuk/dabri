@@ -55,7 +55,7 @@ dabri --socket /tmp/custom.sock start     # Custom socket path
 Output responses in JSON format for scripting.
 
 ```bash
-dabri --json status                       # JSON output
+dabri status --json                       # JSON output
 ```
 
 ---

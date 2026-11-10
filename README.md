@@ -61,7 +61,7 @@ Intuitive minimalist UX, **robust STT infrastructure**. A foundation for voice-c
 
 ```bash
 # Voice command → smart home action
-transcript=$(dabri --json stop | jq -r '.data.transcript')
+transcript=$(dabri stop --json | jq -r '.data.transcript')
 [[ "$transcript" == *"lights off"* ]] && curl -X POST http://hub/lights/off
 ```
 
