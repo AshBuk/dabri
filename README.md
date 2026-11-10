@@ -23,7 +23,7 @@
 
 **Dabri** is a **minimalist**, **privacy-first** application for **offline voice recognition** directly into any active window (editors, browsers, IDEs, AI assistants).  
 
-Written in pure **[Go](https://github.com/golang/go)**, it leverages **[whisper.cpp](https://github.com/ggerganov/whisper.cpp)** for fast, offline transcription.
+Written in **[Go](https://github.com/golang/go)**, Dabri delivers fast, offline transcription powered by modern speech recognition models.
 The architecture is built from the ground up with a *minimal set of dependencies*, featuring a **custom dependency injection factory**, ensuring **lean and maintainable** design.
 
 https://github.com/user-attachments/assets/b798f350-c6a8-4408-83eb-51eef392a731
