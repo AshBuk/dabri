@@ -27,15 +27,15 @@ jobs:
     timeout-minutes: 45
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           fetch-depth: 0
 
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
 
       - name: Cache Docker layers
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: /tmp/.buildx-cache
           key: ${{ runner.os }}-buildx-appimage-${{ hashFiles('docker/Dockerfile.appimage', 'go.mod', 'go.sum') }}
@@ -87,7 +87,7 @@ jobs:
           done
 
       - name: Upload AppImage artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: appimage-rc
           path: dist/*.AppImage
@@ -97,11 +97,11 @@ jobs:
   build-srpm:
     runs-on: ubuntu-latest
     container:
-      image: fedora:43
+      image: fedora:44
     timeout-minutes: 30
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Install dependencies
         run: dnf install -y golang rpm-build rpmlint curl glibc-langpack-en
@@ -157,7 +157,7 @@ jobs:
           echo "✅ SRPM built successfully"
 
       - name: Upload SRPM artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: srpm-rc
           path: ~/rpmbuild/SRPMS/*.src.rpm
@@ -169,7 +169,7 @@ jobs:
     timeout-minutes: 15
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Extract version
         id: version

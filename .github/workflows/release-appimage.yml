@@ -34,15 +34,15 @@ jobs:
     
     steps:
     - name: Checkout code
-      uses: actions/checkout@v4
+      uses: actions/checkout@v7
       with:
         fetch-depth: 0
 
     - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@v3
+      uses: docker/setup-buildx-action@v4
 
     - name: Cache Docker layers
-      uses: actions/cache@v4
+      uses: actions/cache@v6
       with:
         path: /tmp/.buildx-cache
         key: ${{ runner.os }}-${{ matrix.arch }}-buildx-appimage-${{ hashFiles('docker/Dockerfile.appimage', 'go.mod', 'go.sum') }}
@@ -90,7 +90,7 @@ jobs:
         done
         
     - name: Upload AppImage artifact
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         name: dabri-appimage-${{ matrix.arch }}
         path: |
@@ -104,12 +104,12 @@ jobs:
     
     steps:
     - name: Checkout code
-      uses: actions/checkout@v4
+      uses: actions/checkout@v7
       with:
         fetch-depth: 0
 
     - name: Download AppImage artifacts
-      uses: actions/download-artifact@v4
+      uses: actions/download-artifact@v8
       with:
         pattern: dabri-appimage-*
         path: ./artifacts/
@@ -144,7 +144,7 @@ jobs:
         } >> "$GITHUB_OUTPUT"
 
     - name: Create Release
-      uses: softprops/action-gh-release@v2
+      uses: softprops/action-gh-release@v3
       with:
         files: |
           ./artifacts/*.AppImage

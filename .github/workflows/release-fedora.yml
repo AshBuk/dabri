@@ -15,10 +15,10 @@ jobs:
   build-srpm:
     runs-on: ubuntu-latest
     container:
-      image: fedora:43
+      image: fedora:44
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Install dependencies
         run: |
@@ -73,7 +73,7 @@ jobs:
           rpmbuild -bs ~/rpmbuild/SPECS/dabri.spec
 
       - name: Upload SRPM artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: srpm
           path: ~/rpmbuild/SRPMS/*.src.rpm

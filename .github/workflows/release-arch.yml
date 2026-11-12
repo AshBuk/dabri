@@ -16,7 +16,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Extract version from tag
         id: version
@@ -83,7 +83,7 @@ jobs:
             "
 
       - name: Publish to AUR
-        uses: KSXGitHub/github-actions-deploy-aur@v4.1.3
+        uses: KSXGitHub/github-actions-deploy-aur@v4.2.0
         with:
           pkgname: dabri
           pkgbuild: packaging/arch/PKGBUILD
