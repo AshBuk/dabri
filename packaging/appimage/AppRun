@@ -50,6 +50,8 @@ system_desktop_entry_exists() {
     local name="$1"
     local IFS=':'
     for d in ${XDG_DATA_DIRS:-/usr/local/share:/usr/share}; do
+        # The gtk apprun hook prepends our own $APPDIR/usr/share
+        case "$d" in "${HERE}"/*) continue ;; esac
         [ -n "$d" ] && [ -f "${d}/applications/${name}" ] && return 0
     done
     return 1
@@ -70,7 +72,13 @@ integrate_desktop() {
         return
     fi
 
-    if [ -f "$desktop_file" ]; then
+    # Only a mounted AppImage has a stable path to launch
+    if [ -z "${APPIMAGE}" ]; then
+        return
+    fi
+
+    # Rewrite the entry when the AppImage moved or a new versioned file replaced it
+    if grep -qxF "Exec=\"${APPIMAGE}\" %U" "$desktop_file" 2>/dev/null; then
         return
     fi
 
