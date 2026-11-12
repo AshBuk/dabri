@@ -84,8 +84,8 @@ make appimage              # Build AppImage using Docker (Ubuntu 22.04, recommen
                            # Output: dist/dabri-<version>.AppImage
                            # Includes: binary, libraries, models, dependencies
 
-make appimage-host        # Build AppImage locally without Docker (requires tools on host)
-                           # Requires: linuxdeploy, appimagetool installed
+make appimage-host        # Build AppImage locally without Docker
+                           # Requires: Go, CMake, glslc, GTK/appindicator dev packages
 ```
 
 ### 8. CI/CD Pipeline
