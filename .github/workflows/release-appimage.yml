@@ -84,7 +84,8 @@ jobs:
           if "$appimage" --appimage-help > /dev/null 2>&1; then
             echo "✅ Valid AppImage: $appimage"
           else
-            echo "⚠️ AppImage validation failed for: $appimage"
+            echo "❌ AppImage validation failed for: $appimage"
+            exit 1
           fi
         done
         
