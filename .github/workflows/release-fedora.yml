@@ -94,5 +94,5 @@ jobs:
           chmod 600 ~/.config/copr
           
           # Submit build
-          SRPM=~/rpmbuild/SRPMS/dabri-${{ steps.version.outputs.VERSION }}-1.fc43.src.rpm
+          SRPM=$(ls ~/rpmbuild/SRPMS/dabri-${{ steps.version.outputs.VERSION }}-1.*.src.rpm)
           copr-cli build dabri "$SRPM"
