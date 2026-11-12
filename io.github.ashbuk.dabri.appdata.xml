@@ -50,6 +50,13 @@
   <provides>
     <binary>dabri</binary>
   </provides>
+  <requires>
+    <display_length compare="ge">768</display_length>
+  </requires>
+  <recommends>
+    <control>keyboard</control>
+    <control>pointing</control>
+  </recommends>
   <releases>
     <release version="2.4.0" date="2026-10-27">
       <description><p>NVIDIA Parakeet TDT 0.6B v3 as a second speech engine that detects the spoken language itself</p></description>
