@@ -268,8 +268,8 @@ func (b *BaseRecorder) ensureProcessReaped() {
 		return
 	}
 
-	finalDone := make(chan error, 1)
-	go func() { finalDone <- b.waitForProcess() }()
+	finalDone := make(chan struct{})
+	go func() { _ = b.waitForProcess(); close(finalDone) }()
 
 	select {
 	case <-finalDone:
