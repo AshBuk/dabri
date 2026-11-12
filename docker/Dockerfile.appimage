@@ -104,4 +104,4 @@ RUN packaging/appimage/build-appimage.sh
 
 # Export artifacts stage
 FROM scratch AS artifacts
-COPY --from=builder /app/dist/ /
+COPY --from=builder /app/dist/*.AppImage /app/dist/*.zsync /

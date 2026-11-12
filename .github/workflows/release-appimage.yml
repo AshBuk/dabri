@@ -95,7 +95,6 @@ jobs:
         path: |
           dist/*.AppImage
           dist/*.zsync
-          !dist/tools/
 
   create-release:
     needs: [build-appimage]
