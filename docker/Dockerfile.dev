@@ -27,7 +27,7 @@ RUN apt-get update && apt-get -y dist-upgrade && apt-get install -y --no-install
     && rm -rf /var/lib/apt/lists/*
 
 # Install Vulkan SDK (glslc + headers) - required for whisper.cpp Vulkan backend
-ENV VULKAN_SDK_VERSION=1.4.341.1
+ENV VULKAN_SDK_VERSION=1.4.363.1
 RUN curl -fsSL "https://sdk.lunarg.com/sdk/download/${VULKAN_SDK_VERSION}/linux/vulkansdk-linux-x86_64-${VULKAN_SDK_VERSION}.tar.xz" -o /tmp/vulkan-sdk.tar.xz \
     && mkdir -p /opt/vulkan-sdk \
     && tar -xJf /tmp/vulkan-sdk.tar.xz -C /opt/vulkan-sdk --strip-components=1 \
@@ -39,8 +39,8 @@ RUN curl -fsSL "https://sdk.lunarg.com/sdk/download/${VULKAN_SDK_VERSION}/linux/
 # Install golangci-lint from the release tarball, verified against a pinned
 # sha256. The upstream install.sh fails verification since v2.13: its grep also
 # matches the .sbom.json line in checksums.txt.
-ARG GOLANGCI_LINT_VERSION=2.13.2
-ARG GOLANGCI_LINT_SHA256=2277d43b98ec0054280f2ac26b53268bae97682444678a59a657dd565da021d6
+ARG GOLANGCI_LINT_VERSION=2.15.0
+ARG GOLANGCI_LINT_SHA256=9b7fe6a6bf6334b98decf8d86b11415ea7889afdabdd1959fdce23af2a9ebcea
 RUN curl -fsSL "https://github.com/golangci/golangci-lint/releases/download/v${GOLANGCI_LINT_VERSION}/golangci-lint-${GOLANGCI_LINT_VERSION}-linux-amd64.tar.gz" -o /tmp/golangci-lint.tar.gz \
     && echo "${GOLANGCI_LINT_SHA256}  /tmp/golangci-lint.tar.gz" | sha256sum -c - \
     && tar -xzf /tmp/golangci-lint.tar.gz -C /usr/local/bin --strip-components=1 \
@@ -48,7 +48,7 @@ RUN curl -fsSL "https://github.com/golangci/golangci-lint/releases/download/v${G
     && rm /tmp/golangci-lint.tar.gz
 
 # Install gosec and goimports, pinned so lint runs need no network
-RUN go install github.com/securego/gosec/v2/cmd/gosec@v2.29.0 \
+RUN go install github.com/securego/gosec/v2/cmd/gosec@v2.30.0 \
     && go install golang.org/x/tools/cmd/goimports@v0.52.0
 
 # Set working directory
