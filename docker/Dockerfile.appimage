@@ -23,8 +23,6 @@ RUN apt-get update && apt-get install -y \
     alsa-utils \
     file \
     desktop-file-utils \
-    fuse \
-    libfuse2 \
     xsel \
     wl-clipboard \
     xdotool \
