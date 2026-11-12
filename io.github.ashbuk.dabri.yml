@@ -34,8 +34,8 @@ modules:
       - "make PREFIX=/app LDCONFIG=: INSTALLMAN=/app/share/man install"
     sources:
       - type: archive
-        url: https://github.com/jordansissel/xdotool/archive/refs/tags/v3.20211022.1.tar.gz
-        sha256: 82b15a944a5e82fee15e0f6116bd9f642bc3d0bb6989fc0ca5ad9dfe35de0847
+        url: https://github.com/jordansissel/xdotool/archive/refs/tags/v4.20260303.1.tar.gz
+        sha256: c1f971a384da588eb99ca0755fc4300316d49c1e612537e3f1de52215e104fa3
 
   - name: xsel
     buildsystem: autotools
@@ -51,15 +51,15 @@ modules:
       - -Dfishcompletiondir=no
     sources:
       - type: archive
-        url: https://github.com/bugaevc/wl-clipboard/archive/refs/tags/v2.2.1.tar.gz
-        sha256: 6eb8081207fb5581d1d82c4bcd9587205a31a3d47bea3ebeb7f41aa1143783eb
+        url: https://github.com/bugaevc/wl-clipboard/archive/refs/tags/v2.3.0.tar.gz
+        sha256: b4dc560973f0cd74e02f817ffa2fd44ba645a4f1ea94b7b9614dacc9f895f402
 
   - name: wtype
     buildsystem: meson
     sources:
       - type: archive
-        url: https://github.com/atx/wtype/archive/refs/tags/v0.4.tar.gz
-        sha256: da91786d828b6a6e29b884bc510473939eda052658ebef87d7bdeafa6a8746f9
+        url: https://github.com/atx/wtype/archive/refs/tags/v0.5.tar.gz
+        sha256: 684308ac8b47c510dddf4abac3aef86b4f7b8c0e165389a40608679a7a5b77ed
 
   # ydotool injects input via /dev/uinput, the only active-window typing path on
   # wlroots/Hyprland inside the sandbox (wtype's virtual-keyboard protocol is
@@ -86,8 +86,8 @@ modules:
     buildsystem: cmake-ninja
     sources:
       - type: archive
-        url: https://github.com/KhronosGroup/SPIRV-Headers/archive/refs/tags/vulkan-sdk-1.4.321.0.tar.gz
-        sha256: 5bbea925663d4cd2bab23efad53874f2718248a73dcaf9dd21dff8cb48e602fc
+        url: https://github.com/KhronosGroup/SPIRV-Headers/archive/refs/tags/vulkan-sdk-1.4.363.0.tar.gz
+        sha256: 5b3a0d099f5c7649e29c0938476c462e71d66ad89a0bde42fa1ba3eb476956c9
 
   - name: whisper-cpp
     buildsystem: cmake-ninja
