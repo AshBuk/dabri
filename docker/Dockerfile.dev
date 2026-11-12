@@ -1,5 +1,5 @@
 # Development environment with GUI dependencies
-FROM golang:1.26-bookworm
+FROM golang:1.26.11-bookworm
 
 ENV DEBIAN_FRONTEND=noninteractive
 
