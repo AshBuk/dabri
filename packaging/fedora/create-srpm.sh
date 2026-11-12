@@ -5,7 +5,7 @@
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-SPEC_FILE="$SCRIPT_DIR/dabri.spec"
+SPEC_FILE="$SCRIPT_DIR/dabri.spec.in"
 PROJECT_ROOT="$(dirname "$(dirname "$SCRIPT_DIR")")"
 
 # Get version from git tag (single source of truth)
@@ -25,7 +25,7 @@ RPMBUILD_DIR="$HOME/rpmbuild"
 mkdir -p "$RPMBUILD_DIR"/{BUILD,RPMS,SOURCES,SPECS,SRPMS}
 
 # Copy spec file
-cp "$SPEC_FILE" "$RPMBUILD_DIR/SPECS/"
+cp "$SPEC_FILE" "$RPMBUILD_DIR/SPECS/dabri.spec"
 
 cd "$RPMBUILD_DIR/SOURCES"
 

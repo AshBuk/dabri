@@ -1,6 +1,10 @@
 # Copyright (c) 2025 Asher Buk
 # SPDX-License-Identifier: MIT
 # https://github.com/AshBuk/dabri
+#
+# Named dabri.spec.in, not dabri.spec: Go >= 1.26.11 refuses to build a tree
+# that holds a *.spec file while the whisper.cpp Go bindings link with -fopenmp
+# (ggml-org/whisper.cpp#4169). Copy it to dabri.spec for rpmlint and rpmbuild.
 
 # =============================================================================
 # Version definitions (single source of truth)

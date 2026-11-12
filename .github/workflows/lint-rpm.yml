@@ -28,4 +28,6 @@ jobs:
         run: dnf install -y rpmlint glibc-langpack-en
 
       - name: Lint spec file
-        run: rpmlint -r packaging/fedora/.rpmlintrc packaging/fedora/dabri.spec
+        run: |
+          cp packaging/fedora/dabri.spec.in /tmp/dabri.spec
+          rpmlint -r packaging/fedora/.rpmlintrc /tmp/dabri.spec
