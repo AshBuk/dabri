@@ -12,7 +12,7 @@ require (
 	github.com/AshBuk/go-wlportal v1.3.1
 	github.com/ggerganov/whisper.cpp/bindings/go v0.0.0-20261006141035-d1be6fde11ac
 	github.com/go-audio/wav v1.1.0
-	github.com/godbus/dbus/v5 v5.2.3
+	github.com/godbus/dbus/v5 v5.2.4
 	github.com/gotk3/gotk3 v0.6.5-0.20251124190141-e7a9e823ca35
 	github.com/holoplot/go-evdev v0.0.0-20260909133534-d873ed210bda
 	github.com/spf13/cobra v1.10.2
@@ -24,7 +24,7 @@ require (
 	github.com/go-audio/riff v1.0.0 // indirect
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
 	github.com/kr/text v0.2.0 // indirect
-	github.com/spf13/pflag v1.0.10 // indirect
+	github.com/spf13/pflag v1.1.0 // indirect
 	github.com/stretchr/testify v1.12.1 // indirect
-	golang.org/x/sys v0.49.0 // indirect
+	golang.org/x/sys v0.50.0 // indirect
 )
