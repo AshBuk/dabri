@@ -143,10 +143,10 @@ appimage:
 	@echo "=== Building AppImage via Docker (Ubuntu 22.04) ==="
 	docker build -f docker/Dockerfile.appimage --build-arg APP_VERSION=$(VERSION) --build-arg WHISPER_CPP_REF=$(WHISPER_CPP_REF) --target artifacts --output type=local,dest=$(DIST_DIR) .
 
-# Build AppImage locally (without Docker, requires linuxdeploy/appimagetool on host)
-appimage-host: build
+# Build AppImage locally (without Docker; the script fetches AppImage tools itself)
+appimage-host:
 	@echo "=== Building AppImage locally (host environment) ==="
-	@echo "⚠️  Warning: This requires linuxdeploy and appimagetool installed on host"
+	@echo "⚠️  Warning: This requires Go, CMake, glslc and GTK/appindicator dev packages on host"
 	bash packaging/appimage/build-appimage.sh
 
 # Build and install Flatpak into the user installation (host or flatpak'd builder)
