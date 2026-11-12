@@ -125,7 +125,7 @@ make help
 Config location: `~/.config/dabri/config.yaml`
 
 ## Dependencies
-- Go 1.26.8
+- Go 1.26.11
 - whisper.cpp v1.9.5
 - cobra, systray, websockets, yaml, evdev, dbus
 - CGO enabled for whisper bindings
