@@ -19,10 +19,10 @@ jobs:
   rpmlint:
     runs-on: ubuntu-latest
     container:
-      image: fedora:43
+      image: fedora:44
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Install rpmlint
         run: dnf install -y rpmlint glibc-langpack-en

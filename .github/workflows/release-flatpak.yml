@@ -32,7 +32,7 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           fetch-depth: 0
 
@@ -89,7 +89,7 @@ jobs:
           ls -lh "${{ steps.ver.outputs.bundle }}"
 
       - name: Upload Flatpak artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: dabri-flatpak-${{ matrix.arch }}
           path: ${{ steps.ver.outputs.bundle }}
@@ -100,14 +100,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Download Flatpak bundles
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           pattern: dabri-flatpak-*
           merge-multiple: true
           path: dist
 
       - name: Attach Flatpak bundles to Release
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v3
         with:
           # Attach to the pushed tag, or to an existing release given via
           # workflow_dispatch (release_tag).
