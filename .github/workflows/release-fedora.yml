@@ -34,17 +34,19 @@ jobs:
       - name: Update spec version
         run: |
           sed -i "s/^%global app_version.*/%global app_version     ${{ steps.version.outputs.VERSION }}/" \
-            packaging/fedora/dabri.spec
+            packaging/fedora/dabri.spec.in
 
       - name: Lint spec file
-        run: rpmlint -r packaging/fedora/.rpmlintrc packaging/fedora/dabri.spec
+        run: |
+          cp packaging/fedora/dabri.spec.in /tmp/dabri.spec
+          rpmlint -r packaging/fedora/.rpmlintrc /tmp/dabri.spec
 
       - name: Create SRPM
         run: |
           mkdir -p ~/rpmbuild/{BUILD,RPMS,SOURCES,SPECS,SRPMS}
           
           # Copy spec
-          cp packaging/fedora/dabri.spec ~/rpmbuild/SPECS/
+          cp packaging/fedora/dabri.spec.in ~/rpmbuild/SPECS/dabri.spec
           
           # Create vendored tarball
           VERSION="${{ steps.version.outputs.VERSION }}"
@@ -63,7 +65,7 @@ jobs:
               icons/ docs/ packaging/
           
           # Download whisper.cpp
-          WHISPER_VERSION=$(grep -E '^%global whisper_version' packaging/fedora/dabri.spec | awk '{print $3}')
+          WHISPER_VERSION=$(grep -E '^%global whisper_version' packaging/fedora/dabri.spec.in | awk '{print $3}')
           curl -L -o ~/rpmbuild/SOURCES/whisper-cpp-${WHISPER_VERSION}.tar.gz \
             "https://github.com/ggml-org/whisper.cpp/archive/refs/tags/v${WHISPER_VERSION}.tar.gz"
           
