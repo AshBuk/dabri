@@ -9,7 +9,7 @@
 # =============================================================================
 # Version definitions (single source of truth)
 # =============================================================================
-%global app_version     2.4.0
+%global app_version     2.4.1
 %global go_version      1.26
 %global whisper_version 1.9.5
 
@@ -265,6 +265,9 @@ fi
 %{_datadir}/icons/hicolor/scalable/apps/io.github.ashbuk.dabri.svg
 
 %changelog
+* Fri Nov 13 2026 Asher Buk <AshBuk@users.noreply.github.com> - 2.4.1-1
+- Dependency bumps and metadata update
+
 * Tue Oct 27 2026 Asher Buk <AshBuk@users.noreply.github.com> - 2.4.0-1
 - NVIDIA Parakeet TDT 0.6B v3 as a second speech engine that detects the spoken language itself
 
