@@ -16,16 +16,20 @@ TOOLS_DIR="$(pwd)/tools"
 MODEL_URL="${MODEL_URL:-https://huggingface.co/ggerganov/whisper.cpp/resolve/main/ggml-small-q5_1.bin}"
 MODEL_SHA256="${MODEL_SHA256:-ae85e4a935d7a567bd102fe55afc16bb595bdb618e11b2fc7591bc08120411bb}"
 LINUXDEPLOY_TAG="${LINUXDEPLOY_TAG:-1-alpha-20251107-1}"
-APPIMAGETOOL_TAG="${APPIMAGETOOL_TAG:-continuous}"
+APPIMAGETOOL_TAG="${APPIMAGETOOL_TAG:-1.9.1}"
+# Static type2-runtime: the AppImage needs fusermount only, no libfuse2
+RUNTIME_TAG="${RUNTIME_TAG:-20251108}"
 # AppImage tool checksums differ per architecture
 case "${ARCH}" in
     x86_64)
         LINUXDEPLOY_SHA256="${LINUXDEPLOY_SHA256:-c20cd71e3a4e3b80c3483cef793cda3f4e990aca14014d23c544ca3ce1270b4d}"
-        APPIMAGETOOL_SHA256="${APPIMAGETOOL_SHA256:-b90f4a8b18967545fda78a445b27680a1642f1ef9488ced28b65398f2be7add2}"
+        APPIMAGETOOL_SHA256="${APPIMAGETOOL_SHA256:-ed4ce84f0d9caff66f50bcca6ff6f35aae54ce8135408b3fa33abfc3cb384eb0}"
+        RUNTIME_SHA256="${RUNTIME_SHA256:-2fca8b443c92510f1483a883f60061ad09b46b978b2631c807cd873a47ec260d}"
         ;;
     aarch64)
         LINUXDEPLOY_SHA256="${LINUXDEPLOY_SHA256:-620095110d693282b8ebeb244a95b5e911cf8f65f76c88b4b47d16ae6346fcff}"
-        APPIMAGETOOL_SHA256="${APPIMAGETOOL_SHA256:-a48972e5ae91c944c5a7c80214e7e0a42dd6aa3ae979d8756203512a74ff574d}"
+        APPIMAGETOOL_SHA256="${APPIMAGETOOL_SHA256:-f0837e7448a0c1e4e650a93bb3e85802546e60654ef287576f46c71c126a9158}"
+        RUNTIME_SHA256="${RUNTIME_SHA256:-00cbdfcf917cc6c0ff6d3347d59e0ca1f7f45a6df1a428a0d6d8a78664d87444}"
         ;;
     *)
         echo "Unsupported architecture: ${ARCH}"
@@ -59,8 +63,8 @@ download_verified() {
     local output="$2"
     local sha256="$3"
 
-    if [ -f "${output}" ]; then
-        verify_sha256 "${output}" "${sha256}"
+    # Reuse a cached download only while it matches the pinned checksum
+    if [ -f "${output}" ] && verify_sha256 "${output}" "${sha256}"; then
         return
     fi
 
@@ -152,10 +156,15 @@ download_tools() {
     chmod +x "${TOOLS_DIR}/linuxdeploy-${ARCH}.AppImage"
 
     download_verified \
-        "${base_url}/AppImage/AppImageKit/releases/download/${APPIMAGETOOL_TAG}/appimagetool-${ARCH}.AppImage" \
+        "${base_url}/AppImage/appimagetool/releases/download/${APPIMAGETOOL_TAG}/appimagetool-${ARCH}.AppImage" \
         "${TOOLS_DIR}/appimagetool-${ARCH}.AppImage" \
         "${APPIMAGETOOL_SHA256}"
     chmod +x "${TOOLS_DIR}/appimagetool-${ARCH}.AppImage"
+
+    download_verified \
+        "${base_url}/AppImage/type2-runtime/releases/download/${RUNTIME_TAG}/runtime-${ARCH}" \
+        "${TOOLS_DIR}/runtime-${ARCH}" \
+        "${RUNTIME_SHA256}"
 
     download_verified \
         "https://raw.githubusercontent.com/linuxdeploy/linuxdeploy-plugin-gtk/${GTK_PLUGIN_COMMIT}/linuxdeploy-plugin-gtk.sh" \
@@ -211,6 +220,7 @@ build_appimage() {
     echo "Creating AppImage..."
     local output="${APP_NAME}-${APP_VERSION}-${ARCH}.AppImage"
     "${TOOLS_DIR}/appimagetool-${ARCH}.AppImage" --appimage-extract-and-run \
+        --runtime-file "${TOOLS_DIR}/runtime-${ARCH}" \
         -u "gh-releases-zsync|AshBuk|dabri|latest|${APP_NAME}-*-${ARCH}.AppImage.zsync" \
         "${APP_NAME}.AppDir" "${output}"
     chmod +x "${output}"
