@@ -26,7 +26,8 @@ dabri model set small-q5_1     # ~181 MB, default
 dabri model set medium-q5_0    # ~539 MB
 dabri model set large-v3-turbo-q5_0 # ~820 MB, faster large-v3 variant
 dabri model set large-v3-q5_0       # ~1.1 GB, best quality
-dabri model set parakeet-tdt-0.6b-v3-q8_0 # ~669 MB, NVIDIA Parakeet, 25 European languages, ignores the language setting
+dabri model set parakeet-tdt-0.6b-v3-q4_k # ~416 MB, NVIDIA Parakeet, 25 European languages, ignores the language setting
+dabri model set parakeet-tdt-0.6b-v3-q8_0 # ~669 MB, same model, larger file with the same accuracy
 dabri model delete <model-id>  # Delete a downloaded model (cannot delete active)
 ```
 

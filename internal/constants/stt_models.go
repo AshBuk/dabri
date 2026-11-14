@@ -65,6 +65,14 @@ var Models = []ModelDef{
 		MinSize:  1000 * 1024 * 1024, // ~1.1 GB
 	},
 	{
+		ID:       "parakeet-tdt-0.6b-v3-q4_k",
+		Engine:   EngineParakeet,
+		Name:     "Parakeet TDT 0.6B v3 (Q4_K)",
+		FileName: "ggml-parakeet-tdt-0.6b-v3-q4_k.bin",
+		URL:      "https://huggingface.co/ggml-org/parakeet-GGUF/resolve/main/ggml-parakeet-tdt-0.6b-v3-q4_k.bin",
+		MinSize:  350 * 1024 * 1024, // ~416 MB
+	},
+	{
 		ID:       "parakeet-tdt-0.6b-v3-q8_0",
 		Engine:   EngineParakeet,
 		Name:     "Parakeet TDT 0.6B v3 (Q8_0)",
