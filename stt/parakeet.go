@@ -12,7 +12,9 @@ import "C"
 
 import (
 	"errors"
+	"io/fs"
 	"math"
+	"os"
 	"runtime"
 	"strings"
 	"sync"
@@ -58,8 +60,8 @@ func (p *parakeetModel) transcribe(samples []float32) (string, error) {
 		return "", errors.New("parakeet model is closed")
 	}
 	params := C.parakeet_full_default_params(C.PARAKEET_SAMPLING_GREEDY)
-	// The library defaults to 4 threads; use every core, as the Whisper bindings do
-	if threads := runtime.NumCPU(); threads > 0 && threads <= math.MaxInt32 {
+	// The library defaults to 4 threads; one per physical core is the fastest on CPU
+	if threads := min(physicalCores(), runtime.NumCPU()); threads > 0 && threads <= math.MaxInt32 {
 		params.n_threads = C.int(threads)
 	}
 	// gosec needs both bounds and the conversion outside the cgo call; cgo output drops #nosec comments
@@ -77,4 +79,17 @@ func (p *parakeetModel) transcribe(samples []float32) (string, error) {
 		transcript.WriteString(" ")
 	}
 	return transcript.String(), nil
+}
+
+// physicalCores counts CPU cores without their SMT siblings, which slow ggml down; 0 if sysfs has no topology
+func physicalCores() int {
+	sys := os.DirFS("/sys/devices/system/cpu")
+	siblings, _ := fs.Glob(sys, "cpu[0-9]*/topology/thread_siblings_list")
+	cores := map[string]struct{}{}
+	for _, name := range siblings {
+		if list, err := fs.ReadFile(sys, name); err == nil {
+			cores[string(list)] = struct{}{}
+		}
+	}
+	return len(cores)
 }
