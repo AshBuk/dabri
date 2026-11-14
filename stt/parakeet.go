@@ -13,6 +13,7 @@ import "C"
 import (
 	"errors"
 	"math"
+	"runtime"
 	"strings"
 	"sync"
 	"unsafe"
@@ -57,6 +58,10 @@ func (p *parakeetModel) transcribe(samples []float32) (string, error) {
 		return "", errors.New("parakeet model is closed")
 	}
 	params := C.parakeet_full_default_params(C.PARAKEET_SAMPLING_GREEDY)
+	// The library defaults to 4 threads; use every core, as the Whisper bindings do
+	if threads := runtime.NumCPU(); threads > 0 && threads <= math.MaxInt32 {
+		params.n_threads = C.int(threads)
+	}
 	// gosec needs both bounds and the conversion outside the cgo call; cgo output drops #nosec comments
 	n := len(samples)
 	if n < 0 || n > math.MaxInt32 {
