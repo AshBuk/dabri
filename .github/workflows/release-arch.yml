@@ -38,16 +38,24 @@ jobs:
             "https://github.com/ggml-org/whisper.cpp/archive/refs/tags/v${WHISPER_VERSION}.tar.gz"
           WHISPER_SHA256=$(sha256sum whisper.tar.gz | cut -d' ' -f1)
 
+          # Download and checksum transcribe.cpp
+          TRANSCRIBE_VERSION=$(grep -E '^_transcribe_version=' packaging/arch/PKGBUILD | cut -d= -f2)
+          curl -sL -o transcribe.tar.gz \
+            "https://github.com/handy-computer/transcribe.cpp/archive/refs/tags/v${TRANSCRIBE_VERSION}.tar.gz"
+          TRANSCRIBE_SHA256=$(sha256sum transcribe.tar.gz | cut -d' ' -f1)
+
           echo "MAIN_SHA256=${MAIN_SHA256}" >> $GITHUB_OUTPUT
           echo "WHISPER_SHA256=${WHISPER_SHA256}" >> $GITHUB_OUTPUT
+          echo "TRANSCRIBE_SHA256=${TRANSCRIBE_SHA256}" >> $GITHUB_OUTPUT
 
-          rm -f source.tar.gz whisper.tar.gz
+          rm -f source.tar.gz whisper.tar.gz transcribe.tar.gz
 
       - name: Update PKGBUILD version and checksums
         run: |
           VERSION="${{ steps.version.outputs.VERSION }}"
           MAIN_SHA256="${{ steps.checksums.outputs.MAIN_SHA256 }}"
           WHISPER_SHA256="${{ steps.checksums.outputs.WHISPER_SHA256 }}"
+          TRANSCRIBE_SHA256="${{ steps.checksums.outputs.TRANSCRIBE_SHA256 }}"
 
           cd packaging/arch
 
@@ -58,6 +66,7 @@ jobs:
           # Update checksums
           sed -i "s/'SKIP'  # TODO: Update on release/'${MAIN_SHA256}'/" PKGBUILD
           sed -i "s/'SKIP'  # whisper.cpp checksum/'${WHISPER_SHA256}'/" PKGBUILD
+          sed -i "s/'SKIP'  # transcribe.cpp checksum/'${TRANSCRIBE_SHA256}'/" PKGBUILD
 
       - name: Generate .SRCINFO
         uses: docker://archlinux:latest
