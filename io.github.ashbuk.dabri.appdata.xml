@@ -58,6 +58,9 @@
     <control>pointing</control>
   </recommends>
   <releases>
+    <release version="2.5.0" date="2026-11-15">
+      <description><p>New models: Parakeet Ultra and a smaller Parakeet v3</p></description>
+    </release>
     <release version="2.4.1" date="2026-11-13">
       <description><p>Dependency bumps and metadata update</p></description>
     </release>

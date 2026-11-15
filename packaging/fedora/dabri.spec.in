@@ -9,7 +9,7 @@
 # =============================================================================
 # Version definitions (single source of truth)
 # =============================================================================
-%global app_version     2.4.1
+%global app_version     2.5.0
 %global go_version      1.26
 %global whisper_version 1.9.5
 %global transcribe_version 0.4.2
@@ -277,6 +277,9 @@ fi
 %{_datadir}/icons/hicolor/scalable/apps/io.github.ashbuk.dabri.svg
 
 %changelog
+* Sun Nov 15 2026 Asher Buk <AshBuk@users.noreply.github.com> - 2.5.0-1
+- New models: Parakeet Ultra and a smaller Parakeet v3
+
 * Fri Nov 13 2026 Asher Buk <AshBuk@users.noreply.github.com> - 2.4.1-1
 - Dependency bumps and metadata update
 
