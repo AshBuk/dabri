@@ -62,12 +62,15 @@ jobs:
               Makefile LICENSE README.md \
               io.github.ashbuk.dabri.desktop \
               io.github.ashbuk.dabri.appdata.xml \
-              icons/ docs/ packaging/
+              icons/ docs/ packaging/ bash-scripts/
           
           # Download whisper.cpp
           WHISPER_VERSION=$(grep -E '^%global whisper_version' packaging/fedora/dabri.spec.in | awk '{print $3}')
           curl -L -o ~/rpmbuild/SOURCES/whisper-cpp-${WHISPER_VERSION}.tar.gz \
             "https://github.com/ggml-org/whisper.cpp/archive/refs/tags/v${WHISPER_VERSION}.tar.gz"
+          TRANSCRIBE_VERSION=$(grep -E '^%global transcribe_version' packaging/fedora/dabri.spec.in | awk '{print $3}')
+          curl -L -o ~/rpmbuild/SOURCES/transcribe-cpp-${TRANSCRIBE_VERSION}.tar.gz \
+            "https://github.com/handy-computer/transcribe.cpp/archive/refs/tags/v${TRANSCRIBE_VERSION}.tar.gz"
           
           # Build SRPM
           rpmbuild -bs ~/rpmbuild/SPECS/dabri.spec

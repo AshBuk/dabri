@@ -63,6 +63,10 @@ func (m *ModelManager) resolveModel(ctx context.Context, modelID string) (string
 	if def == nil {
 		return "", fmt.Errorf("unknown model ID: %s", modelID)
 	}
+	// Before the download: the model would be fetched only to fail on load
+	if !def.CPUSupported() {
+		return "", fmt.Errorf("model %s needs a CPU with AVX2", modelID)
+	}
 
 	resolver := providers.NewModelPathResolver(m.config(), def.FileName)
 

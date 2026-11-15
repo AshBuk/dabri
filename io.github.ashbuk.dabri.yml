@@ -110,6 +110,35 @@ modules:
         url: https://github.com/ggml-org/whisper.cpp/archive/refs/tags/v1.9.5.tar.gz
         sha256: ff1a9053feb509ff9d7729703355541ae9690073a6b1c40eb692c962e0dc1720
 
+  # CBLAS for the transcribe.cpp decoder, which falls back to scalar loops without it
+  - name: openblas
+    no-autogen: true
+    make-args: &openblas-args
+      - DYNAMIC_ARCH=1
+      - NOFORTRAN=1
+      - NO_LAPACK=1
+      - NO_STATIC=1
+      - USE_OPENMP=0
+      - PREFIX=/app
+    make-install-args: *openblas-args
+    sources:
+      - type: archive
+        url: https://github.com/OpenMathLib/OpenBLAS/releases/download/v0.3.34/OpenBLAS-0.3.34.tar.gz
+        sha256: cd7e129868320cc2d033afa920e31202dfe0b8066a5b66661900ccc0f197dfed
+
+  # The engine for Parakeet Ultra, built as one private library with its own ggml hidden inside
+  - name: transcribe-cpp
+    buildsystem: simple
+    build-commands:
+      - CMAKE_PREFIX_PATH=/app CMAKE_BUILD_PARALLEL_LEVEL=$FLATPAK_BUILDER_N_JOBS ./build-transcribe.sh . /app/lib
+      - mv /app/lib/transcribe.h /app/include/
+    sources:
+      - type: archive
+        url: https://github.com/handy-computer/transcribe.cpp/archive/refs/tags/v0.4.2.tar.gz
+        sha256: 5455374e18adaa0d79ff48104b13109d15dd6002edda999eda1179a86ea09c5b
+      - type: file
+        path: bash-scripts/build-transcribe.sh
+
   # Bundle the default Whisper model so first run works offline
   - name: whisper-model-small
     buildsystem: simple

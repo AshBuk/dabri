@@ -28,6 +28,8 @@ DIST_DIR := dist
 # Optional: set to a tag or commit hash to pin whisper.cpp version for reproducible builds
 # Example (CI recommended): make WHISPER_CPP_REF=v1.9.5
 WHISPER_CPP_REF ?= v1.9.5
+# transcribe.cpp runs the models whisper.cpp has no support for (Parakeet Ultra)
+TRANSCRIBE_CPP_REF ?= v0.4.2
 # Optional: build every ggml CPU variant as a runtime module for distributable builds,
 # so the binary runs on any x86-64 CPU and picks the best variant at startup
 GGML_CPU_ALL_VARIANTS ?=
@@ -93,7 +95,14 @@ whisper-libs:
 	$(DOCKER_RUN) bash -c 'make internal-whisper-libs WHISPER_CPP_REF="$(WHISPER_CPP_REF)"'
 
 # Internal target executed inside the dev container
-internal-whisper-libs: $(LIB_DIR)/whisper.h
+internal-whisper-libs: $(LIB_DIR)/whisper.h $(LIB_DIR)/transcribe.h
+
+$(LIB_DIR)/transcribe.h:
+	@echo "=== Building transcribe.cpp library ==="
+	mkdir -p $(BUILD_DIR)
+	[ -d $(BUILD_DIR)/transcribe.cpp ] || git clone --depth 1 --branch $(TRANSCRIBE_CPP_REF) \
+		https://github.com/handy-computer/transcribe.cpp.git $(BUILD_DIR)/transcribe.cpp
+	bash-scripts/build-transcribe.sh $(BUILD_DIR)/transcribe.cpp $(LIB_DIR)
 
 $(LIB_DIR)/whisper.h:
 	@echo "=== Building whisper.cpp libraries ==="
@@ -257,7 +266,7 @@ help:
 	@echo "  build                 - Build Go binary only"
 	@echo "  build-systray         - Build with systray support"
 	@echo "  deps                  - Download Go dependencies"
-	@echo "  whisper-libs          - Build whisper.cpp libraries"
+	@echo "  whisper-libs          - Build whisper.cpp and transcribe.cpp libraries"
 	@echo "  fmt                   - Format Go code (go fmt + goimports)"
 	@echo "  lint                  - Run linter and code quality checks"
 	@echo "  gosec                 - Run security scanner (SAST)"
