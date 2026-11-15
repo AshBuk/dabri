@@ -151,6 +151,7 @@ Related constants:
 - **`engine.go`**: `Engine` validates and decodes the WAV file and passes the samples to the backend named by the model's `Engine` field in `internal/constants/stt_models.go`
 - **`whisper.go`**: Whisper backend using the whisper.cpp Go bindings
 - **`parakeet.go`**: Parakeet backend using libparakeet from whisper.cpp through CGO; it detects the language itself, so the language pickers are disabled for it
+- **`transcribe.go`**: backend for models whisper.cpp cannot run (Parakeet Ultra), using transcribe.cpp through CGO. transcribe.cpp carries its own ggml, so `bash-scripts/build-transcribe.sh` links it into one private library, `libdabri-transcribe.so`, that exports only `transcribe_*` symbols
 - **`engine_stub.go`**: Stub implementation when CGO is disabled
 - **`manager/model_manager.go`**: Model lifecycle management
 - **`providers/model_path_resolver.go`**: Bundled model path resolution for different environments
