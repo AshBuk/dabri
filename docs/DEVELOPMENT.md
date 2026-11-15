@@ -28,7 +28,7 @@ make test-race             # Run unit tests with the Go race detector
 make test-integration      # Run integration tests (fast mode, no CGO)
 make test-integration-full # Run full integration tests (with audio/CGO)
 make deps                  # Download Go dependencies
-make whisper-libs          # Build whisper.cpp libraries into ./lib
+make whisper-libs          # Build whisper.cpp and transcribe.cpp libraries into ./lib
 make appimage              # Build AppImage (Docker-based, recommended)
 make appimage-host         # Build AppImage on host (requires tools installed)
 make clean                 # Clean build artifacts
