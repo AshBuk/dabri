@@ -20,6 +20,7 @@ jobs:
     runs-on: ubuntu-latest
     container:
       image: archlinux:latest
+    timeout-minutes: 15
     steps:
       - name: Checkout code
         uses: actions/checkout@v7
