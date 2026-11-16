@@ -149,10 +149,11 @@ Start onboarding with:
 
 ## ✦ Acknowledgments
 
-- [whisper.cpp](https://github.com/ggerganov/whisper.cpp) for the excellent C++ implementation of OpenAI Whisper
+- [whisper.cpp](https://github.com/ggml-org/whisper.cpp) for the C++ implementation of OpenAI Whisper
+- [transcribe.cpp](https://github.com/handy-computer/transcribe.cpp) for running NVIDIA Parakeet models
 - [fyne.io/systray](https://github.com/fyne-io/systray) for cross-platform system tray support
 - [ydotool](https://github.com/ReimuNotMoe/ydotool) and [wtype](https://github.com/atx/wtype) for Wayland-compatible input automation
-- OpenAI for the original Whisper model
+- OpenAI for the original Whisper model and NVIDIA for the Parakeet models
 
 ## ✦ MIT [LICENSE](LICENSE)
 
