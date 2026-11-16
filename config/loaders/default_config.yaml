@@ -4,7 +4,7 @@
 # General settings
 general:
   debug: false
-  whisper_model: "small-q5_1"
+  model: "small-q5_1"
   temp_audio_path: "/tmp"
   language: "en"  # Recognition language: "en", "ru", "de", "fr", "es", "he", etc.
 
