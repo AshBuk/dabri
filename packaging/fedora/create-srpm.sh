@@ -70,7 +70,7 @@ cd "$RPMBUILD_DIR/SOURCES"
 WHISPER_TARBALL="whisper-cpp-${WHISPER_VERSION}.tar.gz"
 if [[ ! -f "$WHISPER_TARBALL" ]]; then
     echo "Downloading whisper.cpp v${WHISPER_VERSION}..."
-    curl -L -o "$WHISPER_TARBALL" \
+    curl -fL -o "$WHISPER_TARBALL" \
         "https://github.com/ggml-org/whisper.cpp/archive/refs/tags/v${WHISPER_VERSION}.tar.gz"
 fi
 
@@ -81,7 +81,7 @@ TRANSCRIBE_VERSION=$(grep -E '^%global transcribe_version' "$SPEC_FILE" | awk '{
 TRANSCRIBE_TARBALL="transcribe-cpp-${TRANSCRIBE_VERSION}.tar.gz"
 if [[ ! -f "$TRANSCRIBE_TARBALL" ]]; then
     echo "Downloading transcribe.cpp v${TRANSCRIBE_VERSION}..."
-    curl -L -o "$TRANSCRIBE_TARBALL" \
+    curl -fL -o "$TRANSCRIBE_TARBALL" \
         "https://github.com/handy-computer/transcribe.cpp/archive/refs/tags/v${TRANSCRIBE_VERSION}.tar.gz"
 fi
 

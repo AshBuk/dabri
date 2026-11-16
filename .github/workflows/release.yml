@@ -1,0 +1,47 @@
+# Copyright (c) 2025 Asher Buk
+# SPDX-License-Identifier: MIT
+
+name: Release
+
+# Stable tags (v1.0.0) build and publish every package.
+# RC tags (v1.0.0-rc.1) and manual runs build the same packages without publishing.
+# AUR and COPR publish only after the AppImage and Flatpak builds pass.
+
+on:
+  push:
+    tags:
+      - 'v[0-9]+.[0-9]+.[0-9]+'
+      - 'v[0-9]+.[0-9]+.[0-9]+-rc.[0-9]+'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to validate (e.g., 1.7.0)'
+        required: true
+
+permissions:
+  contents: write
+  actions: read
+
+jobs:
+  appimage:
+    uses: ./.github/workflows/release-appimage.yml
+    with: &release
+      version: ${{ inputs.version }}
+      publish: ${{ github.ref_type == 'tag' && !contains(github.ref_name, '-rc.') }}
+
+  flatpak:
+    uses: ./.github/workflows/release-flatpak.yml
+    with:
+      publish: ${{ github.ref_type == 'tag' && !contains(github.ref_name, '-rc.') }}
+
+  arch:
+    needs: [appimage, flatpak]
+    uses: ./.github/workflows/release-arch.yml
+    with: *release
+    secrets: inherit
+
+  fedora:
+    needs: [appimage, flatpak]
+    uses: ./.github/workflows/release-fedora.yml
+    with: *release
+    secrets: inherit

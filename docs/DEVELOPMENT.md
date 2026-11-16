@@ -83,10 +83,10 @@ GitHub Actions handle complex builds, releases, and distribution:
 ├── ci.yml                  # Main CI (format, lint, gosec, test)
 ├── lint-arch.yml           # PKGBUILD validation (namcap)
 ├── lint-rpm.yml            # Spec validation (rpmlint)
-├── pre-release.yml         # Pre-release validation
+├── release.yml             # Release on stable tags, validation on RC tags
 ├── release-appimage.yml    # AppImage build & GitHub Release
-├── release-arch.yml        # AUR publish (on tag)
-├── release-fedora.yml      # COPR submit (on tag)
+├── release-arch.yml        # AUR publish
+├── release-fedora.yml      # COPR submit
 └── release-flatpak.yml     # Flatpak bundles attached to the GitHub Release
 ```
 

@@ -4,9 +4,14 @@
 name: Release Fedora
 
 on:
-  push:
-    tags:
-      - 'v[0-9]+.[0-9]+.[0-9]+'  # Only stable tags (v1.0.0), not RC (v1.0.0-rc.1)
+  workflow_call:
+    inputs:
+      version:
+        type: string
+        default: ''
+      publish:
+        type: boolean
+        default: false
 
 permissions:
   contents: read
@@ -16,6 +21,7 @@ jobs:
     runs-on: ubuntu-latest
     container:
       image: fedora:44
+    timeout-minutes: 30
     steps:
       - name: Checkout code
         uses: actions/checkout@v7
@@ -27,14 +33,14 @@ jobs:
       - name: Vendor Go dependencies
         run: go mod vendor
 
-      - name: Extract version from tag
+      - name: Extract version
         id: version
-        run: echo "VERSION=${GITHUB_REF_NAME#v}" >> $GITHUB_OUTPUT
-
-      - name: Update spec version
+        env:
+          VERSION: ${{ inputs.version || github.ref_name }}
         run: |
-          sed -i "s/^%global app_version.*/%global app_version     ${{ steps.version.outputs.VERSION }}/" \
-            packaging/fedora/dabri.spec.in
+          # v1.7.0-rc.1 -> 1.7.0: RPM and pacman versions cannot contain '-'
+          VERSION="${VERSION#v}"
+          echo "VERSION=${VERSION%%-rc.*}" >> $GITHUB_OUTPUT
 
       - name: Lint spec file
         run: |
@@ -42,38 +48,9 @@ jobs:
           rpmlint -r packaging/fedora/.rpmlintrc /tmp/dabri.spec
 
       - name: Create SRPM
-        run: |
-          mkdir -p ~/rpmbuild/{BUILD,RPMS,SOURCES,SPECS,SRPMS}
-          
-          # Copy spec
-          cp packaging/fedora/dabri.spec.in ~/rpmbuild/SPECS/dabri.spec
-          
-          # Create vendored tarball
-          VERSION="${{ steps.version.outputs.VERSION }}"
-          tar --transform "s,^,dabri-${VERSION}/," \
-              --exclude='.git' \
-              --exclude='build' \
-              --exclude='dist' \
-              --exclude='lib' \
-              -czf ~/rpmbuild/SOURCES/dabri-${VERSION}-vendored.tar.gz \
-              cmd/ config/ hotkeys/ audio/ stt/ output/ websocket/ internal/ \
-              vendor/ \
-              go.mod go.sum \
-              Makefile LICENSE README.md \
-              io.github.ashbuk.dabri.desktop \
-              io.github.ashbuk.dabri.appdata.xml \
-              icons/ docs/ packaging/ bash-scripts/
-          
-          # Download whisper.cpp
-          WHISPER_VERSION=$(grep -E '^%global whisper_version' packaging/fedora/dabri.spec.in | awk '{print $3}')
-          curl -L -o ~/rpmbuild/SOURCES/whisper-cpp-${WHISPER_VERSION}.tar.gz \
-            "https://github.com/ggml-org/whisper.cpp/archive/refs/tags/v${WHISPER_VERSION}.tar.gz"
-          TRANSCRIBE_VERSION=$(grep -E '^%global transcribe_version' packaging/fedora/dabri.spec.in | awk '{print $3}')
-          curl -L -o ~/rpmbuild/SOURCES/transcribe-cpp-${TRANSCRIBE_VERSION}.tar.gz \
-            "https://github.com/handy-computer/transcribe.cpp/archive/refs/tags/v${TRANSCRIBE_VERSION}.tar.gz"
-          
-          # Build SRPM
-          rpmbuild -bs ~/rpmbuild/SPECS/dabri.spec
+        env:
+          APP_VERSION: ${{ steps.version.outputs.VERSION }}
+        run: packaging/fedora/create-srpm.sh
 
       - name: Upload SRPM artifact
         uses: actions/upload-artifact@v7
@@ -82,6 +59,7 @@ jobs:
           path: ~/rpmbuild/SRPMS/*.src.rpm
 
       - name: Submit to COPR
+        if: inputs.publish
         env:
           COPR_API_TOKEN: ${{ secrets.COPR_API_TOKEN }}
         run: |
