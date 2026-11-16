@@ -152,9 +152,11 @@ Related constants:
 - **`whisper.go`**: Whisper backend using the whisper.cpp Go bindings
 - **`parakeet.go`**: Parakeet backend using libparakeet from whisper.cpp through CGO; it detects the language itself, so the language pickers are disabled for it
 - **`transcribe.go`**: backend for models whisper.cpp cannot run (Parakeet Ultra), using transcribe.cpp through CGO. transcribe.cpp carries its own ggml, so `bash-scripts/build-transcribe.sh` links it into one private library, `libdabri-transcribe.so`, that exports only `transcribe_*` symbols
+- **`backends.go`**: Loads the ggml backends once and picks the inference thread count shared by all backends
 - **`engine_stub.go`**: Stub implementation when CGO is disabled
 - **`manager/model_manager.go`**: Model lifecycle management
 - **`providers/model_path_resolver.go`**: Bundled model path resolution for different environments
+- **`providers/model_downloader.go`**: Model download from Hugging Face with progress reporting
 - **`stt.go`**: Public facade and type re-exports for external use
 
 ### **Output Management** (`output/`)
@@ -210,7 +212,6 @@ Related constants:
   - `disk_linux.go`: Disk space checking (Linux)
   - `disk_stub.go`: Stub implementation
   - `sanitize.go`: Transcript sanitization (token cleanup, whitespace)
-  - `async.go`: Goroutine tracking and graceful shutdown coordination
 - **`ipc/`**: Inter-process communication (CLI ↔ daemon via Unix sockets)
   - `server.go`: IPC server (socket listener, handler registry)
   - `client.go`: IPC client (request sender with timeout)
@@ -228,13 +229,14 @@ Distribution-specific packaging scripts and configurations:
 - `flatpak/` - Vendored Go modules and sandbox wrappers for the Flatpak build
 
 #### Bash Scripts (`bash-scripts/`)
+- **`build-transcribe.sh`**: Builds transcribe.cpp into `libdabri-transcribe.so`
 - **`check-license-headers.sh`**: License compliance validation
 - **`dev-env.sh`**: Development environment setup
 
 #### Docker Configuration (`docker/`)
 - **`Dockerfile.dev`**: Development environment
 - **`Dockerfile.appimage`**: AppImage build environment
-- **`docker-compose.yml`**: Multi-service development setup
+- **`docker-compose.yml`** (repo root): Single `dev` service setup
 
 #### Package Metadata
 - **`io.github.ashbuk.dabri.desktop`**: Desktop entry
@@ -256,4 +258,4 @@ Distribution-specific packaging scripts and configurations:
 
 ---
 
-*This architecture documentation is maintained alongside the codebase. Last updated: 2026-10-26*
+*This architecture documentation is maintained alongside the codebase. Last updated: 2026-11-16*

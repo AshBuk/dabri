@@ -4,9 +4,11 @@
 name: Release Flatpak
 
 on:
-  push:
-    tags:
-      - 'v[0-9]+.[0-9]+.[0-9]+'  # Only stable tags (v1.0.0), not RC (v1.0.0-rc.1)
+  workflow_call:
+    inputs:
+      publish:
+        type: boolean
+        default: false
   workflow_dispatch:
     inputs:
       release_tag:
@@ -70,7 +72,7 @@ jobs:
       - name: Resolve version
         id: ver
         run: |
-          TAG="${{ github.event.inputs.release_tag }}"
+          TAG="${{ inputs.release_tag }}"
           if [ -z "$TAG" ] && [ "${GITHUB_REF_TYPE}" = "tag" ]; then
             TAG="${GITHUB_REF_NAME}"
           fi
@@ -96,8 +98,9 @@ jobs:
 
   release:
     needs: build-flatpak
-    if: startsWith(github.ref, 'refs/tags/') || github.event.inputs.release_tag != ''
+    if: inputs.publish || inputs.release_tag
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - name: Download Flatpak bundles
         uses: actions/download-artifact@v8
@@ -107,11 +110,11 @@ jobs:
           path: dist
 
       - name: Attach Flatpak bundles to Release
-        uses: softprops/action-gh-release@v3
+        uses: softprops/action-gh-release@8a0cd651e5b2365bd640854a3fa5dfc70e4875f3 # v3.0.4
         with:
           # Attach to the pushed tag, or to an existing release given via
           # workflow_dispatch (release_tag).
-          tag_name: ${{ github.event.inputs.release_tag || github.ref_name }}
+          tag_name: ${{ inputs.release_tag || github.ref_name }}
           files: dist/*.flatpak
           fail_on_unmatched_files: true
         env:

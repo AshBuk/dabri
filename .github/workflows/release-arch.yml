@@ -4,9 +4,14 @@
 name: Release Arch
 
 on:
-  push:
-    tags:
-      - 'v[0-9]+.[0-9]+.[0-9]+'  # Only stable tags (v1.0.0), not RC (v1.0.0-rc.1)
+  workflow_call:
+    inputs:
+      version:
+        type: string
+        default: ''
+      publish:
+        type: boolean
+        default: false
 
 permissions:
   contents: read
@@ -14,59 +19,47 @@ permissions:
 jobs:
   aur-publish:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
       - name: Checkout code
         uses: actions/checkout@v7
 
-      - name: Extract version from tag
+      - name: Extract version
         id: version
-        run: echo "VERSION=${GITHUB_REF_NAME#v}" >> $GITHUB_OUTPUT
+        env:
+          VERSION: ${{ inputs.version || github.ref_name }}
+        run: |
+          # v1.7.0-rc.1 -> 1.7.0: RPM and pacman versions cannot contain '-'
+          VERSION="${VERSION#v}"
+          echo "VERSION=${VERSION%%-rc.*}" >> $GITHUB_OUTPUT
 
-      - name: Generate checksums
-        id: checksums
+      - name: Update PKGBUILD version
+        run: |
+          cd packaging/arch
+          sed -i "s/^pkgver=.*/pkgver=${{ steps.version.outputs.VERSION }}/" PKGBUILD
+          sed -i "s/^pkgrel=.*/pkgrel=1/" PKGBUILD
+
+      - name: Update PKGBUILD checksums
+        if: inputs.publish
         run: |
           VERSION="${{ steps.version.outputs.VERSION }}"
           WHISPER_VERSION=$(grep -E '^_whisper_version=' packaging/arch/PKGBUILD | cut -d= -f2)
-
-          # Download and checksum main source
-          curl -sL -o source.tar.gz \
-            "https://github.com/AshBuk/dabri/archive/refs/tags/v${VERSION}.tar.gz"
-          MAIN_SHA256=$(sha256sum source.tar.gz | cut -d' ' -f1)
-
-          # Download and checksum whisper.cpp
-          curl -sL -o whisper.tar.gz \
-            "https://github.com/ggml-org/whisper.cpp/archive/refs/tags/v${WHISPER_VERSION}.tar.gz"
-          WHISPER_SHA256=$(sha256sum whisper.tar.gz | cut -d' ' -f1)
-
-          # Download and checksum transcribe.cpp
           TRANSCRIBE_VERSION=$(grep -E '^_transcribe_version=' packaging/arch/PKGBUILD | cut -d= -f2)
-          curl -sL -o transcribe.tar.gz \
-            "https://github.com/handy-computer/transcribe.cpp/archive/refs/tags/v${TRANSCRIBE_VERSION}.tar.gz"
-          TRANSCRIBE_SHA256=$(sha256sum transcribe.tar.gz | cut -d' ' -f1)
 
-          echo "MAIN_SHA256=${MAIN_SHA256}" >> $GITHUB_OUTPUT
-          echo "WHISPER_SHA256=${WHISPER_SHA256}" >> $GITHUB_OUTPUT
-          echo "TRANSCRIBE_SHA256=${TRANSCRIBE_SHA256}" >> $GITHUB_OUTPUT
+          # Download main source, whisper.cpp and transcribe.cpp
+          curl -fsSL -o source.tar.gz \
+            "https://github.com/AshBuk/dabri/archive/refs/tags/v${VERSION}.tar.gz"
+          curl -fsSL -o whisper.tar.gz \
+            "https://github.com/ggml-org/whisper.cpp/archive/refs/tags/v${WHISPER_VERSION}.tar.gz"
+          curl -fsSL -o transcribe.tar.gz \
+            "https://github.com/handy-computer/transcribe.cpp/archive/refs/tags/v${TRANSCRIBE_VERSION}.tar.gz"
+
+          sha() { sha256sum "$1" | cut -d' ' -f1; }
+          sed -i "s/'SKIP'  # TODO: Update on release/'$(sha source.tar.gz)'/" packaging/arch/PKGBUILD
+          sed -i "s/'SKIP'  # whisper.cpp checksum/'$(sha whisper.tar.gz)'/" packaging/arch/PKGBUILD
+          sed -i "s/'SKIP'  # transcribe.cpp checksum/'$(sha transcribe.tar.gz)'/" packaging/arch/PKGBUILD
 
           rm -f source.tar.gz whisper.tar.gz transcribe.tar.gz
-
-      - name: Update PKGBUILD version and checksums
-        run: |
-          VERSION="${{ steps.version.outputs.VERSION }}"
-          MAIN_SHA256="${{ steps.checksums.outputs.MAIN_SHA256 }}"
-          WHISPER_SHA256="${{ steps.checksums.outputs.WHISPER_SHA256 }}"
-          TRANSCRIBE_SHA256="${{ steps.checksums.outputs.TRANSCRIBE_SHA256 }}"
-
-          cd packaging/arch
-
-          # Update version
-          sed -i "s/^pkgver=.*/pkgver=${VERSION}/" PKGBUILD
-          sed -i "s/^pkgrel=.*/pkgrel=1/" PKGBUILD
-
-          # Update checksums
-          sed -i "s/'SKIP'  # TODO: Update on release/'${MAIN_SHA256}'/" PKGBUILD
-          sed -i "s/'SKIP'  # whisper.cpp checksum/'${WHISPER_SHA256}'/" PKGBUILD
-          sed -i "s/'SKIP'  # transcribe.cpp checksum/'${TRANSCRIBE_SHA256}'/" PKGBUILD
 
       - name: Generate .SRCINFO
         uses: docker://archlinux:latest
@@ -92,7 +85,8 @@ jobs:
             "
 
       - name: Publish to AUR
-        uses: KSXGitHub/github-actions-deploy-aur@v4.2.0
+        if: inputs.publish
+        uses: KSXGitHub/github-actions-deploy-aur@084b0d9b15415bf9cdb65d44dad1efe37a354050 # v4.2.0
         with:
           pkgname: dabri
           pkgbuild: packaging/arch/PKGBUILD

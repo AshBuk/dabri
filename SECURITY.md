@@ -18,11 +18,11 @@ You can expect an initial response within **7 days**. Once the issue is confirme
 
 ## Scope
 
-Dabri is an offline Linux desktop application: speech recognition runs locally via whisper.cpp, and no audio or transcripts are sent over the network. Reports most relevant to this project include:
+Dabri is an offline Linux desktop application: speech recognition runs locally via whisper.cpp and transcribe.cpp, and no audio or transcripts are sent over the network. Reports most relevant to this project include:
 
 - Path traversal or arbitrary file read/write via model paths or configuration (`~/.config/dabri/config.yaml`)
 - Privilege or input-device issues in the hotkey layer (evdev, D-Bus)
 - Unsafe handling of recorded audio buffers or temporary files
 - Issues in the local WebSocket server exposed by the daemon
 
-Out of scope: vulnerabilities in upstream dependencies (whisper.cpp, Go modules — please report those to the respective projects) and issues that require prior local root access.
+Out of scope: vulnerabilities in upstream dependencies (whisper.cpp, transcribe.cpp, Go modules — please report those to the respective projects) and issues that require prior local root access.

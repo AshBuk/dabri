@@ -112,13 +112,15 @@ make help
 ```
 
 ## Project Structure
-- `cmd/dabri/` - Main entry point (main.go, daemon.go, commands.go, model.go, environment.go) — cobra-based CLI
+- `cmd/dabri/` - Main entry point (main.go, daemon.go, commands.go, model.go) — cobra-based CLI
 - `hotkeys/` - Hotkey handling
 - `audio/` - Audio recording
 - `stt/` - Speech recognition (Whisper and Parakeet models)
 - `output/` - Text output (clipboard/typing)
 - `config/` - Configuration management
-- `lib/` - Whisper.cpp libraries (built)
+- `websocket/` - WebSocket API
+- `internal/` - App core, services, UI, IPC and utilities
+- `lib/` - whisper.cpp and transcribe.cpp libraries (built)
 - `build/` - Build artifacts
 
 ## Configuration

@@ -20,6 +20,7 @@ jobs:
     runs-on: ubuntu-latest
     container:
       image: fedora:44
+    timeout-minutes: 15
     steps:
       - name: Checkout code
         uses: actions/checkout@v7
