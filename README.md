@@ -37,8 +37,6 @@ https://github.com/user-attachments/assets/b798f350-c6a8-4408-83eb-51eef392a731
 
 ▸ **Terminal:** it can also be invoked as a CLI tool (see **[CLI Usage Guide](docs/CLI_USAGE.md)**) for scripting purposes. 
 
-▸ For integration enthusiasts, a WebSocket server is available at `localhost:8080`. Enable it in your config with web_server enabled: true (disabled by default).
-
 - **Offline speech-to-text, privacy-first**: all processing happens locally
 - **Portable**: Flatpak and AppImage packages
 - **Cross-platform support** for X11 and Wayland
@@ -49,20 +47,17 @@ https://github.com/user-attachments/assets/b798f350-c6a8-4408-83eb-51eef392a731
 - **Multi-language support, custom hotkey binding, visual notifications**
 - **Model management**: switch between Whisper models (base, small, medium, large-v3-turbo, large-v3), NVIDIA Parakeet TDT 0.6B v3 and Parakeet Ultra via tray or CLI
 
-## Beyond Minimalism
+## Scripting and automation
 
-Intuitive minimalist UX, **robust STT infrastructure**. A foundation for voice-controlled automation:
-
-- **Dual API**: Unix socket IPC + WebSocket — script locally or integrate remotely
-- **Interface-driven**: focused contracts — swap STT engines, add I/O methods, extend hotkey providers
-- **Daemon + CLI**: background hub + stateless commands — perfect for IoT pipelines
-- **Graceful degradation**: provider fallbacks, optional components, no crashes
+Recording, transcripts and model switching are also CLI commands. `dabri stop --json` returns the transcript as JSON, so a shell script can act on what you said:
 
 ```bash
 # Voice command → smart home action
 transcript=$(dabri stop --json | jq -r '.data.transcript')
 [[ "$transcript" == *"lights off"* ]] && curl -X POST http://hub/lights/off
 ```
+
+Other programs can use the WebSocket API on `localhost:8080`: it starts and stops recording and returns the transcript. It is off by default (enable it with `web_server.enabled: true` in the config) and supports a Bearer token. When part of the desktop stack is missing, Dabri falls back instead of failing: from the D-Bus hotkey portal to evdev, from typing to the clipboard.
 
 ## ✦ Installation
 
@@ -117,12 +112,12 @@ See changes: [Releases](https://github.com/AshBuk/dabri/releases)
 
 | Category | Requirement |
 |----------|-------------|
-| **OS** | Linux with glibc 2.35+ |
+| **OS** | Linux with glibc 2.35+ (2.39+ for the ARM64 AppImage) |
 | **Desktop** | X11 or Wayland |
 | **Audio** | Microphone capability |
 | **Storage** | ~54MB + model (57MB–1.1GB) |
 | **Memory** | ~300MB RAM |
-| **CPU** | AVX-capable (Intel/AMD 2011+) |
+| **CPU** | x86_64 with AVX (Intel/AMD 2011+) or ARM64 |
 
 <details>
 <summary><b>📋 Supported Distributions</b></summary>

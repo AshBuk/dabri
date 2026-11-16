@@ -43,7 +43,7 @@ make docker-ps              # Show running containers status
 make docker-shell           # Open interactive bash shell in dev container
 make docker-logs            # Show and follow container logs (Ctrl+C to exit)
 make docker-stop            # Stop containers (without removing them)
-make docker-down            # Stop and remove containers (preserves volumes)
+make docker-down            # Stop and remove containers and volumes
 ```
 
 ### 3. Dependencies & Libraries
@@ -90,7 +90,7 @@ make appimage-host        # Build AppImage locally without Docker
 
 ### 8. CI/CD Pipeline
 ```bash
-make docker-ci              # Run full CI pipeline (simulates GitHub Actions):
+make docker-ci              # Run lint, tests and an AppImage build:
                            # 1. Lint (golangci-lint + goimports check)
                            # 2. Test (unit tests with coverage)
                            # 3. Build AppImage package
@@ -142,7 +142,6 @@ make appimage-host
 
 ### 4. Full CI Pipeline Locally
 ```bash
-# Simulates GitHub Actions CI
 make docker-ci
 ```
 
@@ -201,4 +200,4 @@ make appimage VERSION=v1.2.3
 2. **Consistent Environment**: Same Go version, linter, and tools across all developers
 3. **Isolated Builds**: Package builds (AppImage) run in clean Ubuntu 22.04 container
 4. **Fast Iteration**: Docker layer caching + named volumes = quick rebuilds
-5. **CI Parity**: Local `make docker-ci` mirrors GitHub Actions workflow
+5. **CI Parity**: GitHub Actions CI runs in the same `Dockerfile.dev` image

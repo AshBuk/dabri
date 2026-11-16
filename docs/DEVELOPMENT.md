@@ -31,6 +31,7 @@ make deps                  # Download Go dependencies
 make whisper-libs          # Build whisper.cpp and transcribe.cpp libraries into ./lib
 make appimage              # Build AppImage (Docker-based, recommended)
 make appimage-host         # Build AppImage on host (requires tools installed)
+make flatpak               # Build and install the Flatpak for the current user
 make clean                 # Clean build artifacts
 make fmt                   # Format Go code (go fmt + goimports)
 make lint                  # Run linter and code quality checks
@@ -59,6 +60,7 @@ packaging/
 io.github.ashbuk.dabri.yml        # Flatpak manifest (Flathub)
 
 bash-scripts/dev-env.sh           # CGO environment configuration
+bash-scripts/build-transcribe.sh  # transcribe.cpp → libdabri-transcribe.so
 ```
 
 ### 3. Docker - Containers
@@ -67,7 +69,7 @@ Reproducible builds across different environments (single dev service):
 make docker-build      # Build/rebuild Docker images
 make docker-up         # Start dev container in background
 make docker-stop       # Stop containers (preserve state)
-make docker-down       # Stop and remove containers (keep volumes)
+make docker-down       # Stop and remove containers and volumes
 make docker-shell      # Open interactive shell in dev container
 make docker-ci         # Run full CI pipeline (lint + test + appimage)
 make docker-logs       # Show container logs
@@ -96,7 +98,7 @@ GitHub Actions handle complex builds, releases, and distribution:
 |-----------|---------|----------|--------------|----------|
 | **Unit Tests** | `make test` | ~3-8s | Docker dev image | Core functionality |
 | **Race Tests** | `make test-race` | slower | Docker dev image | Concurrency checks |
-| **Integration Fast** | `make test-integration` | ~2-5s | Docker dev image | Development, CI |
+| **Integration Fast** | `make test-integration` | ~2-5s | Docker dev image | Development |
 | **Integration Full** | `make test-integration-full` | ~8-20s | Docker dev image + audio | QA, Production |
 
 
@@ -141,4 +143,4 @@ hotkeys/
 
 See [`config/loaders/default_config.yaml`](../config/loaders/default_config.yaml) for the complete configuration file with all available options and detailed comments. It is embedded in the binary and written to `~/.config/dabri/config.yaml` on first run.
 
-*Last updated: 2026-10-26*
+*Last updated: 2026-11-16*
