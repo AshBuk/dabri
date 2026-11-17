@@ -31,7 +31,7 @@ func TestLoadConfig(t *testing.T) {
 			configContent: `
 general:
   debug: true
-  whisper_model: "small-q5_1"
+  model: "small-q5_1"
   language: "en"
   temp_audio_path: "/tmp"
 
@@ -70,7 +70,7 @@ hotkeys:
 			name: "minimal config",
 			configContent: `
 general:
-  whisper_model: "small-q5_1"
+  model: "small-q5_1"
 `,
 			expectError: false,
 			checkValues: func(t *testing.T, cfg *models.Config) {
@@ -181,7 +181,7 @@ func TestSetDefaultConfig(t *testing.T) {
 		got  any
 		want any
 	}{
-		{"whisper_model", cfg.General.Model, "small-q5_1"},
+		{"model", cfg.General.Model, "small-q5_1"},
 		{"language", cfg.General.Language, "en"},
 		{"hotkey_provider", cfg.Hotkeys.Provider, "auto"},
 		{"start_recording", cfg.Hotkeys.StartRecording, "alt+r"},

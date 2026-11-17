@@ -21,9 +21,10 @@ const (
 type Config struct {
 	General struct {
 		Debug         bool   `yaml:"debug"`
-		Model         string `yaml:"whisper_model"`   // Speech model ID; the key keeps its old name for existing configs
-		TempAudioPath string `yaml:"temp_audio_path"` // Directory to store temporary audio files
-		Language      string `yaml:"language"`        // Language for speech recognition (e.g., "en", "ru")
+		Model         string `yaml:"model"`                   // Speech model ID (Whisper or Parakeet)
+		LegacyModel   string `yaml:"whisper_model,omitempty"` // Deprecated: old name of model, migrated on load
+		TempAudioPath string `yaml:"temp_audio_path"`         // Directory to store temporary audio files
+		Language      string `yaml:"language"`                // Language for speech recognition (e.g., "en", "ru")
 	} `yaml:"general"`
 
 	Hotkeys struct {

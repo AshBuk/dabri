@@ -60,6 +60,10 @@ func LoadConfig(filename string, loggers ...logger.Logger) (*models.Config, erro
 	if err := yaml.Unmarshal(data, &config); err != nil {
 		return nil, err
 	}
+	// Migrate the pre-Parakeet key; omitempty drops it on the next save
+	if config.General.LegacyModel != "" {
+		config.General.Model, config.General.LegacyModel = config.General.LegacyModel, ""
+	}
 	// Validate the loaded configuration and apply corrections if necessary
 	if err := validators.ValidateConfig(&config); err != nil {
 		logSink.Warning("Configuration validation error: %v", err)
