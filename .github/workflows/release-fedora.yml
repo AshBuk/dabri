@@ -20,7 +20,7 @@ jobs:
   build-srpm:
     runs-on: ubuntu-latest
     container:
-      image: fedora:44
+      image: fedora:45
     timeout-minutes: 30
     steps:
       - name: Checkout code
@@ -28,10 +28,8 @@ jobs:
 
       - name: Install dependencies
         run: |
-          dnf install -y golang rpm-build rpmlint curl copr-cli glibc-langpack-en
-
-      - name: Vendor Go dependencies
-        run: go mod vendor
+          dnf install -y git golang go-rpm-macros go-vendor-tools rpm-build rpmlint curl copr-cli glibc-langpack-en
+          git config --global --add safe.directory "$GITHUB_WORKSPACE"
 
       - name: Extract version
         id: version

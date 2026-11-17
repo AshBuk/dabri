@@ -1,8 +1,8 @@
 # rpmlint configuration for dabri
 
 Filters = [
-    # Source0 is a local vendored tarball, not a URL
-    ".*invalid-url Source0.*",
+    # Source1 is the go-vendor-tools archive, generated locally, not a URL
+    ".*invalid-url Source1.*",
     # Locale warning in CI container (not our issue)
     ".*specfile-warning.*setlocale.*",
 ]

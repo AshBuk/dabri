@@ -1,0 +1,10 @@
+[licensing]
+detector = "askalono"
+# Sources and license copies of the bundled C libraries; the spec lists those
+# licenses with %license, and they are all MIT
+exclude_directories = ["build"]
+exclude_files = [
+    "LICENSE.whisper.cpp",
+    "LICENSE.transcribe.cpp",
+    "THIRD-PARTY-LICENSES.transcribe.cpp.md",
+]
