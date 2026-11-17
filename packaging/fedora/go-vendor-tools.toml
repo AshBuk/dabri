@@ -1,0 +1,5 @@
+[licensing]
+detector = "askalono"
+# Sources of the bundled C libraries; %prep copies their license texts to the
+# top level, where they are scanned and installed with the Go ones
+exclude_directories = ["build"]

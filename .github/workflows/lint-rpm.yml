@@ -19,14 +19,15 @@ jobs:
   rpmlint:
     runs-on: ubuntu-latest
     container:
-      image: fedora:44
+      image: fedora:45
     timeout-minutes: 15
     steps:
       - name: Checkout code
         uses: actions/checkout@v7
 
       - name: Install rpmlint
-        run: dnf install -y rpmlint glibc-langpack-en
+        # go-rpm-macros and go-vendor-tools define the %gometa and %go_vendor_* macros the spec uses
+        run: dnf install -y rpmlint go-rpm-macros go-vendor-tools glibc-langpack-en
 
       - name: Lint spec file
         run: |

@@ -1,5 +1,6 @@
 #!/bin/bash
 # Script to create SRPM for dabri with vendored Go dependencies
+# Requires: git, curl, rpm-build, go-vendor-tools
 # Usage: ./create-srpm.sh
 
 set -euo pipefail
@@ -13,7 +14,7 @@ APP_VERSION_RAW="${APP_VERSION:-${GITHUB_REF_NAME:-$(git -C "$PROJECT_ROOT" desc
 APP_VERSION=$(echo "${APP_VERSION_RAW}" | sed 's/^v//')
 
 # Patch spec file with version from git tag
-sed -i "s/^%global app_version.*/%global app_version     ${APP_VERSION}/" "$SPEC_FILE"
+sed -i "s/^Version:.*/Version:                ${APP_VERSION}/" "$SPEC_FILE"
 
 WHISPER_VERSION=$(grep -E '^%global whisper_version' "$SPEC_FILE" | awk '{print $3}')
 
@@ -30,41 +31,24 @@ cp "$SPEC_FILE" "$RPMBUILD_DIR/SPECS/dabri.spec"
 cd "$RPMBUILD_DIR/SOURCES"
 
 # =============================================================================
-# Source0: Create vendored tarball
+# Source0: the upstream tarball, built from HEAD the way GitHub builds it for a tag
 # =============================================================================
-VENDORED_TARBALL="dabri-${APP_VERSION}-vendored.tar.gz"
-echo "Creating vendored tarball: $VENDORED_TARBALL"
-
-# Check if vendor directory exists
-if [[ ! -d "$PROJECT_ROOT/vendor" ]]; then
-    echo "ERROR: vendor/ directory not found!"
-    echo "Run 'go mod vendor' or 'docker compose run --rm dev go mod vendor' first"
-    exit 1
-fi
-
-# Create tarball with vendor/ included
-cd "$PROJECT_ROOT"
-tar --transform "s,^,dabri-${APP_VERSION}/," \
-    --exclude='.git' \
-    --exclude='build' \
-    --exclude='dist' \
-    --exclude='lib' \
-    --exclude='*.AppImage' \
-    --exclude='rpm/*.src.rpm' \
-    -czf "$RPMBUILD_DIR/SOURCES/$VENDORED_TARBALL" \
-    cmd/ config/ hotkeys/ audio/ stt/ output/ websocket/ internal/ \
-    vendor/ \
-    go.mod go.sum \
-    Makefile LICENSE README.md \
-    io.github.ashbuk.dabri.desktop \
-    io.github.ashbuk.dabri.appdata.xml \
-    icons/ docs/ bash-scripts/
-
-echo "Created: $RPMBUILD_DIR/SOURCES/$VENDORED_TARBALL"
-ls -lh "$RPMBUILD_DIR/SOURCES/$VENDORED_TARBALL"
+SOURCE_TARBALL="dabri-${APP_VERSION}.tar.gz"
+echo "Creating source tarball: $SOURCE_TARBALL"
+git -C "$PROJECT_ROOT" archive --format=tar.gz --prefix="dabri-${APP_VERSION}/" \
+    -o "$RPMBUILD_DIR/SOURCES/$SOURCE_TARBALL" HEAD
 
 # =============================================================================
-# Source1: Download whisper.cpp tarball
+# Source1, Source2: vendored Go modules and the go-vendor-tools config
+# =============================================================================
+cp "$SCRIPT_DIR/go-vendor-tools.toml" "$RPMBUILD_DIR/SOURCES/"
+(cd "$RPMBUILD_DIR/SOURCES" && \
+    go_vendor_archive create --config go-vendor-tools.toml \
+        -O "dabri-${APP_VERSION}-vendor.tar.bz2" "$SOURCE_TARBALL")
+ls -lh "$RPMBUILD_DIR/SOURCES/dabri-${APP_VERSION}"*
+
+# =============================================================================
+# Source3: Download whisper.cpp tarball
 # =============================================================================
 cd "$RPMBUILD_DIR/SOURCES"
 WHISPER_TARBALL="whisper-cpp-${WHISPER_VERSION}.tar.gz"
@@ -75,7 +59,7 @@ if [[ ! -f "$WHISPER_TARBALL" ]]; then
 fi
 
 # =============================================================================
-# Source2: Download transcribe.cpp tarball
+# Source4: Download transcribe.cpp tarball
 # =============================================================================
 TRANSCRIBE_VERSION=$(grep -E '^%global transcribe_version' "$SPEC_FILE" | awk '{print $3}')
 TRANSCRIBE_TARBALL="transcribe-cpp-${TRANSCRIBE_VERSION}.tar.gz"
