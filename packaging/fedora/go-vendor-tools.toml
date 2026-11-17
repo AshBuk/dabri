@@ -1,10 +1,5 @@
 [licensing]
 detector = "askalono"
-# Sources and license copies of the bundled C libraries; the spec lists those
-# licenses with %license, and they are all MIT
+# Sources of the bundled C libraries; %prep copies their license texts to the
+# top level, where they are scanned and installed with the Go ones
 exclude_directories = ["build"]
-exclude_files = [
-    "LICENSE.whisper.cpp",
-    "LICENSE.transcribe.cpp",
-    "THIRD-PARTY-LICENSES.transcribe.cpp.md",
-]
