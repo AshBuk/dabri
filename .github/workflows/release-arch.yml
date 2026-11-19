@@ -44,22 +44,18 @@ jobs:
         run: |
           VERSION="${{ steps.version.outputs.VERSION }}"
           WHISPER_VERSION=$(grep -E '^_whisper_version=' packaging/arch/PKGBUILD | cut -d= -f2)
-          TRANSCRIBE_VERSION=$(grep -E '^_transcribe_version=' packaging/arch/PKGBUILD | cut -d= -f2)
 
-          # Download main source, whisper.cpp and transcribe.cpp
+          # Download main source and whisper.cpp
           curl -fsSL -o source.tar.gz \
             "https://github.com/AshBuk/dabri/archive/refs/tags/v${VERSION}.tar.gz"
           curl -fsSL -o whisper.tar.gz \
             "https://github.com/ggml-org/whisper.cpp/archive/refs/tags/v${WHISPER_VERSION}.tar.gz"
-          curl -fsSL -o transcribe.tar.gz \
-            "https://github.com/handy-computer/transcribe.cpp/archive/refs/tags/v${TRANSCRIBE_VERSION}.tar.gz"
 
           sha() { sha256sum "$1" | cut -d' ' -f1; }
           sed -i "s/'SKIP'  # TODO: Update on release/'$(sha source.tar.gz)'/" packaging/arch/PKGBUILD
           sed -i "s/'SKIP'  # whisper.cpp checksum/'$(sha whisper.tar.gz)'/" packaging/arch/PKGBUILD
-          sed -i "s/'SKIP'  # transcribe.cpp checksum/'$(sha transcribe.tar.gz)'/" packaging/arch/PKGBUILD
 
-          rm -f source.tar.gz whisper.tar.gz transcribe.tar.gz
+          rm -f source.tar.gz whisper.tar.gz
 
       - name: Generate .SRCINFO
         uses: docker://archlinux:latest

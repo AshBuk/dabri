@@ -59,17 +59,6 @@ if [[ ! -f "$WHISPER_TARBALL" ]]; then
 fi
 
 # =============================================================================
-# Source4: Download transcribe.cpp tarball
-# =============================================================================
-TRANSCRIBE_VERSION=$(grep -E '^%global transcribe_version' "$SPEC_FILE" | awk '{print $3}')
-TRANSCRIBE_TARBALL="transcribe-cpp-${TRANSCRIBE_VERSION}.tar.gz"
-if [[ ! -f "$TRANSCRIBE_TARBALL" ]]; then
-    echo "Downloading transcribe.cpp v${TRANSCRIBE_VERSION}..."
-    curl -fL -o "$TRANSCRIBE_TARBALL" \
-        "https://github.com/handy-computer/transcribe.cpp/archive/refs/tags/v${TRANSCRIBE_VERSION}.tar.gz"
-fi
-
-# =============================================================================
 # Build SRPM
 # =============================================================================
 echo "=== Building SRPM ==="
