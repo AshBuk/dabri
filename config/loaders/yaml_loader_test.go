@@ -81,6 +81,19 @@ general:
 			},
 		},
 		{
+			name: "transcribe.cpp parakeet ultra id",
+			configContent: `
+general:
+  model: "parakeet-ultra-q4_k_m"
+`,
+			expectError: false,
+			checkValues: func(t *testing.T, cfg *models.Config) {
+				if cfg.General.Model != "parakeet-ultra-q4_k" {
+					t.Errorf("expected model to be 'parakeet-ultra-q4_k', got %s", cfg.General.Model)
+				}
+			},
+		},
+		{
 			name: "invalid yaml",
 			configContent: `
 general:

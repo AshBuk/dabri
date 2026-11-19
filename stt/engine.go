@@ -46,16 +46,9 @@ func NewEngine(config func() *config.Config, modelPath string, loggers ...logger
 	}
 	var b backend
 	var err error
-	engine := constants.EngineWhisper
-	if m := constants.ModelByFileName(filepath.Base(modelPath)); m != nil {
-		engine = m.Engine
-	}
-	switch engine {
-	case constants.EngineParakeet:
+	if m := constants.ModelByFileName(filepath.Base(modelPath)); m != nil && m.Engine == constants.EngineParakeet {
 		b, err = newParakeetModel(modelPath, logSink)
-	case constants.EngineTranscribe:
-		b, err = newTranscribeModel(modelPath, logSink)
-	default:
+	} else {
 		b, err = newWhisperModel(config, modelPath, logSink)
 	}
 	if err != nil {

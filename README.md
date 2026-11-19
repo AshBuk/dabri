@@ -23,7 +23,7 @@
 
 **Dabri** is a **minimalist**, **privacy-first** application for **offline voice recognition** directly into any active window (editors, browsers, IDEs, AI assistants).  
 
-Written in **[Go](https://github.com/golang/go)** with a *short dependency list*, Dabri runs Whisper and NVIDIA Parakeet models natively on your machine via **[whisper.cpp](https://github.com/ggml-org/whisper.cpp)** and **[transcribe.cpp](https://github.com/handy-computer/transcribe.cpp)**, on the GPU through Vulkan or on the CPU. It works on practically any Linux distro: press a hotkey, speak, and the text appears where your cursor is.
+Written in **[Go](https://github.com/golang/go)** with a *short dependency list*, Dabri runs Whisper and NVIDIA Parakeet models natively on your machine via **[whisper.cpp](https://github.com/ggml-org/whisper.cpp)**, on the GPU through Vulkan or on the CPU. It works on practically any Linux distro: press a hotkey, speak, and the text appears where your cursor is.
 
 https://github.com/user-attachments/assets/b798f350-c6a8-4408-83eb-51eef392a731
 
@@ -145,10 +145,10 @@ Start onboarding with:
 ## ✦ Acknowledgments
 
 - [whisper.cpp](https://github.com/ggml-org/whisper.cpp) for the C++ implementation of OpenAI Whisper
-- [transcribe.cpp](https://github.com/handy-computer/transcribe.cpp) for running NVIDIA Parakeet models
 - [fyne.io/systray](https://github.com/fyne-io/systray) for cross-platform system tray support
 - [ydotool](https://github.com/ReimuNotMoe/ydotool) and [wtype](https://github.com/atx/wtype) for Wayland-compatible input automation
 - OpenAI for the original Whisper model and NVIDIA for the Parakeet models
+- [Moondream](https://huggingface.co/moondream/parakeet-ultra) for Parakeet Ultra (CC-BY-4.0), converted for whisper.cpp in [AshBuk/dabri-models](https://huggingface.co/AshBuk/dabri-models)
 
 ## ✦ MIT [LICENSE](LICENSE)
 
