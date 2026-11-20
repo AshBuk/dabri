@@ -120,7 +120,7 @@ make help
 - `config/` - Configuration management
 - `websocket/` - WebSocket API
 - `internal/` - App core, services, UI, IPC and utilities
-- `lib/` - whisper.cpp and transcribe.cpp libraries (built)
+- `lib/` - whisper.cpp libraries (built)
 - `build/` - Build artifacts
 
 ## Configuration
@@ -129,6 +129,5 @@ Config location: `~/.config/dabri/config.yaml`
 ## Dependencies
 - Go 1.26.11
 - whisper.cpp v1.9.5
-- transcribe.cpp v0.4.2
 - cobra, systray, websockets, yaml, evdev, dbus
 - CGO enabled for whisper bindings

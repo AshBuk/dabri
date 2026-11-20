@@ -11,13 +11,12 @@
 Version:                2.5.0
 %global go_version      1.26
 %global whisper_version 1.9.5
-%global transcribe_version 0.4.2
 
 %gometa -L -f
 
 # Keep the private libraries out of the package's provides and requires
 %global __provides_exclude_from ^%{_libdir}/%{name}/.*$
-%global __requires_exclude libwhisper\\.so|libparakeet\\.so|libggml.*\\.so|libdabri-transcribe\\.so
+%global __requires_exclude libwhisper\\.so|libparakeet\\.so|libggml.*\\.so
 
 Name:           dabri
 Release:        1%{?dist}
@@ -30,10 +29,8 @@ Source0:        %{gosource}
 Source1:        %{archivename}-vendor.tar.bz2
 Source2:        go-vendor-tools.toml
 Source3:        https://github.com/ggml-org/whisper.cpp/archive/refs/tags/v%{whisper_version}.tar.gz#/whisper-cpp-%{whisper_version}.tar.gz
-# transcribe.cpp runs Parakeet Ultra, which whisper.cpp does not support
-Source4:        https://github.com/handy-computer/transcribe.cpp/archive/refs/tags/v%{transcribe_version}.tar.gz#/transcribe-cpp-%{transcribe_version}.tar.gz
 
-# Upstream builds and tests only these two; transcribe.cpp sets its SIMD flags per architecture
+# Upstream builds and tests only these two
 ExclusiveArch:  x86_64 aarch64
 
 BuildRequires:  golang >= %{go_version}
@@ -49,8 +46,6 @@ BuildRequires:  vulkan-devel
 BuildRequires:  glslc
 # whisper.cpp's Vulkan backend needs the SPIRV-Headers cmake config
 BuildRequires:  spirv-headers-devel
-# CBLAS for the transcribe.cpp decoder
-BuildRequires:  openblas-devel
 BuildRequires:  desktop-file-utils
 BuildRequires:  appstream
 
@@ -71,15 +66,8 @@ Recommends:     vulkan-loader
 
 # Fedora's whisper-cpp has no Vulkan backend and builds without SIMD, and Fedora
 # ships no ggml package, so dabri builds both from source.
-# transcribe.cpp carries its own ggml: upstream ggml d7cb574 plus four downstream
-# patches, linked statically with hidden symbols so both copies of ggml can live
-# in one process. Its x86-64 build targets AVX2; ModelDef.CPUSupported keeps
-# those models off older CPUs.
 Provides:       bundled(whisper-cpp) = %{whisper_version}
-Provides:       bundled(transcribe-cpp) = %{transcribe_version}
 Provides:       bundled(ggml) = 0.26.0
-Provides:       bundled(ggml) = 0.26.0^20261005gitd7cb574
-Provides:       bundled(miniz) = 3.1.1
 
 %description
 Dabri is a minimalist, privacy-focused desktop application for offline
@@ -104,12 +92,8 @@ tar -xf %{SOURCE1}
 mkdir -p build
 tar -xzf %{SOURCE3} -C build
 mv build/whisper.cpp-%{whisper_version} build/whisper.cpp
-tar -xzf %{SOURCE4} -C build
-mv build/transcribe.cpp-%{transcribe_version} build/transcribe.cpp
 # Licenses of the bundled C libraries, installed by %%go_vendor_license_install
 cp -p build/whisper.cpp/LICENSE LICENSE.whisper
-cp -p build/transcribe.cpp/LICENSE LICENSE.transcribe
-cp -p build/transcribe.cpp/src/third_party/miniz/LICENSE LICENSE.miniz
 
 %generate_buildrequires
 %go_vendor_license_buildrequires -c %{SOURCE2}
@@ -140,9 +124,6 @@ cp build/whisper.cpp/build/bin/libggml*.so* lib/
 # The Go bindings link -lggml-cpu, which is a runtime module with GGML_CPU_ALL_VARIANTS
 ar rcs lib/libggml-cpu.a
 
-# transcribe.cpp as one private library with its own ggml hidden inside
-CMAKE_BUILD_PARALLEL_LEVEL=%{_smp_build_ncpus} bash-scripts/build-transcribe.sh build/transcribe.cpp lib
-
 export CGO_ENABLED=1
 export C_INCLUDE_PATH=$(pwd)/lib
 export LIBRARY_PATH=$(pwd)/lib
@@ -162,7 +143,7 @@ install -D -m 0755 %{gobuilddir}/bin/%{name} %{buildroot}%{_bindir}/%{name}
 # Install each library once under its full version with a soname symlink.
 # Everything links by soname, so the unversioned .so symlinks are not shipped.
 install -d %{buildroot}%{_libdir}/%{name}
-for lib in lib/libwhisper.so lib/libparakeet.so lib/libggml.so lib/libggml-base.so lib/libggml-cpu-*.so lib/libggml-vulkan.so lib/libdabri-transcribe.so; do
+for lib in lib/libwhisper.so lib/libparakeet.so lib/libggml.so lib/libggml-base.so lib/libggml-cpu-*.so lib/libggml-vulkan.so; do
     [ ! -f "$lib" ] && continue
     base=$(basename "$lib" .so)
     versioned=$(ls -1 ${lib}.*.* 2>/dev/null | grep -E '\.so\.[0-9]+\.[0-9]+' | head -1)
@@ -172,7 +153,7 @@ for lib in lib/libwhisper.so lib/libparakeet.so lib/libggml.so lib/libggml-base.
         major=$(echo "$versioned_name" | sed -E 's/.*\.so\.([0-9]+).*/\1/')
         ln -sf "$versioned_name" %{buildroot}%{_libdir}/%{name}/${base}.so.${major}
     else
-        # ggml backend modules and libdabri-transcribe.so have no version
+        # ggml backend modules have no version
         install -m 0755 "$lib" %{buildroot}%{_libdir}/%{name}/
     fi
 done
@@ -204,7 +185,6 @@ export LD_LIBRARY_PATH=%{buildroot}%{_libdir}/%{name}
 %{_libdir}/%{name}/libwhisper.so*
 %{_libdir}/%{name}/libparakeet.so*
 %{_libdir}/%{name}/libggml*.so*
-%{_libdir}/%{name}/libdabri-transcribe.so
 %{_datadir}/applications/io.github.ashbuk.dabri.desktop
 %{_metainfodir}/io.github.ashbuk.dabri.appdata.xml
 %{_datadir}/icons/hicolor/128x128/apps/io.github.ashbuk.dabri.png

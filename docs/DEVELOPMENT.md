@@ -28,7 +28,7 @@ make test-race             # Run unit tests with the Go race detector
 make test-integration      # Run integration tests (fast mode, no CGO)
 make test-integration-full # Run full integration tests (with audio/CGO)
 make deps                  # Download Go dependencies
-make whisper-libs          # Build whisper.cpp and transcribe.cpp libraries into ./lib
+make whisper-libs          # Build whisper.cpp libraries into ./lib
 make appimage              # Build AppImage (Docker-based, recommended)
 make appimage-host         # Build AppImage on host (requires tools installed)
 make flatpak               # Build and install the Flatpak for the current user
@@ -60,7 +60,6 @@ packaging/
 io.github.ashbuk.dabri.yml        # Flatpak manifest (Flathub)
 
 bash-scripts/dev-env.sh           # CGO environment configuration
-bash-scripts/build-transcribe.sh  # transcribe.cpp → libdabri-transcribe.so
 ```
 
 ### 3. Docker - Containers

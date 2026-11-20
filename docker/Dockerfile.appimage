@@ -33,8 +33,6 @@ RUN apt-get update && apt-get install -y \
     libvulkan-dev \
     # SPIRV-Headers cmake config - required by whisper.cpp >= v1.8.5 Vulkan backend
     spirv-headers \
-    # CBLAS for the transcribe.cpp decoder
-    libopenblas-dev \
     && rm -rf /var/lib/apt/lists/*
 
 # Vulkan shader compiler (glslc) + headers for whisper.cpp Vulkan backend.

@@ -3,26 +3,19 @@
 
 package constants
 
-import (
-	"runtime"
-
-	"golang.org/x/sys/cpu"
-)
-
 // DefaultModelID is the default model used when none is configured
 const DefaultModelID = "small-q5_1"
 
 // Inference engines that run the models
 const (
-	EngineWhisper    = "whisper"    // whisper.cpp
-	EngineParakeet   = "parakeet"   // libparakeet from whisper.cpp; detects the language itself
-	EngineTranscribe = "transcribe" // transcribe.cpp; its models in the catalog detect the language themselves
+	EngineWhisper  = "whisper"  // whisper.cpp
+	EngineParakeet = "parakeet" // libparakeet from whisper.cpp; detects the language itself
 )
 
 // ModelDef describes an available speech model variant
 type ModelDef struct {
 	ID       string // Unique identifier (matches config value)
-	Engine   string // EngineWhisper, EngineParakeet or EngineTranscribe
+	Engine   string // EngineWhisper or EngineParakeet
 	Name     string // Human-readable name for UI
 	FileName string // File name on disk
 	URL      string // HuggingFace download URL
@@ -72,12 +65,12 @@ var Models = []ModelDef{
 		MinSize:  1000 * 1024 * 1024, // ~1.1 GB
 	},
 	{
-		ID:       "parakeet-ultra-q4_k_m",
-		Engine:   EngineTranscribe,
-		Name:     "Parakeet Ultra (Q4_K_M)",
-		FileName: "parakeet-ultra-Q4_K_M.gguf",
-		URL:      "https://huggingface.co/handy-computer/parakeet-ultra-gguf/resolve/main/parakeet-ultra-Q4_K_M.gguf",
-		MinSize:  400 * 1024 * 1024, // ~486 MB
+		ID:       "parakeet-ultra-q4_k",
+		Engine:   EngineParakeet,
+		Name:     "Parakeet Ultra (Q4_K)",
+		FileName: "ggml-parakeet-ultra-q4_k.bin",
+		URL:      "https://huggingface.co/AshBuk/dabri-models/resolve/main/ggml-parakeet-ultra-q4_k.bin",
+		MinSize:  350 * 1024 * 1024, // ~416 MB
 	},
 	{
 		ID:       "parakeet-tdt-0.6b-v3-q4_k",
@@ -99,13 +92,7 @@ var Models = []ModelDef{
 
 // DetectsLanguage reports whether the model ignores the language setting
 func (m ModelDef) DetectsLanguage() bool {
-	return m.Engine != EngineWhisper
-}
-
-// CPUSupported reports whether this CPU can run the model. libdabri-transcribe is one build
-// with AVX2 as its floor on x86-64, while whisper.cpp picks a CPU variant at runtime
-func (m ModelDef) CPUSupported() bool {
-	return m.Engine != EngineTranscribe || runtime.GOARCH != "amd64" || (cpu.X86.HasAVX2 && cpu.X86.HasFMA)
+	return m.Engine == EngineParakeet
 }
 
 // ModelByID returns model definition by its ID, or nil if not found

@@ -64,6 +64,10 @@ func LoadConfig(filename string, loggers ...logger.Logger) (*models.Config, erro
 	if config.General.LegacyModel != "" {
 		config.General.Model, config.General.LegacyModel = config.General.LegacyModel, ""
 	}
+	// Parakeet Ultra moved from the transcribe.cpp Q4_K_M build to the libparakeet Q4_K one
+	if config.General.Model == "parakeet-ultra-q4_k_m" {
+		config.General.Model = "parakeet-ultra-q4_k"
+	}
 	// Validate the loaded configuration and apply corrections if necessary
 	if err := validators.ValidateConfig(&config); err != nil {
 		logSink.Warning("Configuration validation error: %v", err)

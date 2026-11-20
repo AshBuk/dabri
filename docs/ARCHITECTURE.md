@@ -151,7 +151,6 @@ Related constants:
 - **`engine.go`**: `Engine` validates and decodes the WAV file and passes the samples to the backend named by the model's `Engine` field in `internal/constants/stt_models.go`
 - **`whisper.go`**: Whisper backend using the whisper.cpp Go bindings
 - **`parakeet.go`**: Parakeet backend using libparakeet from whisper.cpp through CGO; it detects the language itself, so the language pickers are disabled for it
-- **`transcribe.go`**: backend for models whisper.cpp cannot run (Parakeet Ultra), using transcribe.cpp through CGO. transcribe.cpp carries its own ggml, so `bash-scripts/build-transcribe.sh` links it into one private library, `libdabri-transcribe.so`, that exports only `transcribe_*` symbols
 - **`backends.go`**: Loads the ggml backends once and picks the inference thread count shared by all backends
 - **`engine_stub.go`**: Stub implementation when CGO is disabled
 - **`manager/model_manager.go`**: Model lifecycle management
@@ -229,7 +228,6 @@ Distribution-specific packaging scripts and configurations:
 - `flatpak/` - Vendored Go modules and sandbox wrappers for the Flatpak build
 
 #### Bash Scripts (`bash-scripts/`)
-- **`build-transcribe.sh`**: Builds transcribe.cpp into `libdabri-transcribe.so`
 - **`check-license-headers.sh`**: License compliance validation
 - **`dev-env.sh`**: Development environment setup
 
