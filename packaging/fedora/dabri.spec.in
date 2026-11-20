@@ -8,7 +8,7 @@
 
 %global goipath         github.com/AshBuk/dabri/v2
 %global forgeurl        https://github.com/AshBuk/dabri
-Version:                2.5.0
+Version:                2.6.0
 %global go_version      1.26
 %global whisper_version 1.9.5
 
@@ -191,6 +191,9 @@ export LD_LIBRARY_PATH=%{buildroot}%{_libdir}/%{name}
 %{_datadir}/icons/hicolor/scalable/apps/io.github.ashbuk.dabri.svg
 
 %changelog
+* Fri Nov 20 2026 Asher Buk <AshBuk@users.noreply.github.com> - 2.6.0-1
+- Parakeet Ultra without AVX2, a smaller Ultra model and one speech engine
+
 * Sun Nov 15 2026 Asher Buk <AshBuk@users.noreply.github.com> - 2.5.0-1
 - New models: Parakeet Ultra and a smaller Parakeet v3
 

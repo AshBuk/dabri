@@ -58,6 +58,9 @@
     <control>pointing</control>
   </recommends>
   <releases>
+    <release version="2.6.0" date="2026-11-20">
+      <description><p>Parakeet Ultra without AVX2, a smaller Ultra model and one speech engine</p></description>
+    </release>
     <release version="2.5.0" date="2026-11-15">
       <description><p>New models: Parakeet Ultra and a smaller Parakeet v3</p></description>
     </release>
