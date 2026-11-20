@@ -23,13 +23,14 @@ jobs:
       image: fedora:45
     timeout-minutes: 30
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v7
-
+      # git goes first: without it checkout downloads a tarball with no .git for git archive
       - name: Install dependencies
         run: |
           dnf install -y git golang go-rpm-macros go-vendor-tools rpm-build rpmlint curl copr-cli glibc-langpack-en
           git config --global --add safe.directory "$GITHUB_WORKSPACE"
+
+      - name: Checkout code
+        uses: actions/checkout@v7
 
       - name: Extract version
         id: version
