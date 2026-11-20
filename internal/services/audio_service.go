@@ -437,17 +437,15 @@ func (as *AudioService) handleTranscriptionResult(transcript string, err error) 
 
 	// Output text
 	if as.io != nil {
-		if err := as.io.OutputText(sanitized); err != nil {
+		err := as.io.OutputText(sanitized)
+		as.io.CompleteTranscription(sanitized)
+		if err != nil {
 			as.logger.Error("Failed to output text: %v", err)
 			if as.ui != nil {
 				as.ui.SetError("Output failed")
 			}
 			return
 		}
-	}
-	// Notify IO about completion for clipboard protection release
-	if as.io != nil {
-		as.io.CompleteTranscription(sanitized)
 	}
 	// Update UI
 	if as.ui != nil {
