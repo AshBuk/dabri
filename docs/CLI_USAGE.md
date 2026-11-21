@@ -99,6 +99,21 @@ dabri --debug                             # Debug mode
 
 ---
 
+## Transcribing System Audio
+
+Dabri records from whatever source `audio.device` points to, and the monitor of an output device is a regular PulseAudio/PipeWire source. To transcribe what plays through your speakers or headphones, find the monitor name and put it in the config:
+```bash
+pactl list short sources | grep monitor
+```
+```yaml
+audio:
+  recording_method: ffmpeg
+  device: alsa_output.pci-0000_00_1f.3.analog-stereo.monitor
+```
+The `default` device skips monitor sources, so the name must be set explicitly. Recording length is capped by `audio.max_recording_time` (300 seconds by default). Dabri stays a push-to-talk tool: there is no speaker separation or summarizing.
+
+---
+
 ## AppImage CLI Usage
 
 AppImage requires the full path to run CLI commands (e.g. `./dabri-x.x.x-x86_64.AppImage status`).
